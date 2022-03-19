@@ -20,11 +20,11 @@ export class FloatInputNode extends ShaderNode {
     this.#value = value
   }
 
-  generateCommonCode(): string {
+  generateFragCommonCode(): string {
     return ""
   }
 
-  generateCode(): string {
+  generateFragCode(): string {
     const outputs = this.getOutSockets()
     const v = createValidNumberLiteral(this.#value)
     return `

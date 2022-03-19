@@ -151,7 +151,19 @@ export abstract class ShaderNode {
     return [...this.#attributes]
   }
 
-  abstract generateCommonCode(): string;
+  generateVertCommonCode(): string {
+    return ""
+  }
 
-  abstract generateCode(): string
+  generateFragCommonCode(): string {
+    return ""
+  }
+
+  generateVertCode(): string {
+    return ""
+  }
+
+  generateFragCode(): string {
+    return ""
+  }
 }

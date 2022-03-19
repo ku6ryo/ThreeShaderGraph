@@ -21,11 +21,11 @@ export class Vector3InputNode extends ShaderNode {
     this.#value = value
   }
 
-  generateCommonCode(): string {
+  generateFragCommonCode(): string {
     return ""
   }
 
-  generateCode(): string {
+  generateFragCode(): string {
     const outputs = this.getOutSockets()
     const x = this.#value.x
     const y = this.#value.y

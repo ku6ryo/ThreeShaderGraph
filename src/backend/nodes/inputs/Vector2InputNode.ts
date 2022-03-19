@@ -9,11 +9,11 @@ export class Vector2InputNode extends ShaderNode {
     this.addOutSocket("Vector2InputNodeOut", ShaderDataType.Vector2)
   }
 
-  generateCommonCode(): string {
+  generateFragCommonCode(): string {
     return ""
   }
 
-  generateCode(): string {
+  generateFragCode(): string {
     const outputs = this.getOutSockets()
     /*
     const x = this.#value.x

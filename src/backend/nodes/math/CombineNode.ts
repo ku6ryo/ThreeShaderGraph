@@ -12,11 +12,11 @@ export class CombineNode extends ShaderNode {
     this.addOutSocket("out", ShaderDataType.Vector4)
   }
 
-  generateCommonCode(): string {
+  generateFragCommonCode(): string {
     return ""
   }
 
-  generateCode(): string {
+  generateFragCode(): string {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `

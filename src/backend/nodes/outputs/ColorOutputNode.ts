@@ -11,11 +11,11 @@ export class ColorOutputNode extends ShaderNode {
     this.setUniformValue(0, new Vector3(1, 0, 0))
   }
 
-  generateCommonCode(): string {
+  generateFragCommonCode(): string {
     return ""
   }
 
-  generateCode(): string {
+  generateFragCode(): string {
     const s = this.getInSockets()[0]
     return `
     gl_FragColor = vec4(${s.connected() ? s.getVarName() : s.getUniformVarName()}, 1.0);

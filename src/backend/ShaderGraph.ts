@@ -166,25 +166,13 @@ export class ShaderGraph {
   }
 
   generateVertCode(): string {
-    return `
-precision mediump float;
-
-void main()	{
-  gl_Position = vec4( position, 1.0 );
-}
-`
-  }
-
-  generateFragCode(): string {
     let uniformCode = ""
-    let attributeCode = ""
     let commonCode = ""
-    let mainCode = ""
     let commonCodes: { [key: string]: string } = {}
-
+    let mainCode = ""
     const attributeMap: Map<AttributeType, boolean> = new Map()
     this.#resolvedNodes.forEach(n => {
-      const cCode = n.generateCommonCode()
+      const cCode = n.generateVertCommonCode()
       if (cCode && !commonCodes[n.getTypeId()]) {
         commonCode += cCode + "\n"
       }
@@ -197,7 +185,41 @@ void main()	{
         }
         uniformCode += `uniform ${u.type} ${u.name};\n`
       })
-      mainCode += n.generateCode()
+      mainCode += n.generateVertCode()
+    })
+    return `
+${uniformCode}
+${commonCode}
+void main()
+{
+${mainCode}
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+}
+`
+  }
+
+  generateFragCode(): string {
+    let uniformCode = ""
+    let commonCode = ""
+    let mainCode = ""
+    let commonCodes: { [key: string]: string } = {}
+
+    const attributeMap: Map<AttributeType, boolean> = new Map()
+    this.#resolvedNodes.forEach(n => {
+      const cCode = n.generateFragCommonCode()
+      if (cCode && !commonCodes[n.getTypeId()]) {
+        commonCode += cCode + "\n"
+      }
+      n.getAttributes().forEach(a => {
+        attributeMap.set(a, true)
+      })
+      n.getUniforms().forEach((u, i) => {
+        if (n.getInSockets()[i].connected()) {
+          return
+        }
+        uniformCode += `uniform ${u.type} ${u.name};\n`
+      })
+      mainCode += n.generateFragCode()
       const oSockets = n.getOutSockets()
       oSockets.forEach(s => {
         const wires = this.#wires.filter(w => {
@@ -208,13 +230,9 @@ void main()	{
         })
       })
     })
-    if (attributeMap.get(AttributeType.UV)) {
-      attributeCode += "varying vec2 vUV;\n"
-    }
     commonCode += Object.values(commonCodes).join("\n")
     return `
 ${uniformCode}
-${attributeCode}
 ${commonCode}
 
 void main() {

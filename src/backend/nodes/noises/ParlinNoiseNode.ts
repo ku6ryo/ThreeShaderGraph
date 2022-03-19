@@ -12,7 +12,7 @@ export class PerlinNoiseNode extends ShaderNode {
     this.addOutSocket("pnoise", ShaderDataType.Float)
   }
 
-  generateCommonCode(): string {
+  generateFragCommonCode(): string {
     return `
 vec4 mod289(vec4 x)
 {
@@ -71,7 +71,7 @@ float cnoise(vec2 P)
 `
   }
 
-  generateCode(): string {
+  generateFragCode(): string {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `

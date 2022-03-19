@@ -15,11 +15,11 @@ export class TimeInputNode extends ShaderNode {
     this.setUniformValue(0, performance.now() / 1000)
   }
 
-  generateCommonCode(): string {
+  generateFragCommonCode(): string {
     return ""
   }
 
-  generateCode(): string {
+  generateFragCode(): string {
     return ""
   }
 }

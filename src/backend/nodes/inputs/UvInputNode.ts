@@ -8,12 +8,20 @@ export class UvInputNode extends ShaderNode {
     this.addOutSocket("TextureInputNodeOut", ShaderDataType.Vector2)
   }
 
-  generateCommonCode(): string {
-    return ""
+  generateVertCommonCode(): string {
+    return "varying vec2 vUv;"
   }
 
-  generateCode(): string {
-    this.getOutSockets()[0].overrideVariableName("vUV")
+  generateVertCode(): string {
+    return "vUv = uv;"
+  }
+
+  generateFragCommonCode(): string {
+    return "varying vec2 vUv;"
+  }
+
+  generateFragCode(): string {
+    this.getOutSockets()[0].overrideVariableName("vUv")
     return ""
   }
 }

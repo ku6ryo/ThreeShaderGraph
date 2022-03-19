@@ -54,6 +54,7 @@ export class ShaderPreview {
   update(graph: ShaderGraph) {
     console.log(graph.generateFragCode())
     const m = new ShaderMaterial({
+      vertexShader: graph.generateVertCode(),
       fragmentShader: graph.generateFragCode(),
       uniforms: graph.createUniforms()
     })

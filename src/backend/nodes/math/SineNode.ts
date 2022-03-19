@@ -19,11 +19,11 @@ export class SineNode extends ShaderNode {
     this.addOutSocket("out", type)
   }
 
-  generateCommonCode(): string {
+  generateFragCommonCode(): string {
     return ""
   }
 
-  generateCode(): string {
+  generateFragCode(): string {
     const i = this.getInSockets()[0]
     const o = this.getOutSockets()[0]
     return `

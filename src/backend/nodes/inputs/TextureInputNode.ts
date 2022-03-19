@@ -20,11 +20,11 @@ export class TextureInputNode extends ShaderNode {
     this.#value = value
   }
 
-  generateCommonCode(): string {
+  generateFragCommonCode(): string {
     return ""
   }
 
-  generateCode(): string {
+  generateFragCode(): string {
     const uName = this.getUnifromName(0)
     this.getOutSockets()[0].overrideVariableName(uName)
     return ""

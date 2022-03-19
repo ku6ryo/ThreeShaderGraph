@@ -454,7 +454,7 @@ export function Board({
           y: board.centerY,
           color: n.color,
           name: f.name,
-          selected: false,
+          selected: true,
           inSockets: n.inSockets,
           outSockets: n.outSockets,
         }
