@@ -1,4 +1,4 @@
-import { InSocket, OutSocket, SocketDirection, NodeColor, InNodeInputType, InNodeInputValue } from "../NodeBox";
+import { InSocket, OutSocket, NodeColor } from "../NodeBox";
 
 // Put commonly used types in this file.
 

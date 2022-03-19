@@ -22,6 +22,7 @@ export const inputFactories = [{
       color: NodeColor.Red,
       inSockets: [{
         label: "time",
+        hidden: true,
       }],
       outSockets: [{
         label: "Seconds",

@@ -36,6 +36,7 @@ export type InSocket = {
   dataTypes: number[]
   alternativeValueInputType?: InNodeInputType,
   alternativeValue?: InNodeInputValue,
+  hidden?: boolean
 }
 
 export type OutSocket = {
@@ -94,8 +95,6 @@ export const NodeBox = memo(function NodeBox({
   onInSocketValueChange,
   onNodeResize,
 }: Props) {
-  const imageInputRef = useRef<HTMLInputElement | null>(null)
-  const [imageValue, setImageValue] = useState<HTMLImageElement | null>(null)
   const frameRef = useRef<SVGForeignObjectElement | null>(null)
   const boxRef = useRef<HTMLDivElement | null>(null)
 
@@ -175,28 +174,33 @@ export const NodeBox = memo(function NodeBox({
             ))}
           </div>
           <div className={style.inputs}>
-            {inSockets.map((socket, i) => (
-              <div
-                className={style.row}
-                key={i}
-              >
+            {inSockets.map((socket, i) => {
+              if (socket.hidden) {
+                return
+              }
+              return (
                 <div
-                  className={style.socket}
-                  data-socket-index={i}
-                  data-socket-direction="in"
-                  onMouseDown={onSocketMouseDownInternal}
-                  onMouseUp={onSocketMouseUpInternal}
-                />
-                <div>{socket.label}</div>
-                {socket.alternativeValue && socket.alternativeValueInputType && (
-                  <div className={style.inputContainer}>
-                    {socket.alternativeValueInputType === InNodeInputType.Float && (
-                      <FloatInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
+                  className={style.row}
+                  key={i}
+                >
+                  <div
+                    className={style.socket}
+                    data-socket-index={i}
+                    data-socket-direction="in"
+                    onMouseDown={onSocketMouseDownInternal}
+                    onMouseUp={onSocketMouseUpInternal}
+                  />
+                  <div>{socket.label}</div>
+                  {socket.alternativeValue && socket.alternativeValueInputType && (
+                    <div className={style.inputContainer}>
+                      {socket.alternativeValueInputType === InNodeInputType.Float && (
+                        <FloatInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
       </foreignObject>
