@@ -1,11 +1,11 @@
 import style from "./App.module.scss";
-import { Board } from "./graph/Board";
-import { NodeProps, WireProps } from "./graph/Board/types";
-import { factories } from "./graph_definitions/definitions/factories";
-import { createGraphFromInputs } from "./graph_definitions/createGraphFromInputs";
-import { Preview } from "./graph/Preview";
+import { Board } from "./components/Board";
+import { NodeProps, WireProps } from "./components/Board/types";
+import { factories } from "./definitions/factories";
+import { createGraphFromInputs } from "./backend/createGraphFromInputs";
+import { Preview } from "./components/Preview";
 import { useState } from "react";
-import { ShaderGraph } from "./materials/graph/ShaderGraph";
+import { ShaderGraph } from "./backend/ShaderGraph";
 
 export const App = () => {
 
