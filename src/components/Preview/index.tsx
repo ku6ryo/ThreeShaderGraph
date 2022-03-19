@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react"
-import { ShaderGraph } from "../../materials/graph/ShaderGraph";
+import { ShaderGraph } from "../../backend/ShaderGraph";
 import { ShaderPreview } from "./ShaderPreview";
 import style from "./style.module.scss"
 

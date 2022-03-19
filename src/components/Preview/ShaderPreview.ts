@@ -3,19 +3,14 @@ import {
   PerspectiveCamera,
   WebGL1Renderer,
   BoxGeometry,
-  MeshBasicMaterial,
   Mesh,
   SphereGeometry,
   MeshPhysicalMaterial,
   DirectionalLight,
   AmbientLight,
   ShaderMaterial,
-  Uniform,
-  Vector3,
-  Texture,
 } from "three"
-import { ShaderDataType } from "../../materials/graph/data_types"
-import { ShaderGraph } from "../../materials/graph/ShaderGraph"
+import { ShaderGraph } from "../../backend/ShaderGraph"
 export class ShaderPreview {
 
   #scene: Scene

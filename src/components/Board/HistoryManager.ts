@@ -1,4 +1,4 @@
-import { NodeProps, WireProps } from "./index"
+import { NodeProps, WireProps } from "./types"
 
 type EditHistory = {
   nodes: { [key: string]: NodeProps },

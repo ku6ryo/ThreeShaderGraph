@@ -1,8 +1,8 @@
 import { NodeTypeId } from "./NodeTypeId"
-import { InNodeInputType, NodeColor } from "../../graph/NodeBox"
-import { NodeBlueprint } from "../../graph/Board"
+import { InNodeInputType, NodeColor } from "../components/NodeBox"
+import { NodeBlueprint } from "../components/Board"
 import { mathTypes } from "./data_types"
-import { ShaderDataType } from "../../materials/graph/data_types"
+import { ShaderDataType } from "../backend/data_types"
 import { Vector3 } from "three"
 
 export const outputFactories = [{

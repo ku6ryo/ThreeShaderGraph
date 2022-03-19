@@ -1,6 +1,6 @@
 import { NodeTypeId } from "./NodeTypeId"
-import { NodeColor } from "../../graph/NodeBox"
-import { NodeBlueprint } from "../../graph/Board"
+import { NodeColor } from "../components/NodeBox"
+import { NodeBlueprint } from "../components/Board"
 import { mathTypes } from "./data_types"
 
 export const textureFactories = [{

@@ -1,6 +1,6 @@
 import { NodeTypeId } from "./NodeTypeId"
-import { NodeColor, InNodeInputType } from "../../graph/NodeBox"
-import { NodeBlueprint } from "../../graph/Board"
+import { NodeColor, InNodeInputType } from "../components/NodeBox"
+import { NodeBlueprint } from "../components/Board"
 
 export const inputFactories = [{
   id: NodeTypeId.InputUv,

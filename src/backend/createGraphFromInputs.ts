@@ -1,27 +1,26 @@
-import { NodeProps, WireProps } from "../graph/Board/types";
-import { ShaderDataType } from "../materials/graph/data_types";
-import { ShaderGraph } from "../materials/graph/ShaderGraph";
-import { ShaderNode } from "../materials/graph/ShaderNode";
-import { FloatInputNode } from "../materials/graph/nodes/inputs/FloatInputNode";
-import { UvInputNode } from "../materials/graph/nodes/inputs/UvInputNode";
-import { AddNode } from "../materials/graph/nodes/math/AddNode";
-import { PerlinNoiseNode } from "../materials/graph/nodes/noises/ParlinNoiseNode";
-import { ColorOutputNode } from "../materials/graph/nodes/outputs/ColorOutputNode";
-import { Wire } from "../materials/graph/Wire";
-import { NodeTypeId } from "../graph_definitions/definitions/NodeTypeId";
-import { SineNode } from "../materials/graph/nodes/math/SineNode";
-import { CosineNode } from "../materials/graph/nodes/math/CosineNode";
-import { TangentNode } from "../materials/graph/nodes/math/TangentNode";
-import { DotNode } from "../materials/graph/nodes/math/DotNode";
-import { SubtractNode } from "../materials/graph/nodes/math/SubtractNode";
-import { FracNode } from "../materials/graph/nodes/math/FracNode";
-import { MultiplyNode } from "../materials/graph/nodes/math/MultiplyNode";
-import { TextureInputNode } from "../materials/graph/nodes/inputs/TextureInputNode";
-import { SampleTextureNode } from "../materials/graph/nodes/texture/SampleTextureNode";
-import { TimeInputNode } from "../materials/graph/nodes/inputs/TimeInputNode";
-import { CombineNode } from "../materials/graph/nodes/math/CombineNode";
-import { SeparateNode } from "../materials/graph/nodes/math/SeparateNode";
-import { compileShaders } from "../materials/shader";
+import { NodeProps, WireProps } from "../components/Board/types";
+import { ShaderDataType } from "./data_types";
+import { ShaderGraph } from "./ShaderGraph";
+import { ShaderNode } from "./ShaderNode";
+import { FloatInputNode } from "./nodes/inputs/FloatInputNode";
+import { UvInputNode } from "./nodes/inputs/UvInputNode";
+import { AddNode } from "./nodes/math/AddNode";
+import { PerlinNoiseNode } from "./nodes/noises/ParlinNoiseNode";
+import { ColorOutputNode } from "./nodes/outputs/ColorOutputNode";
+import { Wire } from "./Wire";
+import { NodeTypeId } from "../definitions/NodeTypeId";
+import { SineNode } from "./nodes/math/SineNode";
+import { CosineNode } from "./nodes/math/CosineNode";
+import { TangentNode } from "./nodes/math/TangentNode";
+import { DotNode } from "./nodes/math/DotNode";
+import { SubtractNode } from "./nodes/math/SubtractNode";
+import { FracNode } from "./nodes/math/FracNode";
+import { MultiplyNode } from "./nodes/math/MultiplyNode";
+import { TextureInputNode } from "./nodes/inputs/TextureInputNode";
+import { SampleTextureNode } from "./nodes/texture/SampleTextureNode";
+import { TimeInputNode } from "./nodes/inputs/TimeInputNode";
+import { CombineNode } from "./nodes/math/CombineNode";
+import { SeparateNode } from "./nodes/math/SeparateNode";
 
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
@@ -97,9 +96,6 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
 
     if (sn) {
-      sn.getInSockets().forEach((s, i) => {
-        const aType = n.inSockets[i].alternativeValueInputType
-      })
       graph.addNode(sn)
     }
   })
@@ -117,17 +113,11 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
       throw new Error("invalid wire")
     }
   })
-
   console.log(graph.getNodes())
 
   const vert = graph.generateVertCode()
   const frag = graph.generateFragCode()
   console.log(vert)
   console.log(frag)
-  const gl = document.createElement("canvas").getContext("webgl")
-  if (!gl) {
-    throw new Error("webgl not supported")
-  }
-  // compileShaders(gl, vert, frag)
   return graph
 }
