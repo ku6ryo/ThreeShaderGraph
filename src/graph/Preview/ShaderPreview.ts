@@ -58,37 +58,21 @@ export class ShaderPreview {
 
   update(graph: ShaderGraph) {
     console.log(graph.generateFragCode())
-    const uniforms: { [key: string]: Uniform } = {}
-    graph.getResolvedNodes().forEach(n => {
-      n.getInSockets().forEach((s, i)=> {
-        if (!s.connected() && n.getUniforms()[i]) {
-          const { name, type, valueVector3, valueFloat, valueVector2, valueSampler2D, valueVector4 } = n.getUniforms()[i]
-          if (type === ShaderDataType.Float && valueFloat !== undefined) {
-            uniforms[name] = new Uniform(valueFloat)
-          }
-          if (type === ShaderDataType.Vector3 && valueVector3) {
-            uniforms[name] = new Uniform(valueVector3)
-          }
-          if (type === ShaderDataType.Vector2 && valueVector2) {
-            uniforms[name] = new Uniform(valueVector3)
-          }
-          if (type === ShaderDataType.Vector4 && valueVector4) {
-            uniforms[name] = new Uniform(valueVector4)
-          }
-          if (type === ShaderDataType.Sampler2D && valueSampler2D) {
-            uniforms[name] = new Uniform(new Texture(valueSampler2D))
-          }
-          return
-        }
-      })
-    })
-    console.log(uniforms)
     const m = new ShaderMaterial({
       fragmentShader: graph.generateFragCode(),
-      uniforms,
+      uniforms: graph.createUniforms()
     })
-    console.log(m.vertexShader)
-    console.log(m.fragmentShader)
+    m.needsUpdate = true
+    this.#mesh.onBeforeRender = () => {
+      graph.getNodes().forEach(n => {
+        n.updateOnDraw()
+      })
+      const values = graph.getUniformValueMap()
+      Object.keys(m.uniforms).forEach(key => {
+        m.uniforms[key].value = values[key]
+      })
+    }
+    console.log(m.uniforms)
     this.#mesh.material = m
   }
 

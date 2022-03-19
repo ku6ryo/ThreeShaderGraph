@@ -8,8 +8,7 @@ export class TimeInputNode extends ShaderNode {
     this.addInSocket("time", ShaderDataType.Float)
     this.setUniformValue(0, 0)
     this.addOutSocket("TimeInputNodeOut", ShaderDataType.Float)
-    const uName = this.getUnifromName(0)
-    this.getOutSockets()[0].overrideVariableName(uName)
+    this.getOutSockets()[0].overrideVariableName(this.getInSockets()[0].getUniformVarName())
   }
 
   updateOnDraw(): void {

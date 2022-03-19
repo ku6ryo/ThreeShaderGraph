@@ -1,3 +1,5 @@
+import { Texture, Uniform } from "three"
+import { ShaderDataType } from "./data_types"
 import { AttributeType, ShaderNode } from "./ShaderNode"
 import { Wire } from "./Wire"
 
@@ -106,6 +108,61 @@ export class ShaderGraph {
       }
     })
     this.#resolvedNodes = resolvedNodes
+  }
+
+  getUniformValueMap() {
+    const values: { [key: string]: any } = {}
+    this.getResolvedNodes().forEach(n => {
+      n.getInSockets().forEach((s, i)=> {
+        if (!s.connected() && n.getUniforms()[i]) {
+          const { name, type, valueVector3, valueFloat, valueVector2, valueSampler2D, valueVector4 } = n.getUniforms()[i]
+          if (type === ShaderDataType.Float && valueFloat !== undefined) {
+            values[name] = valueFloat
+          }
+          if (type === ShaderDataType.Vector3 && valueVector3) {
+            values[name] = valueVector3
+          }
+          if (type === ShaderDataType.Vector2 && valueVector2) {
+            values[name] = valueVector3
+          }
+          if (type === ShaderDataType.Vector4 && valueVector4) {
+            values[name] = valueVector4
+          }
+          if (type === ShaderDataType.Sampler2D && valueSampler2D) {
+            values[name] = new Texture(valueSampler2D)
+          }
+        }
+      })
+    })
+    return values
+  }
+
+  createUniforms() {
+    const uniforms: { [key:string]: Uniform } = {}
+    this.getResolvedNodes().forEach(n => {
+      n.getInSockets().forEach((s, i)=> {
+        if (!s.connected() && n.getUniforms()[i]) {
+          const { name, type, valueVector3, valueFloat, valueVector2, valueSampler2D, valueVector4 } = n.getUniforms()[i]
+          if (type === ShaderDataType.Float && valueFloat !== undefined) {
+            uniforms[name] = new Uniform(valueFloat)
+          }
+          if (type === ShaderDataType.Vector3 && valueVector3) {
+            uniforms[name] = new Uniform(valueVector3)
+          }
+          if (type === ShaderDataType.Vector2 && valueVector2) {
+            uniforms[name] = new Uniform(valueVector3)
+          }
+          if (type === ShaderDataType.Vector4 && valueVector4) {
+            uniforms[name] = new Uniform(valueVector4)
+          }
+          if (type === ShaderDataType.Sampler2D && valueSampler2D) {
+            uniforms[name] = new Uniform(new Texture(valueSampler2D))
+          }
+          return
+        }
+      })
+    })
+    return uniforms
   }
 
   generateVertCode(): string {
