@@ -1,0 +1,126 @@
+
+.frame {
+  overflow: visible; 
+}
+
+.frame.selected {
+  .box {
+    border-color: #ff9f0f;
+  }
+}
+
+.box {
+  background-color: #3f3f3f;
+  border: 1px solid #6a6a6a;
+  border-radius: 4px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.8);
+  user-select: none;
+  width: 150px;
+}
+
+.name {
+  background-color: #ccc;
+  border-radius: 2px 2px 0 0;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  padding: 6px 8px 5px;
+
+  &.orange {
+    background-color: rgb(255, 175, 71);
+  }
+  &.blue {
+    background-color: rgb(71, 151, 255);
+  }
+  &.red {
+    background-color: rgb(255, 92, 71);
+  }
+  &.pink {
+    background-color: rgb(219, 79, 231);
+  }
+  &.purple {
+    background-color: rgb(58, 19, 150);
+  }
+  &.green {
+    background-color: rgb(19, 150, 84);
+  }
+}
+
+.outputs {
+  color: white;
+  font-size: 12px;
+  padding: 8px 4px 0;
+
+  .row {
+    line-height: 1;
+    padding: 4px 8px;
+    position: relative;
+    text-align: right;
+
+    .socket {
+      right: -10px;
+      top: 5px;
+    }
+  }
+}
+
+.inputs {
+  color: white;
+  font-size: 12px;
+  padding: 4px;
+
+  .row {
+    line-height: 1;
+    padding: 4px 8px;
+    position: relative;
+
+    .socket {
+      left: -10px;
+      top: 5px;
+    }
+
+    .inputContainer {
+      margin-top: 4px;
+    }
+  }
+}
+
+.socket {
+  background-color: rgb(182, 182, 182);
+  border: 1px solid #444;
+  border-radius: 10px;
+  height: 8px;
+  position: absolute;
+  transition: .3s;
+  width: 8px;
+
+  &:hover {
+    background-color: #f2f2f2;
+  }
+}
+
+.imageInput {
+  display: none;
+}
+
+.imageInputRect {
+  background-color: #6a6a6a;
+  cursor: pointer;
+  height: 100px;
+  width: 100px;
+
+  &:hover {
+    opacity: .8;
+  }
+
+  img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+}
+
+.floatInput {
+  padding: 0 8px;
+}

@@ -1,0 +1,44 @@
+
+.frame {
+  background-color: #666;
+  font-size: 12px;
+  line-height: 1;
+  position: relative;
+  width: 100%;
+}
+
+.guage {
+  color: white;
+  position: relative;
+  width: 100%;
+
+  .text {
+    margin: 0 20px;
+    padding: 4px;
+    cursor: ew-resize;
+
+    &:hover {
+      background-color: #999;
+    }
+  }
+
+  .arrow {
+    cursor: pointer;
+    position: absolute;
+    padding: 4px 2px;
+    border: none;
+
+    &:hover {
+      background-color: #999;
+    }
+
+    &.left {
+      left: 0;
+      top: 0;
+    }
+    &.right {
+      right: 0;
+      top: 0;
+    }
+  }
+}

@@ -1,0 +1,45 @@
+.frame {
+  background-color: rgb(41, 41, 41);
+  background-size: 12px 12px;
+  font-family: Titillium;
+  height: 100%;
+  width: 100%;
+}
+
+.board {
+  height: 100%;
+  position: relative;
+  width: 100%;
+
+  &.grabbing {
+    cursor: grabbing;
+  }
+}
+
+.boardPattern {
+  fill: rgb(46, 46, 46);
+}
+
+.nodeSelector {
+  background-color: #222;
+  color: white;
+  font-size: 12px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  user-select: none;
+  border-right: 1px solid black;
+  overflow-y: scroll;
+  height: 100%;
+  z-index: 1000;
+
+  .item {
+    border-bottom: 1px solid black;
+    cursor: pointer;
+    padding: 4px;
+
+    &:hover {
+      background-color: #333;
+    }
+  }
+}
