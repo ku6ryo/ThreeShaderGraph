@@ -75,7 +75,7 @@ float cnoise(vec2 P)
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `
-    float ${outputs[0].getVeriableName()} = cnoise(${inputs[0].getVeriableName()});
+    float ${outputs[0].getVarName()} = cnoise(${inputs[0].getVarName()});
     `
   }
 }

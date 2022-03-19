@@ -19,7 +19,7 @@ export class SampleTextureNode extends ShaderNode {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `
-    vec4 ${outputs[0].getVeriableName()} = texture2D(${inputs[0].getVeriableName()}, ${inputs[1].getVeriableName()});
+    vec4 ${outputs[0].getVarName()} = texture2D(${inputs[0].getVarName()}, ${inputs[1].getVarName()});
     `
   }
 }

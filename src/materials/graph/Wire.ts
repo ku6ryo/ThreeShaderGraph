@@ -26,9 +26,9 @@ export class Wire {
 
   generateCode(): string {
     const iType = this.#inSocket.getType()
-    const iVar = this.#inSocket.getVeriableName()
+    const iVar = this.#inSocket.getVarName()
     const oType = this.#outSocket.getType()
-    const oVar = this.#outSocket.getVeriableName()
+    const oVar = this.#outSocket.getVarName()
 
     if (iType === ShaderDataType.Sampler2D) {
       if (oType !== ShaderDataType.Sampler2D) {

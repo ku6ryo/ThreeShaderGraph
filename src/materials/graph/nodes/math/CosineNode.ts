@@ -25,7 +25,7 @@ export class CosineNode extends ShaderNode {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `
-    ${this.#type} ${outputs[0].getVeriableName()} = cos(${inputs[0].getVeriableName()});
+    ${this.#type} ${outputs[0].getVarName()} = cos(${inputs[0].getVarName()});
     `
   }
 }

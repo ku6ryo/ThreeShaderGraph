@@ -91,7 +91,7 @@ export abstract class ShaderNode {
     this.#inSockets.push(socket)
     this.#uniforms.push({
       type,
-      name: socket.getUniformValiableName(),
+      name: socket.getUniformVarName(),
     })
   }
 

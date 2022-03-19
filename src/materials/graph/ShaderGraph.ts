@@ -156,8 +156,6 @@ void main()	{
     }
     commonCode += Object.values(commonCodes).join("\n")
     return `
-precision mediump float;
-
 ${uniformCode}
 ${attributeCode}
 ${commonCode}

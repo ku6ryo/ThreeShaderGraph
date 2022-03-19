@@ -25,7 +25,7 @@ export class TangentNode extends ShaderNode {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `
-    ${this.#type} ${outputs[0].getVeriableName()} = tan(${inputs[0].getVeriableName()});
+    ${this.#type} ${outputs[0].getVarName()} = tan(${inputs[0].getVarName()});
     `
   }
 }

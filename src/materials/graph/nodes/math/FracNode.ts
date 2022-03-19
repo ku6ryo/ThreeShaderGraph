@@ -25,7 +25,7 @@ export class FracNode extends ShaderNode {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `
-    ${this.#type} ${outputs[0].getVeriableName()} = fract(${inputs[0].getVeriableName()});
+    ${this.#type} ${outputs[0].getVarName()} = fract(${inputs[0].getVarName()});
     `
   }
 }

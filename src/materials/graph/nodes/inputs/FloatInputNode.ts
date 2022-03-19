@@ -28,7 +28,7 @@ export class FloatInputNode extends ShaderNode {
     const outputs = this.getOutSockets()
     const v = createValidNumberLiteral(this.#value)
     return `
-    float ${outputs[0].getVeriableName()} = ${v};
+    float ${outputs[0].getVarName()} = ${v};
     `
   }
 }

@@ -57,7 +57,6 @@ export class ShaderPreview {
   }
 
   update(graph: ShaderGraph) {
-    console.log(graph.generateVertCode())
     console.log(graph.generateFragCode())
     const uniforms: { [key: string]: Uniform } = {}
     graph.getResolvedNodes().forEach(n => {
@@ -83,10 +82,13 @@ export class ShaderPreview {
         }
       })
     })
+    console.log(uniforms)
     const m = new ShaderMaterial({
       fragmentShader: graph.generateFragCode(),
       uniforms,
     })
+    console.log(m.vertexShader)
+    console.log(m.fragmentShader)
     this.#mesh.material = m
   }
 

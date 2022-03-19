@@ -40,6 +40,10 @@ export const mathFactories = [{
       inSockets: [{
         label: "Value",
         dataTypes: mathTypes,
+        alternativeValueInputType: InNodeInputType.Float,
+        alternativeValue: {
+          float: 1
+        },
       }],
       outSockets: [{
         label: "Result",

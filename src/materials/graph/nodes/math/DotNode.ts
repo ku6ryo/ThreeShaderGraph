@@ -26,7 +26,7 @@ export class DotNode extends ShaderNode {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `
-    ${this.#type} ${outputs[0].getVeriableName()} = dot(${inputs[0].getVeriableName()}, ${inputs[1].getVeriableName()});
+    ${this.#type} ${outputs[0].getVarName()} = dot(${inputs[0].getVarName()}, ${inputs[1].getVarName()});
     `
   }
 }

@@ -25,7 +25,7 @@ export class AddNode extends ShaderNode {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `
-    ${this.#type} ${outputs[0].getVeriableName()} = ${inputs[0].getVeriableName()} + ${inputs[1].getVeriableName()};
+    ${this.#type} ${outputs[0].getVarName()} = ${inputs[0].getVarName()} + ${inputs[1].getVarName()};
     `
   }
 }

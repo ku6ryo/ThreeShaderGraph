@@ -19,11 +19,17 @@ export class Socket {
     return this.#type
   }
 
-  getVeriableName(): string {
-    return this.#overriddenVariableName || `${this.#id}`
+  getVarName(): string {
+    return this.#overriddenVariableName || (
+      this.#connected ? this.getConnectionVarName() : this.getUniformVarName()
+    )
   }
 
-  getUniformValiableName(): string {
+  getConnectionVarName(): string {
+    return this.#id
+  }
+
+  getUniformVarName(): string {
     return `u_${this.#id}`
   }
 

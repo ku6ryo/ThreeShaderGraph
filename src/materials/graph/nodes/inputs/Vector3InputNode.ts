@@ -32,7 +32,7 @@ export class Vector3InputNode extends ShaderNode {
     const z = this.#value.z
     const parts = [x, y, z].map(createValidNumberLiteral).join(", ")
     return `
-    vec3 ${outputs[0].getVeriableName()} = vec3(${parts});
+    vec3 ${outputs[0].getVarName()} = vec3(${parts});
     `
   }
 }

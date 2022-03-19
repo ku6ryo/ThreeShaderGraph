@@ -1,5 +1,6 @@
 import { ShaderNode } from "../../ShaderNode";
 import { ShaderDataType, ShaderVectorTypes } from "../../data_types";
+import { Vector4 } from "three";
 
 const SupportedTypes = ShaderVectorTypes.concat([ShaderDataType.Float]);
 
@@ -14,6 +15,7 @@ export class SineNode extends ShaderNode {
     super(id, "Math_Sine")
     this.#type = type
     this.addInSocket("in", type)
+    this.setUniformValue(0, new Vector4(1.0, 0.0, 0.0, 0.0))
     this.addOutSocket("out", type)
   }
 
@@ -22,10 +24,10 @@ export class SineNode extends ShaderNode {
   }
 
   generateCode(): string {
-    const inputs = this.getInSockets()
-    const outputs = this.getOutSockets()
+    const i = this.getInSockets()[0]
+    const o = this.getOutSockets()[0]
     return `
-    ${this.#type} ${outputs[0].getVeriableName()} = sin(${inputs[0].getVeriableName()});
+    ${this.#type} ${o.getVarName()} = sin(${i.getVarName()});
     `
   }
 }

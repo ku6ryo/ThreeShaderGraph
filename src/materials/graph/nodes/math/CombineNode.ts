@@ -20,7 +20,7 @@ export class CombineNode extends ShaderNode {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `
-    vec4 ${outputs[0].getVeriableName()} = vec4(${inputs[0].getVeriableName()}, ${inputs[1].getVeriableName()}, ${inputs[2].getVeriableName()}, ${inputs[3].getVeriableName()});
+    vec4 ${outputs[0].getVarName()} = vec4(${inputs[0].getVarName()}, ${inputs[1].getVarName()}, ${inputs[2].getVarName()}, ${inputs[3].getVarName()});
     `
   }
 }

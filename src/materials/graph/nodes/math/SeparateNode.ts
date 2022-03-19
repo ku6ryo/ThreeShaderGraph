@@ -20,10 +20,10 @@ export class SeparateNode extends ShaderNode {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
     return `
-    float ${outputs[0].getVeriableName()} = vec4(${inputs[0].getVeriableName()}).r;
-    float ${outputs[1].getVeriableName()} = vec4(${inputs[0].getVeriableName()}).g;
-    float ${outputs[2].getVeriableName()} = vec4(${inputs[0].getVeriableName()}).b;
-    float ${outputs[3].getVeriableName()} = vec4(${inputs[0].getVeriableName()}).a;
+    float ${outputs[0].getVarName()} = vec4(${inputs[0].getVarName()}).r;
+    float ${outputs[1].getVarName()} = vec4(${inputs[0].getVarName()}).g;
+    float ${outputs[2].getVarName()} = vec4(${inputs[0].getVarName()}).b;
+    float ${outputs[3].getVarName()} = vec4(${inputs[0].getVarName()}).a;
     `
   }
 }

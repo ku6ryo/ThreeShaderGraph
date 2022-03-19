@@ -33,7 +33,7 @@ export class Vector4InputNode extends ShaderNode {
     const w = this.#value.w
     const parts = [x, y, z, w].map(createValidNumberLiteral).join(", ")
     return `
-    vec4 ${outputs[0].getVeriableName()} = vec4(${parts});
+    vec4 ${outputs[0].getVarName()} = vec4(${parts});
     `
   }
 }

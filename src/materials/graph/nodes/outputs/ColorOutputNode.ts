@@ -18,7 +18,7 @@ export class ColorOutputNode extends ShaderNode {
   generateCode(): string {
     const s = this.getInSockets()[0]
     return `
-    gl_FragColor = vec4(${s.connected() ? s.getVeriableName() : s.getUniformValiableName()}, 1.0);
+    gl_FragColor = vec4(${s.connected() ? s.getVarName() : s.getUniformVarName()}, 1.0);
     `
   }
 }
