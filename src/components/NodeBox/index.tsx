@@ -1,4 +1,4 @@
-import { MouseEventHandler, MouseEvent, useRef, useState, memo, useCallback, ChangeEventHandler, KeyboardEventHandler, useEffect } from "react"
+import { MouseEventHandler, MouseEvent, useRef, memo, useCallback, useEffect } from "react"
 import style from "./style.module.scss"
 import classnames from "classnames"
 import { FloatInput } from "./FloatInput"
@@ -33,7 +33,6 @@ export type InNodeInputValue = {
 
 export type InSocket = {
   label: string,
-  dataTypes: number[]
   alternativeValueInputType?: InNodeInputType,
   alternativeValue?: InNodeInputValue,
   socketHidden?: boolean,

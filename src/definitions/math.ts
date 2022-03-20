@@ -1,21 +1,19 @@
 import { NodeTypeId } from "./NodeTypeId"
-import { InNodeInputType, NodeColor } from "../components/NodeBox"
+import { NodeColor } from "../components/NodeBox"
 import { NodeBlueprint } from "../components/Board"
 import { mathTypes } from "./data_types"
 
 export const mathFactories = [{
   id: NodeTypeId.MathAdd,
-  name: "Add",
+  name: "Math / Add",
   factory: () => {
     return {
       color: NodeColor.Blue,
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value 1",
-        dataTypes: mathTypes,
       }, {
         label: "Value 2",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "Result",
@@ -31,7 +29,6 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "Result",
@@ -40,14 +37,13 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathCosine,
-  name: "Cosine",
+  name: "Math / Cosine",
   factory: () => {
     return {
       color: NodeColor.Blue,
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "Result",
@@ -63,7 +59,6 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "Result",
@@ -79,7 +74,6 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value 1",
-        dataTypes: mathTypes,
       }, {
         label: "Value 2",
       }],
@@ -97,7 +91,6 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "Result",
@@ -113,10 +106,8 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value 1",
-        dataTypes: mathTypes,
       }, {
         label: "Value 2",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "Result",
@@ -132,10 +123,8 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value 1",
-        dataTypes: mathTypes,
       }, {
         label: "Value 2",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "Result",
@@ -151,16 +140,12 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "R",
-        dataTypes: mathTypes,
       }, {
         label: "G",
-        dataTypes: mathTypes,
       }, {
         label: "B",
-        dataTypes: mathTypes,
       }, {
         label: "A",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "Vec",
@@ -176,7 +161,6 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "Vec",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "R",
@@ -198,10 +182,8 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value",
-        dataTypes: mathTypes,
       }, {
         label: "Threshold",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "Result",
@@ -217,10 +199,8 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value",
-        dataTypes: mathTypes,
       }, {
         label: "Threshold",
-        dataTypes: mathTypes,
       }],
       outSockets: [{
         label: "Result",

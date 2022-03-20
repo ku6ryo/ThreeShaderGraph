@@ -37,10 +37,7 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
       sn = new TimeInputNode(n.id)
     }
     if (n.typeId === NodeTypeId.InputFloat) {
-      sn = (() => {
-        const node = new FloatInputNode(n.id)
-        return node
-      })()
+      sn = new FloatInputNode(n.id)
     }
     if (n.typeId === NodeTypeId.InputTexture) {
       sn = (() => {
