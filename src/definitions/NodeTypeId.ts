@@ -15,6 +15,8 @@ export enum NodeTypeId {
   MathTangent = "math_tangent",
   MathCombine = "math_combine",
   MathSeparate = "math_separate",
+  MathGreaterThan = "math_greaterThan",
+  MathLessThan = "math_lessThan",
   // Output
   OutputColor = "output_color",
   // Texture

@@ -10,6 +10,7 @@ type Props = {
 export function Preview({
   graph,
 }: Props) {
+  console.log("render preview")
   const frameRef = useRef<HTMLDivElement>(null)
   const preview = useMemo(() => {
     return new ShaderPreview()

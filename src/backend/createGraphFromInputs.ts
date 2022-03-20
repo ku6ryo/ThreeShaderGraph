@@ -21,6 +21,8 @@ import { SampleTextureNode } from "./nodes/texture/SampleTextureNode";
 import { TimeInputNode } from "./nodes/inputs/TimeInputNode";
 import { CombineNode } from "./nodes/math/CombineNode";
 import { SeparateNode } from "./nodes/math/SeparateNode";
+import { GreaterThanNode } from "./nodes/math/GreaterThanNode";
+import { LessThanNode } from "./nodes/math/LessThanNode";
 
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
@@ -37,7 +39,6 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     if (n.typeId === NodeTypeId.InputFloat) {
       sn = (() => {
         const node = new FloatInputNode(n.id)
-        node.setValue(1)
         return node
       })()
     }
@@ -86,6 +87,12 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     if (n.typeId === NodeTypeId.MathSeparate) {
       sn = new SeparateNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.MathGreaterThan) {
+      sn = new GreaterThanNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.MathLessThan) {
+      sn = new LessThanNode(n.id)
     }
     // Texture
     if (n.typeId === NodeTypeId.TexturePerlinNoise) {

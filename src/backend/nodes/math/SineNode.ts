@@ -15,12 +15,8 @@ export class SineNode extends ShaderNode {
     super(id, "Math_Sine")
     this.#type = type
     this.addInSocket("in", type)
-    this.setUniformValue(0, new Vector4(1.0, 0.0, 0.0, 0.0))
+    this.setUniformValue(0, new Vector4(0.0, 0.0, 0.0, 0.0))
     this.addOutSocket("out", type)
-  }
-
-  generateFragCommonCode(): string {
-    return ""
   }
 
   generateFragCode(): string {

@@ -87,6 +87,7 @@ type Rect = {
 type Props = {
   factories: NodeFactory[]
   onChange: (nodes: NodeProps[], wires: WireProps[]) => void
+  onInSocketValueChange: (id: string, index: number, value: InNodeInputValue) => void
 }
 
 /**
@@ -95,6 +96,7 @@ type Props = {
 export function Board({
   factories,
   onChange,
+  onInSocketValueChange,
 }: Props) {
   const svgRootRef = useRef<SVGSVGElement | null>(null)
   const [board, setBoard] = useState<BoardStats>({
@@ -557,14 +559,16 @@ export function Board({
     }
   }, [svgRootRef.current])
   // Fires when socket value is changed in the node UI component.
-  const onInSocketValueChange = useCallback((nodeId: string, index: number, value: InNodeInputValue) => {
+  const onInSocketValueChangeInternal = useCallback((nodeId: string, index: number, value: InNodeInputValue) => {
     const n = nwManager.getNode(nodeId)
     if (n) {
       const s = n.inSockets[index]
       s.alternativeValue = value
       nwManager.updateNode(n)
+      console.log("in socket value changed", nodeId, index, value)
+      onInSocketValueChange(nodeId, index, value)
     }
-  }, [nwManager])
+  }, [nwManager, onInSocketValueChange])
 
   // Preparing for rendering.
   const viewBox = useMemo(() => {
@@ -635,7 +639,7 @@ export function Board({
             onSocketMouseDown={onSocketMouseDown}
             onSocketMouseUp={onSocketMouseUp}
             onDragStart={onNodeDragStart}
-            onInSocketValueChange={onInSocketValueChange}
+            onInSocketValueChange={onInSocketValueChangeInternal}
             onNodeResize={onNodeResize}
           />
         ))}

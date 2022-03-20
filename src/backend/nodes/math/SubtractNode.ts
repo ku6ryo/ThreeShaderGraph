@@ -17,10 +17,6 @@ export class SubtractNode extends ShaderNode {
     this.addOutSocket("out", type)
   }
 
-  generateFragCommonCode(): string {
-    return ""
-  }
-
   generateFragCode(): string {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()

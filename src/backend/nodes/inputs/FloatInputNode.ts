@@ -1,34 +1,18 @@
-import { createValidNumberLiteral } from "../../utils";
 import { ShaderNode } from "../../ShaderNode";
 import { ShaderDataType } from "../../data_types";
 
-
 export class FloatInputNode extends ShaderNode {
-
-  #value: number = 0
 
   constructor(id: string) {
     super(id, "FloatInput")
-    this.addOutSocket("floatInputNodeOut", ShaderDataType.Float)
-  }
-
-  getValue(): number {
-    return this.#value
-  }
-
-  setValue(value: number) {
-    this.#value = value
-  }
-
-  generateFragCommonCode(): string {
-    return ""
+    this.addInSocket("floatInputIn", ShaderDataType.Float)
+    this.setUniformValue(0, 1)
+    this.addOutSocket("floatInputOut", ShaderDataType.Float)
   }
 
   generateFragCode(): string {
-    const outputs = this.getOutSockets()
-    const v = createValidNumberLiteral(this.#value)
-    return `
-    float ${outputs[0].getVarName()} = ${v};
-    `
+    const i = this.getInSockets()[0]
+    const o = this.getOutSockets()[0]
+    return `float ${o.getVarName()} = ${i.getVarName()};`
   }
 }

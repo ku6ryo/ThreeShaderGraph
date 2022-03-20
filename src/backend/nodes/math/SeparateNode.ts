@@ -12,10 +12,6 @@ export class SeparateNode extends ShaderNode {
     this.addOutSocket("a", ShaderDataType.Float)
   }
 
-  generateFragCommonCode(): string {
-    return ""
-  }
-
   generateFragCode(): string {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()

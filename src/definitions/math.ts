@@ -12,17 +12,9 @@ export const mathFactories = [{
       inNodeInputSlots: [],
       inSockets: [{
         label: "Value 1",
-        alternativeValueInputType: InNodeInputType.Float,
-        alternativeValue: {
-          float: 1
-        },
         dataTypes: mathTypes,
       }, {
         label: "Value 2",
-        alternativeValueInputType: InNodeInputType.Float,
-        alternativeValue: {
-          float: 1
-        },
         dataTypes: mathTypes,
       }],
       outSockets: [{
@@ -40,10 +32,6 @@ export const mathFactories = [{
       inSockets: [{
         label: "Value",
         dataTypes: mathTypes,
-        alternativeValueInputType: InNodeInputType.Float,
-        alternativeValue: {
-          float: 1
-        },
       }],
       outSockets: [{
         label: "Result",
@@ -198,6 +186,44 @@ export const mathFactories = [{
         label: "B",
       }, {
         label: "A",
+      }]
+    } as NodeBlueprint
+  }
+}, {
+  id: NodeTypeId.MathGreaterThan,
+  name: "Math / Greater Than",
+  factory: () => {
+    return {
+      color: NodeColor.Blue,
+      inNodeInputSlots: [],
+      inSockets: [{
+        label: "Value",
+        dataTypes: mathTypes,
+      }, {
+        label: "Threshold",
+        dataTypes: mathTypes,
+      }],
+      outSockets: [{
+        label: "Result",
+      }]
+    } as NodeBlueprint
+  }
+}, {
+  id: NodeTypeId.MathLessThan,
+  name: "Math / Less Than",
+  factory: () => {
+    return {
+      color: NodeColor.Blue,
+      inNodeInputSlots: [],
+      inSockets: [{
+        label: "Value",
+        dataTypes: mathTypes,
+      }, {
+        label: "Threshold",
+        dataTypes: mathTypes,
+      }],
+      outSockets: [{
+        label: "Result",
       }]
     } as NodeBlueprint
   }

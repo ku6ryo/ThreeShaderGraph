@@ -11,10 +11,6 @@ export class ColorOutputNode extends ShaderNode {
     this.setUniformValue(0, new Vector3(1, 0, 0))
   }
 
-  generateFragCommonCode(): string {
-    return ""
-  }
-
   generateFragCode(): string {
     const s = this.getInSockets()[0]
     return `

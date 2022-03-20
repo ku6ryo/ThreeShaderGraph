@@ -11,10 +11,6 @@ export class SampleTextureNode extends ShaderNode {
     this.addOutSocket("color", ShaderDataType.Vector4)
   }
 
-  generateFragCommonCode(): string {
-    return ""
-  }
-
   generateFragCode(): string {
     const inputs = this.getInSockets()
     const outputs = this.getOutSockets()
