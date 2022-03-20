@@ -5,9 +5,9 @@ export class FloatInputNode extends ShaderNode {
 
   constructor(id: string) {
     super(id, "FloatInput")
-    this.addInSocket("floatInputIn", ShaderDataType.Float)
+    this.addInSocket("i", ShaderDataType.Float)
     this.setUniformValue(0, 1)
-    this.addOutSocket("floatInputOut", ShaderDataType.Float)
+    this.addOutSocket("o", ShaderDataType.Float)
   }
 
   generateFragCode(): string {

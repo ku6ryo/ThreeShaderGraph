@@ -632,7 +632,7 @@ export function Board({
         </defs>
         <circle cx={0} cy={0} r={100000} fill="url(#board-background-pattern)" />
         {wires.map(w => (
-          <WireLine x1={w.inX} y1={w.inY} x2={w.outX} y2={w.outY}/>
+          <WireLine key={w.id} x1={w.inX} y1={w.inY} x2={w.outX} y2={w.outY}/>
         ))}
         {nodes.map((n) => (
           <NodeBox

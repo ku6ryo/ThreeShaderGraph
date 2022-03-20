@@ -1,0 +1,20 @@
+
+
+.frame {
+  input {
+    display: none;
+  }
+}
+
+.imageInputRect {
+  background-color: #222;
+  height: 100px;
+  position: relative;
+  width: 100px;
+
+  img {
+    object-fit: cover;
+    height: 100px;
+    width: 100px;
+  }
+}

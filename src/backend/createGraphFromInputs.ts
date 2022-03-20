@@ -40,15 +40,7 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
       sn = new FloatInputNode(n.id)
     }
     if (n.typeId === NodeTypeId.InputTexture) {
-      sn = (() => {
-        throw new Error("texture input not implemented")
-        /*
-        if (n.inNodeInputValues[0].image) {
-          return new TextureInputNode(n.id, n.inNodeInputValues[0].image)
-        } else {
-        }
-        */
-      })()
+      sn = new TextureInputNode(n.id)
     }
     // Output
     if (n.typeId === NodeTypeId.OutputColor) {

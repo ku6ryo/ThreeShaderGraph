@@ -6,9 +6,9 @@ import { Vector3 } from "three";
 export class ColorOutputNode extends ShaderNode {
 
   constructor(id: string) {
-    super(id, "ColorOutput", undefined, true, true)
+    super(id, "ColorOutput", undefined, true)
     this.addInSocket("in", ShaderDataType.Vector3)
-    this.setUniformValue(0, new Vector3(1, 0, 0))
+    this.setUniformValue(0, new Vector3(0, 0, 0))
   }
 
   generateFragCode(): string {

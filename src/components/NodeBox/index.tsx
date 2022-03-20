@@ -3,6 +3,7 @@ import style from "./style.module.scss"
 import classnames from "classnames"
 import { FloatInput } from "./FloatInput"
 import { Vector2, Vector3, Vector4 } from "three"
+import { ImageInput } from "./ImageInput"
 
 export type SocketDirection = "in" | "out"
 
@@ -197,6 +198,9 @@ export const NodeBox = memo(function NodeBox({
                     <div className={style.inputContainer}>
                       {socket.alternativeValueInputType === InNodeInputType.Float && (
                         <FloatInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
+                      )}
+                      {socket.alternativeValueInputType === InNodeInputType.Image && (
+                        <ImageInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
                       )}
                     </div>
                   )}

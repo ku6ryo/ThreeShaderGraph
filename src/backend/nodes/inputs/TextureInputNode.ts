@@ -5,12 +5,9 @@ export class TextureInputNode extends ShaderNode {
 
   constructor(id: string) {
     super(id, "Input_Texture")
-    /*
-    const uName = this.getUnifromName(0)
-    this
-    this.getOutSockets()[0].overrideVariableName(uName)
-    this.addOutSocket("TextureInputNodeOut", ShaderDataType.Sampler2D)
-    */
+    this.addInSocket("i", ShaderDataType.Sampler2D)
+    this.addOutSocket("o", ShaderDataType.Sampler2D)
+    this.getOutSocket(0).overrideVariableName(this.getInSocket(0).getUniformVarName())
   }
 
   generateFragCommonCode(): string {

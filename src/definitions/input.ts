@@ -35,7 +35,12 @@ export const inputFactories = [{
   factory: () => {
     return {
       color: NodeColor.Red,
-      inSockets: [],
+      inSockets: [{
+        label: "tex",
+        alternativeValueInputType: InNodeInputType.Image,
+        alternativeValue: {},
+        socketHidden: true,
+      }],
       outSockets: [{
         label: "Texture",
       }]

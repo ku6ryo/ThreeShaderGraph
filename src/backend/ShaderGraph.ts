@@ -1,4 +1,4 @@
-import { Texture } from "three"
+import { ImageUtils, Texture, TextureLoader } from "three"
 import { ShaderDataType } from "./data_types"
 import { AttributeType, ShaderNode } from "./ShaderNode"
 import { InNodeInputValue } from "../components/NodeBox"
@@ -138,7 +138,8 @@ export class ShaderGraph {
             values[name] = valueVector4
           }
           if (type === ShaderDataType.Sampler2D && valueSampler2D) {
-            values[name] = new Texture(valueSampler2D)
+            values[name] = new TextureLoader().load(valueSampler2D.src)
+            // values[name] = new Texture(valueSampler2D)
           }
         }
       })

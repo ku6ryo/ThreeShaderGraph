@@ -1,10 +1,10 @@
-import { useRef } from "react"
+import { useRef, MouseEventHandler } from "react"
 import { InNodeInputValue } from ".."
 import style from "./style.module.scss"
 
 type Props = {
   index: number,
-  value: HTMLImageElement | null,
+  value: InNodeInputValue,
   onChange: (index: number, value: InNodeInputValue) => void,
 }
 
@@ -15,7 +15,8 @@ export function ImageInput({
 }: Props) {
   const imageInputRef = useRef<HTMLInputElement>(null)
 
-  const onImageInputRectClick = () => {
+  const onImageInputRectClick: MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation()
     if (imageInputRef.current) {
       imageInputRef.current.click()
     }
@@ -43,10 +44,10 @@ export function ImageInput({
     })()
   }
   return (
-    <div className={style.slot}>
+    <div className={style.frame}>
       <div className={style.imageInputRect} onClick={onImageInputRectClick}>
-        {value && (
-          <img src={value.src}/>
+        {value.image && (
+          <img src={value.image.src}/>
         )}
       </div>
       <input
