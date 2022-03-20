@@ -1,5 +1,4 @@
 import { Vector3 } from "three";
-import { createValidNumberLiteral } from "../../utils";
 import { ShaderNode } from "../../ShaderNode";
 import { ShaderDataType } from "../../data_types";
 
@@ -21,11 +20,8 @@ export class Vector3InputNode extends ShaderNode {
     this.#value = value
   }
 
-  generateFragCommonCode(): string {
-    return ""
-  }
-
   generateFragCode(): string {
+    /*
     const outputs = this.getOutSockets()
     const x = this.#value.x
     const y = this.#value.y
@@ -34,5 +30,7 @@ export class Vector3InputNode extends ShaderNode {
     return `
     vec3 ${outputs[0].getVarName()} = vec3(${parts});
     `
+    */
+   return ""
   }
 }

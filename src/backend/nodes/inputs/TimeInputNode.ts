@@ -4,11 +4,11 @@ import { ShaderDataType } from "../../data_types";
 export class TimeInputNode extends ShaderNode {
 
   constructor(id: string) {
-    super(id, "Input_Time", undefined, false, true)
+    super(id, "Input_Time", undefined, false)
     this.addInSocket("time", ShaderDataType.Float)
     this.setUniformValue(0, 0)
     this.addOutSocket("TimeInputNodeOut", ShaderDataType.Float)
-    this.getOutSockets()[0].overrideVariableName(this.getInSockets()[0].getUniformVarName())
+    this.getOutSocket(0).overrideVariableName(this.getInSocket(0).getUniformVarName())
   }
 
   updateOnDraw(): void {

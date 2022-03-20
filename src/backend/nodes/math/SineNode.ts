@@ -20,8 +20,8 @@ export class SineNode extends ShaderNode {
   }
 
   generateFragCode(): string {
-    const i = this.getInSockets()[0]
-    const o = this.getOutSockets()[0]
+    const i = this.getInSocket(0)
+    const o = this.getOutSocket(0)
     return `
     ${this.#type} ${o.getVarName()} = sin(${i.getVarName()});
     `

@@ -1,4 +1,4 @@
-import { Texture, Uniform } from "three"
+import { Texture } from "three"
 import { ShaderDataType } from "./data_types"
 import { AttributeType, ShaderNode } from "./ShaderNode"
 import { InNodeInputValue } from "../components/NodeBox"
@@ -12,37 +12,6 @@ export class ShaderGraph {
    * Nodes that are effective. The order is sorted for code generation.
    */
   #resolvedNodes: ShaderNode[] = []
-
-  setUniformValue(nodeId: string, socketIndex: number, value: InNodeInputValue) {
-    const node = this.#nodes.find(n => n.getId() === nodeId)
-    if (!node) {
-      throw new Error("node not found")
-    }
-    const s = node.getInSockets()[socketIndex]
-    if (!s) {
-      throw new Error("socket not found")
-    }
-    const u = node.getUniforms()[socketIndex]
-    if (!u) {
-      throw new Error("uniform not found")
-    }
-    const { type } = u
-    if (type === ShaderDataType.Float && value.float !== undefined) {
-      u.valueFloat = value.float
-    }
-    if (type === ShaderDataType.Vector2 && value.vec2) {
-      u.valueVector2 = value.vec2
-    }
-    if (type === ShaderDataType.Vector3 && value.vec3) {
-      u.valueVector3 = value.vec3
-    }
-    if (type === ShaderDataType.Vector4 && value.vec4) {
-      u.valueVector4 = value.vec4
-    }
-    if (type === ShaderDataType.Sampler2D && value.image) {
-      u.valueSampler2D = value.image
-    }
-  }
 
   /**
    * Adds a node to the graph.
@@ -79,6 +48,14 @@ export class ShaderGraph {
    */
   getWires(): Wire[] {
     return [...this.#wires]
+  }
+
+  setInputValue(nodeId: string, socketIndex: number, value: InNodeInputValue) {
+    const node = this.#nodes.find(n => n.getId() === nodeId)
+    if (!node) {
+      throw new Error("node not found")
+    }
+    node.setInputValue(socketIndex, value)
   }
 
   /**
@@ -167,34 +144,6 @@ export class ShaderGraph {
       })
     })
     return values
-  }
-
-  createUniforms() {
-    const uniforms: { [key:string]: Uniform } = {}
-    this.getResolvedNodes().forEach(n => {
-      n.getInSockets().forEach((s, i)=> {
-        if (!s.connected() && n.getUniforms()[i]) {
-          const { name, type, valueVector3, valueFloat, valueVector2, valueSampler2D, valueVector4 } = n.getUniforms()[i]
-          if (type === ShaderDataType.Float && valueFloat !== undefined) {
-            uniforms[name] = new Uniform(valueFloat)
-          }
-          if (type === ShaderDataType.Vector2 && valueVector2) {
-            uniforms[name] = new Uniform(valueVector3)
-          }
-          if (type === ShaderDataType.Vector3 && valueVector3) {
-            uniforms[name] = new Uniform(valueVector3)
-          }
-          if (type === ShaderDataType.Vector4 && valueVector4) {
-            uniforms[name] = new Uniform(valueVector4)
-          }
-          if (type === ShaderDataType.Sampler2D && valueSampler2D) {
-            uniforms[name] = new Uniform(new Texture(valueSampler2D))
-          }
-          return
-        }
-      })
-    })
-    return uniforms
   }
 
   generateVertCode(): string {

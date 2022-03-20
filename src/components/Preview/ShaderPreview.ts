@@ -9,6 +9,7 @@ import {
   DirectionalLight,
   AmbientLight,
   ShaderMaterial,
+  Uniform,
 } from "three"
 import { ShaderGraph } from "../../backend/ShaderGraph"
 export class ShaderPreview {
@@ -53,10 +54,15 @@ export class ShaderPreview {
 
   update(graph: ShaderGraph) {
     console.log(graph.generateFragCode())
+    const uniforms: { [key: string ]: Uniform } = {} 
+    const uMap = graph.getUniformValueMap()
+    Object.keys(uMap).forEach(name => {
+      uniforms[name] = new Uniform(uMap[name].value)
+    })
     const m = new ShaderMaterial({
       vertexShader: graph.generateVertCode(),
       fragmentShader: graph.generateFragCode(),
-      uniforms: graph.createUniforms()
+      uniforms,
     })
     m.needsUpdate = true
     this.#mesh.onBeforeRender = () => {

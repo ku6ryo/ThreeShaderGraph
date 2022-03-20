@@ -20,15 +20,13 @@ export function App() {
       console.error(e)
     }
   }
-  console.log("render app", graph)
+
   const onInSocketValueChange = (nodeId: string, socketIndex: number, value: InNodeInputValue) => {
-    console.log("app a")
-    console.log(graph)
     if (graph) {
-      console.log("app b")
-      graph.setUniformValue(nodeId, socketIndex, value)
+      graph.setInputValue(nodeId, socketIndex, value)
     }
   }
+
   return (
     <>
       <div className={style.board}>

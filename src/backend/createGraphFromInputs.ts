@@ -100,17 +100,23 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
 
     if (sn) {
+      n.inSockets.forEach((s, i) => {
+        if (s.alternativeValueInputType && s.alternativeValue) {
+          sn!.setInputValue(i, s.alternativeValue)
+        }
+      })
       graph.addNode(sn)
     }
   })
+
   wires.forEach(w => {
     const inNode = graph.getNodes().find(n => n.getId() === w.inNodeId)
     const outNode = graph.getNodes().find(n => n.getId() === w.outNodeId)
     if (inNode && outNode) {
       graph.addWire(
         new Wire(
-          inNode.getOutSockets()[w.inSocketIndex],
-          outNode.getInSockets()[w.outSocketIndex],
+          inNode.getOutSocket(w.inSocketIndex),
+          outNode.getInSocket(w.outSocketIndex),
         )
       )
     } else {

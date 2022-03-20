@@ -18,10 +18,11 @@ export class AddNode extends ShaderNode {
   }
 
   generateFragCode(): string {
-    const inputs = this.getInSockets()
-    const outputs = this.getOutSockets()
+    const i0 = this.getInSocket(0)
+    const i1 = this.getInSocket(1)
+    const o = this.getOutSocket(0)
     return `
-    ${this.#type} ${outputs[0].getVarName()} = ${inputs[0].getVarName()} + ${inputs[1].getVarName()};
+    ${this.#type} ${o.getVarName()} = ${i0.getVarName()} + ${i1.getVarName()};
     `
   }
 }

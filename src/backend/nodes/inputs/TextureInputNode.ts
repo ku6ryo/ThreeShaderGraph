@@ -3,21 +3,14 @@ import { ShaderDataType } from "../../data_types";
 
 export class TextureInputNode extends ShaderNode {
 
-  #value: HTMLImageElement;
-
-  constructor(id: string, value: HTMLImageElement) {
+  constructor(id: string) {
     super(id, "Input_Texture")
-    this.#value = value
-    this.setUniformValue(0, value)
+    /*
+    const uName = this.getUnifromName(0)
+    this
+    this.getOutSockets()[0].overrideVariableName(uName)
     this.addOutSocket("TextureInputNodeOut", ShaderDataType.Sampler2D)
-  }
-
-  getValue(): HTMLImageElement {
-    return this.#value
-  }
-
-  setValue(value: HTMLImageElement) {
-    this.#value = value
+    */
   }
 
   generateFragCommonCode(): string {
@@ -25,8 +18,6 @@ export class TextureInputNode extends ShaderNode {
   }
 
   generateFragCode(): string {
-    const uName = this.getUnifromName(0)
-    this.getOutSockets()[0].overrideVariableName(uName)
     return ""
   }
 }

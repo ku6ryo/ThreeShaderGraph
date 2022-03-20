@@ -46,6 +46,7 @@ type DrawingWireStats = {
   startY: number,
   movingX: number,
   movingY: number,
+  editExisting: boolean,
 }
 
 type DraggingBoardStats = {
@@ -157,7 +158,8 @@ export function Board({
         startX: zoomedX,
         startY: zoomedY,
         movingX: zoomedX,
-        movingY: zoomedY
+        movingY: zoomedY,
+        editExisting: false,
       })
     } else {
       const wires = nwManager.getWires()
@@ -171,7 +173,8 @@ export function Board({
           startX: existingWire.inX,
           startY: existingWire.inY,
           movingX: zoomedX,
-          movingY: zoomedY
+          movingY: zoomedY,
+          editExisting: true,
         })
       } else {
         setDrawingWire({
@@ -181,7 +184,8 @@ export function Board({
           startX: zoomedX,
           startY: zoomedY,
           movingX: zoomedX,
-          movingY: zoomedY
+          movingY: zoomedY,
+          editExisting: false,
         })
       }
     }
@@ -360,6 +364,11 @@ export function Board({
     const nodes = nwManager.getNodes()
     if (drawingWire) {
       setDrawingWire(null)
+
+      // If exiting wire is being edited and removed, notify the change.
+      if (drawingWire.editExisting) {
+        notifyChange()
+      }
     }
     if (draggingNode) {
       saveHistory()
@@ -495,6 +504,7 @@ export function Board({
         nwManager.updateNodes(nodesToKeep)
         nwManager.updateWires(wiresToKeep)
         saveHistory()
+        notifyChange()
       }
       if (e.code === "Escape") {
         nwManager.updateNodes(nodes.map(n => { n.selected = false; return n }))
@@ -565,7 +575,6 @@ export function Board({
       const s = n.inSockets[index]
       s.alternativeValue = value
       nwManager.updateNode(n)
-      console.log("in socket value changed", nodeId, index, value)
       onInSocketValueChange(nodeId, index, value)
     }
   }, [nwManager, onInSocketValueChange])

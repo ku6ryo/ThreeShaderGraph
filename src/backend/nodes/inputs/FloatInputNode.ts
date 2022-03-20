@@ -11,8 +11,8 @@ export class FloatInputNode extends ShaderNode {
   }
 
   generateFragCode(): string {
-    const i = this.getInSockets()[0]
-    const o = this.getOutSockets()[0]
+    const i = this.getInSocket(0)
+    const o = this.getOutSocket(0)
     return `float ${o.getVarName()} = ${i.getVarName()};`
   }
 }

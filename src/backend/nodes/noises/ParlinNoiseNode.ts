@@ -72,10 +72,10 @@ float cnoise(vec2 P)
   }
 
   generateFragCode(): string {
-    const inputs = this.getInSockets()
-    const outputs = this.getOutSockets()
+    const i = this.getInSocket(0)
+    const o = this.getOutSocket(0)
     return `
-    float ${outputs[0].getVarName()} = cnoise(${inputs[0].getVarName()});
+    float ${o.getVarName()} = cnoise(${i.getVarName()});
     `
   }
 }

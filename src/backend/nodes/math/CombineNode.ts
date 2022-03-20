@@ -13,10 +13,13 @@ export class CombineNode extends ShaderNode {
   }
 
   generateFragCode(): string {
-    const inputs = this.getInSockets()
-    const outputs = this.getOutSockets()
+    const i0 = this.getInSocket(0)
+    const i1 = this.getInSocket(1)
+    const i2 = this.getInSocket(2)
+    const i3 = this.getInSocket(3)
+    const o = this.getOutSocket(0)
     return `
-    vec4 ${outputs[0].getVarName()} = vec4(${inputs[0].getVarName()}, ${inputs[1].getVarName()}, ${inputs[2].getVarName()}, ${inputs[3].getVarName()});
+    vec4 ${o.getVarName()} = vec4(${i0.getVarName()}, ${i1.getVarName()}, ${i2.getVarName()}, ${i3.getVarName()});
     `
   }
 }

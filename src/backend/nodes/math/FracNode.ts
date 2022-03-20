@@ -18,10 +18,10 @@ export class FracNode extends ShaderNode {
   }
 
   generateFragCode(): string {
-    const inputs = this.getInSockets()
-    const outputs = this.getOutSockets()
+    const i = this.getInSocket(0)
+    const o = this.getOutSocket(0)
     return `
-    ${this.#type} ${outputs[0].getVarName()} = fract(${inputs[0].getVarName()});
+    ${this.#type} ${o.getVarName()} = fract(${i.getVarName()});
     `
   }
 }

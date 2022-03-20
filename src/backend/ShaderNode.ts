@@ -4,6 +4,7 @@ import { Vector4 } from "three";
 import { validVariableName } from "./utils";
 import { Socket } from "./Socket";
 import { ShaderDataType } from "./data_types";
+import { InNodeInputValue } from "../components/NodeBox";
 
 export type Uniform = {
   type: ShaderDataType;
@@ -39,14 +40,11 @@ export abstract class ShaderNode {
    */
   #attributes: AttributeType[] = []
 
-  #needsUniformUpdateOnDraw = false
-
   constructor(
     id: string,
     typeId: string,
     attributes: AttributeType[] = [],
     isOutputNode: boolean = false,
-    needsUniformUpdatesOnDraw: boolean = false
   ) {
     if (!validVariableName(id)) {
       throw new Error(`Invalid node id: ${id}`)
@@ -58,7 +56,6 @@ export abstract class ShaderNode {
     this.#typeId = typeId;
     this.#attributes = attributes
     this.#isOutputNode = isOutputNode
-    this.#needsUniformUpdateOnDraw = needsUniformUpdatesOnDraw
   }
 
   getId() {
@@ -71,10 +68,6 @@ export abstract class ShaderNode {
 
   isOutputNode() {
     return this.#isOutputNode
-  }
-
-  needsUniformUpdatesOnDraw() {
-    return this.#needsUniformUpdateOnDraw
   }
   
   updateOnDraw() {}
@@ -95,12 +88,28 @@ export abstract class ShaderNode {
     })
   }
 
+  getInSocket(index: number): Socket {
+    const s = this.#inSockets[index]
+    if (!s) {
+      throw new Error(`In socket index ${index} does not exist`)
+    }
+    return s
+  }
+
   getInSockets(): Socket[] {
     return [...this.#inSockets]
   }
 
   protected addOutSocket(name: string, type: ShaderDataType) {
     this.#outSockets.push(this.createSocket(name, type))
+  }
+
+  getOutSocket(index: number): Socket {
+    const s = this.#outSockets[index]
+    if (!s) {
+      throw new Error(`Out socket index ${index} does not exist`)
+    }
+    return s
   }
 
   getOutSockets(): Socket[] {
@@ -122,12 +131,12 @@ export abstract class ShaderNode {
     return u.name
   }
 
-  setUniformValue(index: number, value: number): void;
-  setUniformValue(index: number, value: Vector2): void;
-  setUniformValue(index: number, value: Vector3): void;
-  setUniformValue(index: number, value: Vector4): void;
-  setUniformValue(index: number, value: HTMLImageElement): void;
-  setUniformValue(index: number, value: HTMLImageElement | number | Vector2 | Vector3 | Vector4): void {
+  protected setUniformValue(index: number, value: number): void;
+  protected setUniformValue(index: number, value: Vector2): void;
+  protected setUniformValue(index: number, value: Vector3): void;
+  protected setUniformValue(index: number, value: Vector4): void;
+  protected setUniformValue(index: number, value: HTMLImageElement): void;
+  protected setUniformValue(index: number, value: HTMLImageElement | number | Vector2 | Vector3 | Vector4): void {
     const u = this.#uniforms[index]
     if (!u) {
       throw new Error(`Uniform index ${index} does not exist`)
@@ -144,6 +153,43 @@ export abstract class ShaderNode {
       u.valueVector4 = value
     } else {
       throw new Error("value is not supported type")
+    }
+  }
+
+  setInputValue(index: number, value: InNodeInputValue): void {
+    const u = this.#uniforms[index]
+    if (!u) {
+      throw new Error(`Uniform index ${index} does not exist`)
+    }
+    if (u.type === ShaderDataType.Float) {
+      if (value.float === undefined) {
+        throw new Error("float value is undefined")
+      }
+      u.valueFloat = value.float
+    }
+    if (u.type === ShaderDataType.Vector2) {
+      if (value.vec2 === undefined) {
+        throw new Error("vec2 value is undefined")
+      }
+      u.valueVector2 = value.vec2
+    }
+    if (u.type === ShaderDataType.Vector3) {
+      if (value.vec3 === undefined) {
+        throw new Error("vec3 value is undefined")
+      }
+      u.valueVector3 = value.vec3
+    }
+    if (u.type === ShaderDataType.Vector4) {
+      if (value.vec4 === undefined) {
+        throw new Error("vec4 value is undefined")
+      }
+      u.valueVector4 = value.vec4
+    }
+    if (u.type === ShaderDataType.Sampler2D) {
+      if (value.image === undefined) {
+        throw new Error("image value is undefined")
+      }
+      u.valueSampler2D = value.image
     }
   }
 

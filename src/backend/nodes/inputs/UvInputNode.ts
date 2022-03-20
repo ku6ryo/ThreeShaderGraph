@@ -21,7 +21,7 @@ export class UvInputNode extends ShaderNode {
   }
 
   generateFragCode(): string {
-    this.getOutSockets()[0].overrideVariableName("vUv")
+    this.getOutSocket(0).overrideVariableName("vUv")
     return ""
   }
 }

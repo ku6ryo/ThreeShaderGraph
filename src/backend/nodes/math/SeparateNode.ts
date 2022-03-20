@@ -13,13 +13,16 @@ export class SeparateNode extends ShaderNode {
   }
 
   generateFragCode(): string {
-    const inputs = this.getInSockets()
-    const outputs = this.getOutSockets()
+    const i = this.getInSocket(0)
+    const o0 = this.getOutSocket(0)
+    const o1 = this.getOutSocket(1)
+    const o2 = this.getOutSocket(2)
+    const o3 = this.getOutSocket(3)
     return `
-    float ${outputs[0].getVarName()} = vec4(${inputs[0].getVarName()}).r;
-    float ${outputs[1].getVarName()} = vec4(${inputs[0].getVarName()}).g;
-    float ${outputs[2].getVarName()} = vec4(${inputs[0].getVarName()}).b;
-    float ${outputs[3].getVarName()} = vec4(${inputs[0].getVarName()}).a;
+    float ${o0.getVarName()} = vec4(${i.getVarName()}).r;
+    float ${o1.getVarName()} = vec4(${i.getVarName()}).g;
+    float ${o2.getVarName()} = vec4(${i.getVarName()}).b;
+    float ${o3.getVarName()} = vec4(${i.getVarName()}).a;
     `
   }
 }

@@ -12,10 +12,11 @@ export class SampleTextureNode extends ShaderNode {
   }
 
   generateFragCode(): string {
-    const inputs = this.getInSockets()
-    const outputs = this.getOutSockets()
+    const i0 = this.getInSocket(0)
+    const i1 = this.getInSocket(1)
+    const o = this.getOutSocket(0)
     return `
-    vec4 ${outputs[0].getVarName()} = texture2D(${inputs[0].getVarName()}, ${inputs[1].getVarName()});
+    vec4 ${o.getVarName()} = texture2D(${i0.getVarName()}, ${i1.getVarName()});
     `
   }
 }

@@ -1,7 +1,6 @@
 import { NodeTypeId } from "./NodeTypeId"
 import { NodeColor } from "../components/NodeBox"
 import { NodeBlueprint } from "../components/Board"
-import { mathTypes } from "./data_types"
 
 export const mathFactories = [{
   id: NodeTypeId.MathAdd,

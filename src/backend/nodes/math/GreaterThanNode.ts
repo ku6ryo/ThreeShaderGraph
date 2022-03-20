@@ -11,10 +11,9 @@ export class GreaterThanNode extends ShaderNode {
   }
 
   generateFragCode(): string {
-    const inSokcets = this.getInSockets()
-    const v = inSokcets[0].getVarName()
-    const t = inSokcets[1].getVarName()
-    const o = this.getOutSockets()[0].getVarName()
+    const v = this.getInSocket(0).getVarName()
+    const t = this.getInSocket(1).getVarName()
+    const o = this.getOutSocket(0).getVarName()
     return `
     float ${o} = 0.;
     if (${v} > ${t}) {
