@@ -36,6 +36,7 @@ export type InSocket = {
   dataTypes: number[]
   alternativeValueInputType?: InNodeInputType,
   alternativeValue?: InNodeInputValue,
+  socketHidden?: boolean,
   hidden?: boolean
 }
 
@@ -183,13 +184,15 @@ export const NodeBox = memo(function NodeBox({
                   className={style.row}
                   key={i}
                 >
-                  <div
-                    className={style.socket}
-                    data-socket-index={i}
-                    data-socket-direction="in"
-                    onMouseDown={onSocketMouseDownInternal}
-                    onMouseUp={onSocketMouseUpInternal}
-                  />
+                  {!socket.socketHidden && (
+                    <div
+                      className={style.socket}
+                      data-socket-index={i}
+                      data-socket-direction="in"
+                      onMouseDown={onSocketMouseDownInternal}
+                      onMouseUp={onSocketMouseUpInternal}
+                    />
+                  )}
                   <div>{socket.label}</div>
                   {socket.alternativeValue && socket.alternativeValueInputType && (
                     <div className={style.inputContainer}>

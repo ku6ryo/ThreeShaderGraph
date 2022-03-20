@@ -21,7 +21,7 @@ export class ShaderPreview {
   constructor() {
     const renderer = new WebGL1Renderer({ antialias: true })
     renderer.setSize(300, 300)
-    renderer.setClearColor("#000000");
+    renderer.setClearColor("#222");
 
     const camera = new PerspectiveCamera(90, 1, 0.1, 1000);
     camera.position.z = 2;

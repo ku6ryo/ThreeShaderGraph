@@ -4,7 +4,7 @@ import { NodeProps, WireProps } from "./types";
 
 export class NodeWireManager {
 
-  #id = shortUUID.generate()
+  #updateId = shortUUID.generate()
   #nodes: NodeProps[] = []
   #nodeDict: { [id: string]: NodeProps } = {}
   #wires: WireProps[] = []
@@ -17,16 +17,24 @@ export class NodeWireManager {
 
   private notifyUpdate() {
     if (this.#onUpdate) {
-      this.#onUpdate(this.#id)
+      this.#onUpdate(this.#updateId)
     }
   }
 
   getUpdateId() {
-    return this.#id
+    return this.#updateId
   }
 
   getNodes() {
     return [...this.#nodes]
+  }
+
+  addNode(node: NodeProps) {
+    const n = this.cloneNode(node)
+    this.#nodes.push(n)
+    this.#nodeDict[n.id] = n
+    this.#updateId = shortUUID.generate()
+    this.notifyUpdate()
   }
 
   getNode(id: string) {
@@ -34,7 +42,28 @@ export class NodeWireManager {
     if (!n) {
       throw new Error(`Node with id ${id} not found`)
     }
-    return n
+    return this.cloneNode(n)
+  }
+
+  updateNode(node: NodeProps) {
+    const index = this.#nodes.findIndex(n => n.id === node.id)
+    if (index === -1) {
+      throw new Error(`Node with id ${node.id} not found`)
+    }
+    const n = this.cloneNode(node)
+    this.#nodes[index] = n
+    this.updateNodes(this.#nodes)
+  }
+
+  private cloneNode(node: NodeProps) {
+    const inSockets = node.inSockets.map(s => {
+      return { ...s }
+    })
+    const outSockets = node.outSockets.map(s => {
+      return { ...s }
+    })
+    const newNode = { ...node, outSockets, inSockets }
+    return newNode
   }
 
   updateNodes(nodes: NodeProps[]) {
@@ -44,7 +73,7 @@ export class NodeWireManager {
       dict[n.id] = n
     })
     this.#nodeDict = dict
-    this.#id = shortUUID.generate()
+    this.#updateId = shortUUID.generate()
     this.notifyUpdate()
   }
 
@@ -67,7 +96,7 @@ export class NodeWireManager {
       dict[w.id] = w
     })
     this.#wireDict = dict
-    this.#id = shortUUID.generate()
+    this.#updateId = shortUUID.generate()
     this.notifyUpdate()
   }
 }

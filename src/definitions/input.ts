@@ -47,7 +47,14 @@ export const inputFactories = [{
   factory: () => {
     return {
       color: NodeColor.Red,
-      inSockets: [],
+      inSockets: [{
+        label: "Value",
+        alternativeValueInputType: InNodeInputType.Float,
+        alternativeValue: {
+          float: 1
+        },
+        socketHidden: true,
+      }],
       outSockets: [{
         label: "value",
       }]
