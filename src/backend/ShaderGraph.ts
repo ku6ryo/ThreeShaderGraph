@@ -2,6 +2,7 @@ import { ShaderDataType } from "./data_types"
 import { BuiltIn, ShaderNode } from "./ShaderNode"
 import { InNodeInputValue } from "../components/NodeBox"
 import { Wire } from "./Wire"
+import shortUUID from "short-uuid"
 
 export class ShaderGraph {
   #nodes: ShaderNode[] = []
@@ -11,11 +12,13 @@ export class ShaderGraph {
    * Nodes that are effective. The order is sorted for code generation.
    */
   #resolvedNodes: ShaderNode[] = []
-  
-  /**
-   * Previous uniform value map
-   */
-  #prevUniformValueMap: { [key: string]: any } = {}
+
+  #id: string
+
+  constructor() {
+    this.#id = shortUUID().generate()
+    console.log("ShaderGraph created with id: " + this.#id)
+  }
 
   /**
    * Adds a node to the graph.
@@ -25,7 +28,6 @@ export class ShaderGraph {
       throw new Error("the same node id already exists : " + node.getId())
     }
     this.#nodes.push(node)
-    this.resolveGraph()
   }
 
   /**
@@ -44,7 +46,6 @@ export class ShaderGraph {
    */
   addWire(wire: Wire) {
     this.#wires.push(wire)
-    this.resolveGraph()
   }
 
   /**
@@ -55,6 +56,7 @@ export class ShaderGraph {
   }
 
   setInputValue(nodeId: string, socketIndex: number, value: InNodeInputValue) {
+    console.log("graph " + this.#id + " set input value " + nodeId + " " + socketIndex + " " + value)
     const node = this.#resolvedNodes.find(n => n.getId() === nodeId)
     if (!node) {
       throw new Error("node not found")
@@ -75,7 +77,7 @@ export class ShaderGraph {
   /**
    * Resolve graph structure. Orders of nodes etc.
    */
-  protected resolveGraph() {
+  resolveGraph() {
     let outputNode: ShaderNode | null = null
     let outputNodeCount = 0
     this.#nodes.forEach(n => {
@@ -157,7 +159,6 @@ export class ShaderGraph {
         }
       })
     })
-    this.#prevUniformValueMap = values
     return values
   }
 

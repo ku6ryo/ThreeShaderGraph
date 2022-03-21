@@ -496,7 +496,7 @@ export function Board({
       const newNodes = [
         ...nodes,
         {
-          id: f.id + generateId(),
+          id: f.id + "_" + generateId(),
           typeId: f.id,
           x: board.centerX,
           y: board.centerY,
@@ -603,6 +603,9 @@ export function Board({
     if (n) {
       const s = n.inSockets[index]
       s.alternativeValue = value
+      n.inSockets = [...n.inSockets]
+      const newSocket = {...s}
+      n.inSockets[index] = newSocket
       nwManager.updateNode(n)
       onInSocketValueChange(nodeId, index, value)
     }

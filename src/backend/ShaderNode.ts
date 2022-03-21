@@ -160,7 +160,6 @@ export abstract class ShaderNode {
 
   setInputValue(index: number, value: InNodeInputValue): void {
     const u = this.#uniforms[index]
-    console.log(u)
     if (!u) {
       throw new Error(`Uniform index ${index} does not exist. Node: ${this.#id}`)
     }

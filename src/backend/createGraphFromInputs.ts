@@ -126,8 +126,8 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
       throw new Error("invalid wire")
     }
   })
-  console.log(graph.getNodes())
 
+  graph.resolveGraph()
   const vert = graph.generateVertCode()
   const frag = graph.generateFragCode()
   console.log(vert)

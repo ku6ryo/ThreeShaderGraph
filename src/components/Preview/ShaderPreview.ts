@@ -2,7 +2,6 @@ import {
   Scene,
   PerspectiveCamera,
   WebGL1Renderer,
-  BoxGeometry,
   Mesh,
   SphereGeometry,
   MeshPhysicalMaterial,
@@ -13,11 +12,12 @@ import {
   UniformsUtils,
   UniformsLib,
   ShaderLib,
+  TorusGeometry,
+  Color,
 } from "three"
 import { ShaderGraph } from "../../backend/ShaderGraph"
 import { BuiltIn } from "../../backend/ShaderNode"
 import Stats from "stats.js"
-import { setSyntheticTrailingComments } from "typescript"
 
 const stats = new Stats()
 document.body.appendChild(stats.dom)
@@ -25,8 +25,6 @@ stats.dom.style.position = "fixed"
 stats.dom.style.right = "0"
 stats.dom.style.left = "initial"
 
-console.log(ShaderLib.phong.vertexShader)
-console.log(ShaderLib.phong.fragmentShader)
 export class ShaderPreview {
 
   #scene: Scene
@@ -44,7 +42,7 @@ export class ShaderPreview {
     camera.position.z = 2;
     const scene = new Scene();
 
-    const geometry = new SphereGeometry(1, 32, 32);
+    const geometry = new TorusGeometry(1, 0.3, 16, 100);
     const material = new MeshPhysicalMaterial({
       color: "#ffffff",
       metalness: 0.5,
@@ -70,11 +68,10 @@ export class ShaderPreview {
   }
 
   update(graph: ShaderGraph) {
-    console.log(graph.generateFragCode())
     const uniforms: { [key: string ]: Uniform } = {} 
     const uMap = graph.getUniformValueMap()
     Object.keys(uMap).forEach(name => {
-      uniforms[name] = new Uniform(uMap[name].value)
+      uniforms[name] = new Uniform(uMap[name])
     })
     const builtIns = graph.getBuiltIns()
     const builtInUniforms: any[] = []
@@ -82,6 +79,10 @@ export class ShaderPreview {
     if (useLight) {
       builtInUniforms.push(UniformsLib.lights)
     }
+    graph.getNodes().forEach(n => {
+      n.updateOnDraw()
+    })
+
     const m = new ShaderMaterial({
       vertexShader: graph.generateVertCode(),
       fragmentShader: graph.generateFragCode(),
@@ -91,28 +92,40 @@ export class ShaderPreview {
       ]),
       lights: useLight,
     })
-    m.needsUpdate = true
-    m.uniformsNeedUpdate = true
     this.#mesh.onBeforeRender = () => {
       graph.getNodes().forEach(n => {
         n.updateOnDraw()
       })
       const values = graph.getUniformValueMap()
-      Object.keys(m.uniforms).forEach(key => {
-        m.uniforms[key].value = values[key]
+      Object.keys(values).forEach(name => {
+        m.uniforms[name].value = values[name]
       })
     }
-    graph.getNodes().forEach(n => {
-      n.updateOnDraw()
-    })
-    console.log(builtIns)
-    console.log(m)
-    console.log(m.uniforms)
+    m.needsUpdate = true
+    m.uniformsNeedUpdate = true
     this.#mesh.material = m
   }
 
   render() {
-    console.log("RENDER")
+    this.#mesh.rotation.set(0, performance.now() / 1000, 0)
     this.#renderer.render(this.#scene, this.#camera)
+  }
+
+  stop() {
+    this.#playing = false
+  }
+
+  play() {
+    this.#playing = true
+    const loop = () => {
+      if (!this.#playing) {
+        return
+      }
+      stats.begin()
+      this.render()
+      stats.end()
+      requestAnimationFrame(loop)
+    }
+    requestAnimationFrame(loop)
   }
 }
