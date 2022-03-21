@@ -1,12 +1,12 @@
 import { mathFactories } from "./math"
 import { textureFactories } from "./texture"
-import { outputFactories } from "./output"
 import { inputFactories } from "./input"
+import { materialFactories } from "./material"
 import { NodeFactory } from "../components/Board"
 
 export const factories = ([] as NodeFactory[]).concat(
   mathFactories,
   textureFactories,
-  outputFactories,
-  inputFactories
+  inputFactories,
+  materialFactories,
 ).sort((a, b) => a.name.localeCompare(b.name))

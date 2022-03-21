@@ -7,6 +7,7 @@ import { HistoryManager } from "./HistoryManager";
 import { NodeProps, WireProps } from "./types"
 import shortUUID from "short-uuid";
 import { NodeWireManager } from "./NodeWireManger";
+import { outputFactories } from "../../definitions/output";
 
 /**
  * Generates a unique id for nodes and wires.
@@ -70,6 +71,7 @@ export type NodeBlueprint = {
   color: NodeColor,
   inSockets: InSocket[],
   outSockets: OutSocket[],
+  deletable?: boolean,
 }
 
 export type NodeFactory = {
@@ -115,7 +117,6 @@ export function Board({
   const [_, setNwUpdate] = useState("")
   const [nodeRects, setNodeRects] = useState<{ [id: string]: Rect }>({})
   // Singletons
-  const historyManager = useMemo(() => new HistoryManager(), [])
   const nwManager = useMemo(() => {
     const m = new NodeWireManager()
     m.setOnUpdate((id) => {
@@ -123,15 +124,39 @@ export function Board({
     })
     return m
   }, [])
-  // Please usee this function instead of directly calling `historyManger.save()`.
-  const saveHistory = useCallback(() => {
-    historyManager.save(nwManager.getNodes(), nwManager.getWires())
+  const historyManager = useMemo(() => {
+    const manager = new HistoryManager()
+    return manager
   }, [])
   // Please use this function instead of directly calling `onChange`
   const notifyChange = useCallback(() => {
     const nodes = nwManager.getNodes()
     const wires = nwManager.getWires()
     onChange(nodes, wires)
+  }, [onChange])
+  // Please usee this function instead of directly calling `historyManger.save()`.
+  const saveHistory = useCallback(() => {
+    historyManager.save(nwManager.getNodes(), nwManager.getWires())
+  }, [])
+
+  useEffect(() => {
+    const f = outputFactories[0]
+    const n = f.factory()
+    const newNodes = [{
+      id: f.id + generateId(),
+      typeId: f.id,
+      x: board.centerX,
+      y: board.centerY,
+      color: n.color,
+      name: f.name,
+      selected: true,
+      inSockets: n.inSockets,
+      outSockets: n.outSockets,
+      deletable: n.deletable === undefined ? true : n.deletable,
+    } as NodeProps]
+    nwManager.updateNodes(newNodes)
+    saveHistory()
+    notifyChange()
   }, [])
 
   const goToPrevHistory = () => {
@@ -144,6 +169,7 @@ export function Board({
     const wires = Object.values(history.wires)
     nwManager.updateNodes(nodes)
     nwManager.updateWires(wires)
+    notifyChange()
   }
 
   const onSocketMouseDown = useCallback((id: string, dir: SocketDirection, i: number, x: number, y: number) => {
@@ -479,7 +505,8 @@ export function Board({
           selected: true,
           inSockets: n.inSockets,
           outSockets: n.outSockets,
-        }
+          deletable: n.deletable === undefined ? true : n.deletable,
+        } as NodeProps
       ]
       nwManager.updateNodes(newNodes)
       saveHistory()
@@ -494,17 +521,19 @@ export function Board({
       const nodes = nwManager.getNodes()
       const wires = nwManager.getWires()
       if (e.code === "Delete" || e.code === "Backspace") {
-        const nodesToKeep = nodes.filter(n => !n.selected)
-        const nodesToRemove = nodes.filter(n => n.selected)
+        const nodesToKeep = nodes.filter(n => !n.selected || !n.deletable)
+        const nodesToRemove = nodes.filter(n => n.selected && n.deletable)
         const wiresToKeep = wires.filter(w => {
           return !nodesToRemove.find(n => {
             return w.inNodeId === n.id || w.outNodeId === n.id
           })
         })
-        nwManager.updateNodes(nodesToKeep)
-        nwManager.updateWires(wiresToKeep)
-        saveHistory()
-        notifyChange()
+        if (nodesToRemove.length > 0) {
+          nwManager.updateNodes(nodesToKeep)
+          nwManager.updateWires(wiresToKeep)
+          saveHistory()
+          notifyChange()
+        }
       }
       if (e.code === "Escape") {
         nwManager.updateNodes(nodes.map(n => { n.selected = false; return n }))
@@ -577,7 +606,8 @@ export function Board({
       nwManager.updateNode(n)
       onInSocketValueChange(nodeId, index, value)
     }
-  }, [nwManager, onInSocketValueChange])
+  }
+  , [nwManager, onInSocketValueChange])
 
   // Preparing for rendering.
   const viewBox = useMemo(() => {

@@ -23,6 +23,8 @@ import { CombineNode } from "./nodes/math/CombineNode";
 import { SeparateNode } from "./nodes/math/SeparateNode";
 import { GreaterThanNode } from "./nodes/math/GreaterThanNode";
 import { LessThanNode } from "./nodes/math/LessThanNode";
+import { LambertNode } from "./nodes/materials/LambertNode";
+import { PhongNode } from "./nodes/materials/PhongNode";
 
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
@@ -90,6 +92,13 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     if (n.typeId === NodeTypeId.TextureSample) {
       sn = new SampleTextureNode(n.id)
     }
+    // Materials
+    if (n.typeId === NodeTypeId.Material_Lambert) {
+      sn = new LambertNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.Material_Phong) {
+      sn = new PhongNode(n.id)
+    }
 
     if (sn) {
       n.inSockets.forEach((s, i) => {
@@ -112,6 +121,8 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
         )
       )
     } else {
+      console.log(inNode)
+      console.log(outNode)
       throw new Error("invalid wire")
     }
   })

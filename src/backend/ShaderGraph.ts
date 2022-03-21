@@ -1,6 +1,5 @@
-import { ImageUtils, Texture, TextureLoader } from "three"
 import { ShaderDataType } from "./data_types"
-import { AttributeType, ShaderNode } from "./ShaderNode"
+import { BuiltIn, ShaderNode } from "./ShaderNode"
 import { InNodeInputValue } from "../components/NodeBox"
 import { Wire } from "./Wire"
 
@@ -12,6 +11,11 @@ export class ShaderGraph {
    * Nodes that are effective. The order is sorted for code generation.
    */
   #resolvedNodes: ShaderNode[] = []
+  
+  /**
+   * Previous uniform value map
+   */
+  #prevUniformValueMap: { [key: string]: any } = {}
 
   /**
    * Adds a node to the graph.
@@ -51,11 +55,21 @@ export class ShaderGraph {
   }
 
   setInputValue(nodeId: string, socketIndex: number, value: InNodeInputValue) {
-    const node = this.#nodes.find(n => n.getId() === nodeId)
+    const node = this.#resolvedNodes.find(n => n.getId() === nodeId)
     if (!node) {
       throw new Error("node not found")
     }
     node.setInputValue(socketIndex, value)
+  }
+
+  getBuiltIns(): BuiltIn[] {
+    const builtInMap: Map<BuiltIn, boolean> = new Map()
+    this.#resolvedNodes.forEach(n => {
+      n.getBuiltIns().forEach(b => {
+        builtInMap.set(b, true)
+      })
+    })
+    return Array.from(builtInMap.keys()) as BuiltIn[]
   }
 
   /**
@@ -138,28 +152,30 @@ export class ShaderGraph {
             values[name] = valueVector4
           }
           if (type === ShaderDataType.Sampler2D && valueSampler2D) {
-            values[name] = new TextureLoader().load(valueSampler2D.src)
-            // values[name] = new Texture(valueSampler2D)
+            values[name] = valueSampler2D
           }
         }
       })
     })
+    this.#prevUniformValueMap = values
     return values
   }
 
   generateVertCode(): string {
     let uniformCode = ""
-    let commonCode = ""
-    let commonCodes: { [key: string]: string } = {}
-    let mainCode = ""
-    const attributeMap: Map<AttributeType, boolean> = new Map()
+    let header = ""
+    let common = ""
+    let main = ""
+
+    let headerCodes: { [key: string]: string } = {}
+    const builtInMap: Map<BuiltIn, boolean> = new Map()
     this.#resolvedNodes.forEach(n => {
       const cCode = n.generateVertCommonCode()
-      if (cCode && !commonCodes[n.getTypeId()]) {
-        commonCode += cCode + "\n"
+      if (cCode && !headerCodes[n.getTypeId()]) {
+        header += cCode + "\n"
       }
-      n.getAttributes().forEach(a => {
-        attributeMap.set(a, true)
+      n.getBuiltIns().forEach(a => {
+        builtInMap.set(a, true)
       })
       n.getUniforms().forEach((u, i) => {
         if (n.getInSockets()[i].connected()) {
@@ -167,14 +183,24 @@ export class ShaderGraph {
         }
         uniformCode += `uniform ${u.type} ${u.name};\n`
       })
-      mainCode += n.generateVertCode()
+      main += n.generateVertCode()
     })
+
+    if (builtInMap.get(BuiltIn.UV)) {
+      header += `varying vec2 vUv;\n`
+      common += "vUv = uv;\n"
+    }
+    if (builtInMap.get(BuiltIn.Normal)) {
+      header += "varying vec3 vNormal;\n"
+      common += "vNormal = normalMatrix * normal;\n"
+    }
     return `
 ${uniformCode}
-${commonCode}
+${header}
 void main()
 {
-${mainCode}
+${common}
+${main}
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 }
 `
@@ -182,18 +208,18 @@ ${mainCode}
 
   generateFragCode(): string {
     let uniformCode = ""
+    let header = ""
     let commonCode = ""
-    let mainCode = ""
-    let commonCodes: { [key: string]: string } = {}
+    let main = ""
+    let headers: { [key: string]: string } = {}
 
-    const attributeMap: Map<AttributeType, boolean> = new Map()
+    const builtInMap: Map<BuiltIn, boolean> = new Map()
     this.#resolvedNodes.forEach(n => {
       const cCode = n.generateFragCommonCode()
-      if (cCode && !commonCodes[n.getTypeId()]) {
-        commonCode += cCode + "\n"
-      }
-      n.getAttributes().forEach(a => {
-        attributeMap.set(a, true)
+      headers[n.getTypeId()] = cCode + "\n"
+
+      n.getBuiltIns().forEach(a => {
+        builtInMap.set(a, true)
       })
       n.getUniforms().forEach((u, i) => {
         if (n.getInSockets()[i].connected()) {
@@ -201,24 +227,31 @@ ${mainCode}
         }
         uniformCode += `uniform ${u.type} ${u.name};\n`
       })
-      mainCode += n.generateFragCode()
+      main += n.generateFragCode()
       const oSockets = n.getOutSockets()
       oSockets.forEach(s => {
         const wires = this.#wires.filter(w => {
           return w.getInSocket() === s
         })
         wires.forEach(w => {
-          mainCode += w.generateCode()
+          main += w.generateCode()
         })
       })
     })
-    commonCode += Object.values(commonCodes).join("\n")
+
+    if (builtInMap.get(BuiltIn.UV)) {
+      header += `varying vec2 vUv;\n`
+    }
+    if (builtInMap.get(BuiltIn.Normal)) {
+      header += `varying vec3 vNormal;\n`
+    }
+    header += Object.values(headers).join("\n")
     return `
 ${uniformCode}
-${commonCode}
+${header}
 
 void main() {
-${mainCode}
+${main}
 }
     `
   }

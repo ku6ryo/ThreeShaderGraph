@@ -2,7 +2,7 @@ import { MouseEventHandler, MouseEvent, useRef, memo, useCallback, useEffect } f
 import style from "./style.module.scss"
 import classnames from "classnames"
 import { FloatInput } from "./FloatInput"
-import { Vector2, Vector3, Vector4 } from "three"
+import { Texture, Vector2, Vector3, Vector4 } from "three"
 import { ImageInput } from "./ImageInput"
 
 export type SocketDirection = "in" | "out"
@@ -29,7 +29,7 @@ export type InNodeInputValue = {
   vec2?: Vector2,
   vec3?: Vector3,
   vec4?: Vector4,
-  image?: HTMLImageElement,
+  image?: Texture,
 }
 
 export type InSocket = {

@@ -10,17 +10,33 @@ import {
   AmbientLight,
   ShaderMaterial,
   Uniform,
+  UniformsUtils,
+  UniformsLib,
+  ShaderLib,
 } from "three"
 import { ShaderGraph } from "../../backend/ShaderGraph"
+import { BuiltIn } from "../../backend/ShaderNode"
+import Stats from "stats.js"
+import { setSyntheticTrailingComments } from "typescript"
+
+const stats = new Stats()
+document.body.appendChild(stats.dom)
+stats.dom.style.position = "fixed"
+stats.dom.style.right = "0"
+stats.dom.style.left = "initial"
+
+console.log(ShaderLib.phong.vertexShader)
+console.log(ShaderLib.phong.fragmentShader)
 export class ShaderPreview {
 
   #scene: Scene
   #mesh: Mesh
   #renderer: WebGL1Renderer
   #camera: PerspectiveCamera
+  #playing = false
 
-  constructor() {
-    const renderer = new WebGL1Renderer({ antialias: true })
+  constructor(canvas: HTMLCanvasElement) {
+    const renderer = new WebGL1Renderer({ antialias: true, canvas })
     renderer.setSize(300, 300)
     renderer.setClearColor("#222");
 
@@ -35,6 +51,7 @@ export class ShaderPreview {
       roughness: 0.5,
     })
     const light = new DirectionalLight(0xffffff, 0.5);
+    light.intensity = 10
     scene.add(light);
 
     const ambient = new AmbientLight(0xffffff, 0.5);
@@ -59,12 +76,23 @@ export class ShaderPreview {
     Object.keys(uMap).forEach(name => {
       uniforms[name] = new Uniform(uMap[name].value)
     })
+    const builtIns = graph.getBuiltIns()
+    const builtInUniforms: any[] = []
+    const useLight = builtIns.includes(BuiltIn.DirectionalLight)
+    if (useLight) {
+      builtInUniforms.push(UniformsLib.lights)
+    }
     const m = new ShaderMaterial({
       vertexShader: graph.generateVertCode(),
       fragmentShader: graph.generateFragCode(),
-      uniforms,
+      uniforms: UniformsUtils.merge([
+        ...builtInUniforms,
+        uniforms, 
+      ]),
+      lights: useLight,
     })
     m.needsUpdate = true
+    m.uniformsNeedUpdate = true
     this.#mesh.onBeforeRender = () => {
       graph.getNodes().forEach(n => {
         n.updateOnDraw()
@@ -74,19 +102,17 @@ export class ShaderPreview {
         m.uniforms[key].value = values[key]
       })
     }
+    graph.getNodes().forEach(n => {
+      n.updateOnDraw()
+    })
+    console.log(builtIns)
+    console.log(m)
     console.log(m.uniforms)
     this.#mesh.material = m
   }
 
   render() {
+    console.log("RENDER")
     this.#renderer.render(this.#scene, this.#camera)
-  }
-
-  start() {
-    const loop = () => {
-      this.render()
-      requestAnimationFrame(loop)
-    }
-    requestAnimationFrame(loop)
   }
 }

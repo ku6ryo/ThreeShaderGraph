@@ -8,12 +8,11 @@ type EditHistory = {
 export class HistoryManager {
 
   #maxHistories
-  #index: number = 0
+  #index: number = -1
   #histories: EditHistory[] = []
 
   constructor(maxHistories = 100) {
     this.#maxHistories = maxHistories
-    this.#histories.push({ nodes: {}, wires: {} })
   }
 
   getCurrent(): EditHistory {

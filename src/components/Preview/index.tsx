@@ -17,7 +17,6 @@ export function Preview({
   }, [])
   useEffect(() => {
     if (frameRef.current) {
-      preview.start()
       frameRef.current.appendChild(preview.getCanvas())
     }
   }, [frameRef.current])

@@ -24,7 +24,7 @@ export function FloatInputBase({
     e.stopPropagation()
     const v = Number(e.currentTarget.dataset.value)
     onChange(value + v)
-  }, [value])
+  }, [value, onChange])
   const valueStr = useMemo(() => {
     return value.toFixed(3)
   }, [value])
@@ -41,7 +41,7 @@ export function FloatInputBase({
     if (operatingGuage && e.button === 0) {
       onChange(value + Math.sign(e.movementX) * 0.1)
     }
-  }, [value, operatingGuage])
+  }, [value, operatingGuage, onChange])
   const onMouseLeaveGuage = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     setOperatingGuage(false)
   }, [])
@@ -51,7 +51,7 @@ export function FloatInputBase({
   const onMouseWheelGuage = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
     e.stopPropagation()
     onChange(value - Math.sign(e.deltaY) * 0.1)
-  }, [value])
+  }, [value, onChange])
   return (
     <div className={style.frame}>
       {!typing && (

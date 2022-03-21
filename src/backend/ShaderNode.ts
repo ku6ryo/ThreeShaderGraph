@@ -1,4 +1,4 @@
-import { Vector2 } from "three";
+import { Texture, Vector2 } from "three";
 import { Vector3 } from "three";
 import { Vector4 } from "three";
 import { validVariableName } from "./utils";
@@ -9,15 +9,17 @@ import { InNodeInputValue } from "../components/NodeBox";
 export type Uniform = {
   type: ShaderDataType;
   name: string;
-  valueSampler2D?: HTMLImageElement;
+  valueSampler2D?: Texture;
   valueFloat?: number;
   valueVector2?: Vector2;
   valueVector3?: Vector3;
   valueVector4?: Vector4;
 }
 
-export enum AttributeType {
+export enum BuiltIn {
+  Normal = "normal",
   UV = "uv",
+  DirectionalLight = "DirectionalLight",
 }
 
 export abstract class ShaderNode {
@@ -36,14 +38,14 @@ export abstract class ShaderNode {
   #isOutputNode: boolean
 
   /**
-   * Attribute types to use. UV, Vertex color etc.
+   * Built-in types to use. UV, Vertex color etc.
    */
-  #attributes: AttributeType[] = []
+  #builtIns: BuiltIn[] = []
 
   constructor(
     id: string,
     typeId: string,
-    attributes: AttributeType[] = [],
+    builtIns: BuiltIn[] = [],
     isOutputNode: boolean = false,
   ) {
     if (!validVariableName(id)) {
@@ -52,9 +54,9 @@ export abstract class ShaderNode {
     if (!validVariableName(typeId)) {
       throw new Error(`Invalid node typeId: ${typeId}`)
     }
-    this.#id = id;
-    this.#typeId = typeId;
-    this.#attributes = attributes
+    this.#id = id
+    this.#typeId = typeId
+    this.#builtIns = builtIns
     this.#isOutputNode = isOutputNode
   }
 
@@ -135,13 +137,13 @@ export abstract class ShaderNode {
   protected setUniformValue(index: number, value: Vector2): void;
   protected setUniformValue(index: number, value: Vector3): void;
   protected setUniformValue(index: number, value: Vector4): void;
-  protected setUniformValue(index: number, value: HTMLImageElement): void;
-  protected setUniformValue(index: number, value: HTMLImageElement | number | Vector2 | Vector3 | Vector4): void {
+  protected setUniformValue(index: number, value: Texture): void;
+  protected setUniformValue(index: number, value: Texture | number | Vector2 | Vector3 | Vector4): void {
     const u = this.#uniforms[index]
     if (!u) {
-      throw new Error(`Uniform index ${index} does not exist`)
+      throw new Error(`Uniform index ${index} does not exist. Node: ${this.#id}`)
     }
-    if (value instanceof HTMLImageElement) {
+    if (value instanceof Texture) {
       u.valueSampler2D = value
     } else if (typeof value === "number") {
       u.valueFloat = value
@@ -158,8 +160,9 @@ export abstract class ShaderNode {
 
   setInputValue(index: number, value: InNodeInputValue): void {
     const u = this.#uniforms[index]
+    console.log(u)
     if (!u) {
-      throw new Error(`Uniform index ${index} does not exist`)
+      throw new Error(`Uniform index ${index} does not exist. Node: ${this.#id}`)
     }
     if (u.type === ShaderDataType.Float) {
       if (value.float === undefined) {
@@ -193,8 +196,8 @@ export abstract class ShaderNode {
     }
   }
 
-  getAttributes() {
-    return [...this.#attributes]
+  getBuiltIns() {
+    return [...this.#builtIns]
   }
 
   generateVertCommonCode(): string {

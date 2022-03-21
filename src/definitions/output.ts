@@ -1,23 +1,24 @@
 import { NodeTypeId } from "./NodeTypeId"
 import { InNodeInputType, NodeColor } from "../components/NodeBox"
 import { NodeBlueprint } from "../components/Board"
-import { Vector3 } from "three"
+import { Vector4 } from "three"
 
 export const outputFactories = [{
   id: NodeTypeId.OutputColor,
-  name: "Output / Color",
+  name: "Output / Fragment Color",
   factory: () => {
     return {
-      color: NodeColor.Green,
+      color: NodeColor.Pink,
       inNodeInputSlots: [],
       inSockets: [{
         label: "Color",
         alternativeValue: {
-          vec3: new Vector3(1, 0, 0),
+          vec4: new Vector4(0),
         },
-        alternativeValueInputType: InNodeInputType.Vector3,
+        alternativeValueInputType: InNodeInputType.Vector4,
       }],
-      outSockets: []
+      outSockets: [],
+      deletable: false,
     } as NodeBlueprint
   }
 }]

@@ -12,6 +12,7 @@ export type NodeProps = {
   inSockets: InSocket[],
   outSockets: OutSocket[]
   selected: boolean,
+  deletable: boolean,
 }
 
 export type WireProps = {
