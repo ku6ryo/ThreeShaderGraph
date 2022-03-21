@@ -6,7 +6,7 @@ import { FloatInputNode } from "./nodes/inputs/FloatInputNode";
 import { UvInputNode } from "./nodes/inputs/UvInputNode";
 import { AddNode } from "./nodes/math/AddNode";
 import { PerlinNoiseNode } from "./nodes/noises/ParlinNoiseNode";
-import { ColorOutputNode } from "./nodes/outputs/ColorOutputNode";
+import { FragColorOutputNode } from "./nodes/outputs/FragColorOutputNode";
 import { Wire } from "./Wire";
 import { NodeTypeId } from "../definitions/NodeTypeId";
 import { SineNode } from "./nodes/math/SineNode";
@@ -46,7 +46,7 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     // Output
     if (n.typeId === NodeTypeId.OutputColor) {
-      sn = new ColorOutputNode(n.id)
+      sn = new FragColorOutputNode(n.id)
     }
     // Math
     if (n.typeId === NodeTypeId.MathAdd) {

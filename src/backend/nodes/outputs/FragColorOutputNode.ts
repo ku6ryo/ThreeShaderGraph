@@ -3,10 +3,10 @@ import { ShaderDataType } from "../../data_types";
 import { Vector4 } from "three";
 
 
-export class ColorOutputNode extends ShaderNode {
+export class FragColorOutputNode extends ShaderNode {
 
   constructor(id: string) {
-    super(id, "ColorOutput", undefined, true)
+    super(id, "FragColorOutput", undefined, true)
     this.addInSocket("in", ShaderDataType.Vector4)
     this.setUniformValue(0, new Vector4())
   }
@@ -14,7 +14,7 @@ export class ColorOutputNode extends ShaderNode {
   generateFragCode(): string {
     const s = this.getInSockets()[0]
     return `
-    gl_FragColor = ${s.connected() ? s.getVarName() : s.getUniformVarName()};
+    gl_FragColor = ${s.getVarName()};
     `
   }
 }

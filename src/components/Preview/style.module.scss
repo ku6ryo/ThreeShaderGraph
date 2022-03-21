@@ -1,13 +1,19 @@
 
-
-.frame {
-  background-color: black;
-  height: 100%;
+.rederArea {
   position: relative;
-  width: 100%;
+  height: 300px;
+  width: 300px;
+  background: #fff;
+  margin: 4px;
+  border: 1px solid black;
+  border-radius: 4px;
+  overflow: hidden;
+}
 
-  canvas {
-    height: 100%;
-    width: 100%;
-  }
+.fpsContainer {
+  text-align: right;
+}
+
+.control {
+  margin: 4px;
 }

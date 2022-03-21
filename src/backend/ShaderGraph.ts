@@ -193,7 +193,7 @@ export class ShaderGraph {
     }
     if (builtInMap.get(BuiltIn.Normal)) {
       header += "varying vec3 vNormal;\n"
-      common += "vNormal = normalMatrix * normal;\n"
+      common += "vNormal = normal;\n"
     }
     return `
 ${uniformCode}

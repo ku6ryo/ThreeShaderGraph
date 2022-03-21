@@ -1,17 +1,36 @@
+$SIDEBAR_WIDTH: 308px;
 
 .board {
-  width: 100%;
-  height: 100%;
+  height: 100vh;
   position: fixed;
   bottom: 0;
-  left: 0;
+  left: $SIDEBAR_WIDTH;
+  width: calc(100vw - $SIDEBAR_WIDTH);
 }
 
-.preview {
+.sidebar {
+  height: 100vh;
+  left: 0;
   position: fixed;
   top: 0;
-  right: 0;
-  height: 300px;
-  width: 300px;
-  z-index: 1000;
+  width: $SIDEBAR_WIDTH;
+
+  .title {
+    color: white;
+    padding: 8px 4px;
+  }
+}
+
+.codeModal {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  position: fixed;
+  width: 100vw;
+  z-index: 100000;
+
+  pre {
+    margin: 0 auto;
+  }
 }

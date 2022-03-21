@@ -55,7 +55,7 @@ vec4 builtIn_lambertMaterial(vec3 diffuse, vec3 emissive) {
     dotNL = dot(geometry.normal, directLight.direction);
     directLightColor_Diffuse = PI * directLight.color;
     lightFront += saturate(dotNL) * directLightColor_Diffuse;
-    }
+  }
   #endif
   #if NUM_SPOT_LIGHTS > 0
   #pragma unroll_loop

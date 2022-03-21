@@ -11,45 +11,56 @@ import {
   Uniform,
   UniformsUtils,
   UniformsLib,
-  ShaderLib,
   TorusGeometry,
-  Color,
+  BoxGeometry,
 } from "three"
 import { ShaderGraph } from "../../backend/ShaderGraph"
 import { BuiltIn } from "../../backend/ShaderNode"
 import Stats from "stats.js"
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
-const stats = new Stats()
-document.body.appendChild(stats.dom)
-stats.dom.style.position = "fixed"
-stats.dom.style.right = "0"
-stats.dom.style.left = "initial"
+export enum Model {
+  Sphere = 0,
+  Box = 1,
+  Torus = 2,
+}
+
 
 export class ShaderPreview {
 
+  #stats: Stats
   #scene: Scene
   #mesh: Mesh
   #renderer: WebGL1Renderer
   #camera: PerspectiveCamera
   #playing = false
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, fpsContainer: HTMLDivElement) {
+    const stats = new Stats()
+    this.#stats = stats
+    stats.dom.style.position = "relative"
+    stats.dom.style.top = "initial"
+    stats.dom.style.left = "initial"
+    stats.dom.style.display = "inline-block"
+    fpsContainer.appendChild(stats.dom)
+
     const renderer = new WebGL1Renderer({ antialias: true, canvas })
     renderer.setSize(300, 300)
-    renderer.setClearColor("#222");
+    renderer.setClearColor("#000000", 0);
 
     const camera = new PerspectiveCamera(90, 1, 0.1, 1000);
-    camera.position.z = 2;
+    camera.position.z = 3;
+    new OrbitControls( camera, renderer.domElement );
+
     const scene = new Scene();
 
-    const geometry = new TorusGeometry(1, 0.3, 16, 100);
+    const geometry = new SphereGeometry(1, 64, 64)
     const material = new MeshPhysicalMaterial({
       color: "#ffffff",
       metalness: 0.5,
       roughness: 0.5,
     })
     const light = new DirectionalLight(0xffffff, 0.5);
-    light.intensity = 10
     scene.add(light);
 
     const ambient = new AmbientLight(0xffffff, 0.5);
@@ -65,6 +76,18 @@ export class ShaderPreview {
 
   getCanvas() {
     return this.#renderer.domElement
+  }
+
+  changeModel(model: Model) {
+    if (model === Model.Sphere) {
+      this.#mesh.geometry = new SphereGeometry(1, 64, 64)
+    }
+    if (model === Model.Box) {
+      this.#mesh.geometry = new BoxGeometry(1, 1, 1)
+    }
+    if (model === Model.Torus) {
+      this.#mesh.geometry = new TorusGeometry(1, 0.3, 32, 100);
+    }
   }
 
   update(graph: ShaderGraph) {
@@ -121,9 +144,9 @@ export class ShaderPreview {
       if (!this.#playing) {
         return
       }
-      stats.begin()
+      this.#stats.begin()
       this.render()
-      stats.end()
+      this.#stats.end()
       requestAnimationFrame(loop)
     }
     requestAnimationFrame(loop)
