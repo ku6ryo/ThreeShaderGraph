@@ -1,14 +1,14 @@
-import { ShaderNode } from '../../ShaderNode';
-import { ShaderDataType } from '../../data_types';
+import { ShaderNode } from "../../ShaderNode"
+import { ShaderDataType } from "../../data_types"
 
 export class Vector2InputNode extends ShaderNode {
   constructor(id: string) {
-    super(id, 'Vector2Input');
-    this.addOutSocket('Vector2InputNodeOut', ShaderDataType.Vector2);
+    super(id, "Vector2Input")
+    this.addOutSocket("Vector2InputNodeOut", ShaderDataType.Vector2)
   }
 
   generateFragCommonCode(): string {
-    return '';
+    return ""
   }
 
   generateFragCode(): string {
@@ -20,6 +20,6 @@ export class Vector2InputNode extends ShaderNode {
     vec2 ${outputs[0].getVeriableName()} = vec2(${parts});
     `
     */
-    return '';
+    return ""
   }
 }

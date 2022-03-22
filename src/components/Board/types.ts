@@ -1,5 +1,5 @@
-import { NodeCategory } from '../../definitions/types';
-import { InSocket, OutSocket, NodeColor } from '../NodeBox';
+import { NodeCategory } from "../../definitions/types"
+import { InSocket, OutSocket, NodeColor } from "../NodeBox"
 
 // Put commonly used types in this file.
 

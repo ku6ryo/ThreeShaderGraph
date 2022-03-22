@@ -1,14 +1,14 @@
-import { ShaderNode } from '../../ShaderNode';
-import { ShaderDataType } from '../../data_types';
+import { ShaderNode } from "../../ShaderNode"
+import { ShaderDataType } from "../../data_types"
 
 /**
  * https://github.com/ashima/webgl-noise/blob/master/src/classicnoise2D.glsl
  */
 export class PerlinNoiseNode extends ShaderNode {
   constructor(id: string) {
-    super(id, 'Math_PerlinNoise');
-    this.addInSocket('uv', ShaderDataType.Vector2);
-    this.addOutSocket('pnoise', ShaderDataType.Float);
+    super(id, "Math_PerlinNoise")
+    this.addInSocket("uv", ShaderDataType.Vector2)
+    this.addOutSocket("pnoise", ShaderDataType.Float)
   }
 
   generateFragCommonCode(): string {
@@ -67,14 +67,14 @@ float cnoise(vec2 P)
   float n_xy = mix(n_x.x, n_x.y, fade_xy.y);
   return 2.3 * n_xy;
 }
-`;
+`
   }
 
   generateFragCode(): string {
-    const i = this.getInSocket(0);
-    const o = this.getOutSocket(0);
+    const i = this.getInSocket(0)
+    const o = this.getOutSocket(0)
     return `
     float ${o.getVarName()} = cnoise(${i.getVarName()});
-    `;
+    `
   }
 }

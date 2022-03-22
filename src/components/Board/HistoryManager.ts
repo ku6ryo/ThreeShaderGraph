@@ -1,4 +1,4 @@
-import { NodeProps, WireProps } from './types';
+import { NodeProps, WireProps } from "./types"
 
 type EditHistory = {
   nodes: { [key: string]: NodeProps },
@@ -6,52 +6,52 @@ type EditHistory = {
 }
 
 export class HistoryManager {
-  #maxHistories;
+  #maxHistories
 
-  #index: number = -1;
+  #index: number = -1
 
-  #histories: EditHistory[] = [];
+  #histories: EditHistory[] = []
 
   constructor(maxHistories = 100) {
-    this.#maxHistories = maxHistories;
+    this.#maxHistories = maxHistories
   }
 
   getCurrent(): EditHistory {
-    return this.#histories[this.#index];
+    return this.#histories[this.#index]
   }
 
   goBack(): EditHistory | null {
     if (this.#index > 0) {
-      this.#index--;
-      return this.#histories[this.#index];
+      this.#index--
+      return this.#histories[this.#index]
     }
-    return null;
+    return null
   }
 
   getIndex(): number {
-    return this.#index;
+    return this.#index
   }
 
   save = (nodes: NodeProps[], wires: WireProps[]) => {
-    console.log('save', this.#index + 1);
-    const nodeDict: { [key: string]: NodeProps } = {};
-    const wireDict: { [key: string]: WireProps } = {};
+    console.log("save", this.#index + 1)
+    const nodeDict: { [key: string]: NodeProps } = {}
+    const wireDict: { [key: string]: WireProps } = {}
     nodes.forEach((node) => {
-      nodeDict[node.id] = { ...node };
-    });
+      nodeDict[node.id] = { ...node }
+    })
     wires.forEach((wire) => {
-      wireDict[wire.id] = { ...wire };
-    });
+      wireDict[wire.id] = { ...wire }
+    })
     const newHistory = {
       nodes: nodeDict,
       wires: wireDict,
-    };
-    if (this.#index == this.#maxHistories) {
-      this.#histories.shift();
-      this.#histories[this.#index] = newHistory;
-    } else {
-      this.#histories[this.#index + 1] = newHistory;
-      this.#index += 1;
     }
-  };
+    if (this.#index == this.#maxHistories) {
+      this.#histories.shift()
+      this.#histories[this.#index] = newHistory
+    } else {
+      this.#histories[this.#index + 1] = newHistory
+      this.#index += 1
+    }
+  }
 }

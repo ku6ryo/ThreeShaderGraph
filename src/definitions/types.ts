@@ -10,7 +10,7 @@ export const mathTypes = [
   NodeDataType.Vector2,
   NodeDataType.Vector3,
   NodeDataType.Vector4,
-];
+]
 
 export type NodeCategory = {
   id: string,

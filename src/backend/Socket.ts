@@ -1,47 +1,47 @@
-import { ShaderDataType } from './data_types';
+import { ShaderDataType } from "./data_types"
 
 export class Socket {
-  #id: string;
+  #id: string
 
-  #type: ShaderDataType;
+  #type: ShaderDataType
 
-  #overriddenVariableName: string | null = null;
+  #overriddenVariableName: string | null = null
 
-  #connected = false;
+  #connected = false
 
   constructor(id: string, type: ShaderDataType) {
-    this.#id = id;
-    this.#type = type;
+    this.#id = id
+    this.#type = type
   }
 
   getId() {
-    return this.#id;
+    return this.#id
   }
 
   getType(): ShaderDataType {
-    return this.#type;
+    return this.#type
   }
 
   getVarName(): string {
     return this.#overriddenVariableName || (
       this.#connected ? this.getConnectionVarName() : this.getUniformVarName()
-    );
+    )
   }
 
   getConnectionVarName(): string {
-    return this.#id;
+    return this.#id
   }
 
   getUniformVarName(): string {
-    return `u_${this.#id}`;
+    return `u_${this.#id}`
   }
 
   markConnected(connected: boolean) {
-    this.#connected = connected;
+    this.#connected = connected
   }
 
   connected() {
-    return this.#connected;
+    return this.#connected
   }
 
   /**
@@ -49,13 +49,13 @@ export class Socket {
    * This can be used for uniform names.
    */
   overrideVariableName(name: string) {
-    this.#overriddenVariableName = name;
+    this.#overriddenVariableName = name
   }
 
   /**
    * Stops overriding the variable name.
    */
   clearVariableNameOverride() {
-    this.#overriddenVariableName = null;
+    this.#overriddenVariableName = null
   }
 }

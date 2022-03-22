@@ -1,21 +1,21 @@
-import { Vector3 } from 'three';
-import { BuiltIn, ShaderNode } from '../../ShaderNode';
-import { ShaderDataType } from '../../data_types';
+import { Vector3 } from "three"
+import { BuiltIn, ShaderNode } from "../../ShaderNode"
+import { ShaderDataType } from "../../data_types"
 
 export class PhongNode extends ShaderNode {
   constructor(id: string) {
-    super(id, 'Material_Phong', [BuiltIn.DirectionalLight]);
-    this.addInSocket('diffuse', ShaderDataType.Vector3);
-    this.setUniformValue(0, new Vector3());
-    this.addInSocket('emissive', ShaderDataType.Vector3);
-    this.setUniformValue(0, new Vector3());
-    this.addInSocket('specular', ShaderDataType.Vector3);
-    this.setUniformValue(0, new Vector3());
-    this.addInSocket('shininess', ShaderDataType.Float);
-    this.setUniformValue(0, 1);
-    this.addInSocket('opacity', ShaderDataType.Float);
-    this.setUniformValue(0, 1);
-    this.addOutSocket('color', ShaderDataType.Vector4);
+    super(id, "Material_Phong", [BuiltIn.DirectionalLight])
+    this.addInSocket("diffuse", ShaderDataType.Vector3)
+    this.setUniformValue(0, new Vector3())
+    this.addInSocket("emissive", ShaderDataType.Vector3)
+    this.setUniformValue(0, new Vector3())
+    this.addInSocket("specular", ShaderDataType.Vector3)
+    this.setUniformValue(0, new Vector3())
+    this.addInSocket("shininess", ShaderDataType.Float)
+    this.setUniformValue(0, 1)
+    this.addInSocket("opacity", ShaderDataType.Float)
+    this.setUniformValue(0, 1)
+    this.addOutSocket("color", ShaderDataType.Vector4)
   }
 
   generateVertCommonCode(): string {
@@ -35,7 +35,7 @@ varying vec3 vViewPosition;
 #include <shadowmap_pars_vertex>
 #include <logdepthbuf_pars_vertex>
 #include <clipping_planes_pars_vertex>
-    `;
+    `
   }
 
   generateVertCode(): string {
@@ -62,7 +62,7 @@ vViewPosition = - mvPosition.xyz;
 #include <envmap_vertex>
 #include <shadowmap_vertex>
 #include <fog_vertex>
-    `;
+    `
   }
 
   generateFragCommonCode(): string {
@@ -126,20 +126,20 @@ vec4 builtIn_PhongMaterial(vec3 diffuse, vec3 emissive, vec3 specular, float shi
 
   return vec4(outgoingLight, opacity);
 }
-    `;
+    `
   }
 
   generateFragCode(): string {
-    const i0 = this.getInSocket(0);
-    const i1 = this.getInSocket(1);
-    const i2 = this.getInSocket(2);
-    const i3 = this.getInSocket(3);
-    const i4 = this.getInSocket(4);
-    const o = this.getOutSocket(0);
+    const i0 = this.getInSocket(0)
+    const i1 = this.getInSocket(1)
+    const i2 = this.getInSocket(2)
+    const i3 = this.getInSocket(3)
+    const i4 = this.getInSocket(4)
+    const o = this.getOutSocket(0)
     return `
     vec3 mvPosition = vViewPosition;
     vec3 transformedNormal = vNormal;
     vec4 ${o.getVarName()} = builtIn_PhongMaterial(${i0.getVarName()}, ${i1.getVarName()}, ${i2.getVarName()}, ${i3.getVarName()}, ${i4.getVarName()});
-    `;
+    `
   }
 }

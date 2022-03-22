@@ -1,204 +1,204 @@
-import { NodeTypeId } from './NodeTypeId';
-import { NodeColor } from '../components/NodeBox';
-import { NodeCategory } from './types';
-import { NodeBlueprint } from '../components/Board/types';
+import { NodeTypeId } from "./NodeTypeId"
+import { NodeColor } from "../components/NodeBox"
+import { NodeCategory } from "./types"
+import { NodeBlueprint } from "../components/Board/types"
 
 export const mathCategory: NodeCategory = {
-  id: 'math',
-  label: 'Math',
-  icon: 'calculator',
-};
+  id: "math",
+  label: "Math",
+  icon: "calculator",
+}
 
 export const mathFactories = [{
   id: NodeTypeId.MathAdd,
-  name: 'Add',
+  name: "Add",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Value 1',
+      label: "Value 1",
     }, {
-      label: 'Value 2',
+      label: "Value 2",
     }],
     outSockets: [{
-      label: 'Result',
+      label: "Result",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathSine,
-  name: 'Sine',
+  name: "Sine",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Value',
+      label: "Value",
     }],
     outSockets: [{
-      label: 'Result',
+      label: "Result",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathCosine,
-  name: 'Cosine',
+  name: "Cosine",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Value',
+      label: "Value",
     }],
     outSockets: [{
-      label: 'Result',
+      label: "Result",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathTangent,
-  name: 'Tangent',
+  name: "Tangent",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Value',
+      label: "Value",
     }],
     outSockets: [{
-      label: 'Result',
+      label: "Result",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathDot,
-  name: 'Dot',
+  name: "Dot",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Value 1',
+      label: "Value 1",
     }, {
-      label: 'Value 2',
+      label: "Value 2",
     }],
     outSockets: [{
-      label: 'Result',
+      label: "Result",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathFrac,
-  name: 'Frac',
+  name: "Frac",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Value',
+      label: "Value",
     }],
     outSockets: [{
-      label: 'Result',
+      label: "Result",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathSubtract,
-  name: 'Subtract',
+  name: "Subtract",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Value 1',
+      label: "Value 1",
     }, {
-      label: 'Value 2',
+      label: "Value 2",
     }],
     outSockets: [{
-      label: 'Result',
+      label: "Result",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathMultiply,
-  name: 'Multiply',
+  name: "Multiply",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Value 1',
+      label: "Value 1",
     }, {
-      label: 'Value 2',
+      label: "Value 2",
     }],
     outSockets: [{
-      label: 'Result',
+      label: "Result",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathCombine,
-  name: 'Combine',
+  name: "Combine",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'R',
+      label: "R",
     }, {
-      label: 'G',
+      label: "G",
     }, {
-      label: 'B',
+      label: "B",
     }, {
-      label: 'A',
+      label: "A",
     }],
     outSockets: [{
-      label: 'Vec',
+      label: "Vec",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathSeparate,
-  name: 'Separate',
+  name: "Separate",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Vec',
+      label: "Vec",
     }],
     outSockets: [{
-      label: 'R',
+      label: "R",
     }, {
-      label: 'G',
+      label: "G",
     }, {
-      label: 'B',
+      label: "B",
     }, {
-      label: 'A',
+      label: "A",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathGreaterThan,
-  name: 'Greater Than',
+  name: "Greater Than",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Value',
+      label: "Value",
     }, {
-      label: 'Threshold',
+      label: "Threshold",
     }],
     outSockets: [{
-      label: 'Result',
+      label: "Result",
     }],
   } as NodeBlueprint),
 }, {
   id: NodeTypeId.MathLessThan,
-  name: 'Less Than',
+  name: "Less Than",
   category: mathCategory,
   factory: () => ({
     color: NodeColor.Blue,
     inNodeInputSlots: [],
     inSockets: [{
-      label: 'Value',
+      label: "Value",
     }, {
-      label: 'Threshold',
+      label: "Threshold",
     }],
     outSockets: [{
-      label: 'Result',
+      label: "Result",
     }],
   } as NodeBlueprint),
-}];
+}]
