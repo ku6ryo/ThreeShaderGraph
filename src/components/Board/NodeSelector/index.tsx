@@ -10,7 +10,6 @@ type Props = {
   onSelected: (nodeTypeId: string) => void
 }
 
-
 export function NodeSelector({
   definitions,
   onSelected,
@@ -28,16 +27,23 @@ export function NodeSelector({
     return [Array.from(catMap.values()), nodeMap]
   }, []);
   const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
+
   const onCategoryClick: MouseEventHandler<HTMLButtonElement> & ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void) = useCallback((e) => {
     e.stopPropagation()
-    setSelectedCatId(e.currentTarget.dataset.id!)
-  }, [setSelectedCatId])
+    const id = e.currentTarget.dataset.id!;
+    if (selectedCatId === id) {
+      setSelectedCatId(null)
+    } else {
+      setSelectedCatId(e.currentTarget.dataset.id!)
+    }
+  }, [setSelectedCatId, selectedCatId])
+
   const onNodeClick: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
     e.stopPropagation()
-    console.log(e.currentTarget.dataset.id)
     onSelected(e.currentTarget.dataset.id!)
     setSelectedCatId(null)
   }, [onSelected, selectedCatId])
+
   useEffect(() => {
     const listener = () => {
       if (selectedCatId) {

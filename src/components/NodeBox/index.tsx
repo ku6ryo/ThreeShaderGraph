@@ -170,7 +170,9 @@ export const NodeBox = memo(function NodeBox({
                   data-socket-direction="out"
                   onMouseDown={onSocketMouseDownInternal}
                   onMouseUp={onSocketMouseUpInternal}
-                />
+                >
+                  <div className={style.circle} />
+                </div>
               </div>
             ))}
           </div>
@@ -191,7 +193,9 @@ export const NodeBox = memo(function NodeBox({
                       data-socket-direction="in"
                       onMouseDown={onSocketMouseDownInternal}
                       onMouseUp={onSocketMouseUpInternal}
-                    />
+                    >
+                      <div className={style.circle} />
+                    </div>
                   )}
                   <div>{socket.label}</div>
                   {socket.alternativeValue && socket.alternativeValueInputType && (
