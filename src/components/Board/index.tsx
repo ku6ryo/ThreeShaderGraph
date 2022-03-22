@@ -8,6 +8,14 @@ import { NodeProps, WireProps } from "./types"
 import shortUUID from "short-uuid";
 import { NodeWireManager } from "./NodeWireManger";
 import { outputFactories } from "../../definitions/output";
+import { Slider } from "@blueprintjs/core";
+
+/**
+ * ZOOM configurations
+ */
+const MAX_ZOOM = 2.5
+const MIN_ZOOM = 0.3
+const ZOOM_STEP = 0.05
 
 /**
  * Generates a unique id for nodes and wires.
@@ -572,10 +580,10 @@ export function Board({
         return
       }
       const s = Math.sign(e.deltaY)
-      if ((s > 0 && board.zoom > 0.3) || (s < 0 && board.zoom < 2.5)) {
+      if ((s > 0 && board.zoom >= MIN_ZOOM) || (s < 0 && board.zoom <= MAX_ZOOM - ZOOM_STEP)) {
         setBoard({
           ...board,
-          zoom: board.zoom - 0.05 * Math.sign(e.deltaY)
+          zoom: board.zoom - ZOOM_STEP * Math.sign(e.deltaY)
         })
       }
     }
@@ -584,6 +592,13 @@ export function Board({
       window.removeEventListener("wheel", mouseWheelListener)
     }
   }, [board, cursorOnBoad, draggingBoard])
+
+  const onZoomSliderChange = useCallback((v: number) => {
+    setBoard({
+      ...board,
+      zoom: v,
+    })
+  }, [board])
 
   // Initially set the board size.
   useEffect(() => {
@@ -704,6 +719,19 @@ export function Board({
           />
         )}
       </svg>
+      <div className={style.zoomSlider}>
+        <Slider
+          min={MIN_ZOOM}
+          max={MAX_ZOOM}
+          stepSize={ZOOM_STEP}
+          labelStepSize={10}
+          onChange={onZoomSliderChange}
+          labelRenderer={(value) => `${(value * 100).toFixed()}%`}
+          showTrackFill={false}
+          value={board.zoom}
+          vertical={true}
+        />
+      </div>
     </div>
   )
 }

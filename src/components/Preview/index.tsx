@@ -5,7 +5,6 @@ import style from "./style.module.scss"
 import GUI from "lil-gui"
 import shortUUID from "short-uuid";
 
-
 type Props = {
   graph: ShaderGraph | null
 }
@@ -13,11 +12,12 @@ type Props = {
 export function Preview({
   graph
 }: Props) {
+
   const [preview, setPreview] = useState<ShaderPreview | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fpsRef = useRef<HTMLDivElement | null>(null);
   const controlRef = useRef<HTMLDivElement | null>(null);
-  const [controlChangeId, setControlChangeId] = useState("");
+  const [, setControlChangeId] = useState("");
 
   useEffect(() => {
     if (canvasRef.current && fpsRef.current) {
@@ -32,7 +32,7 @@ export function Preview({
   const controlValues = useMemo(() => {
     return {
       modelType: Model.Sphere,
-      backgroundColor: "0xFFFFFF",
+      backgroundColor: "#EEEEEE",
     }
   }, [])
 
@@ -42,13 +42,18 @@ export function Preview({
       gui.domElement.style.position = "relative"
       gui.domElement.style.width = "100%"
       gui.domElement.style.right = "initial"
-      gui.add(controlValues, "modelType", { ["Sphere"]: Model.Sphere, ["Box"]: Model.Box, Torus: Model.Torus } ).name("Model").onChange((v: any) => {
+      gui.add(controlValues, "modelType", {
+        Sphere: Model.Sphere,
+        Box: Model.Box,
+        Torus: Model.Torus
+      }).name("Model").onChange((v: Model) => {
         preview.changeModel(v);
       })
-      gui.addColor(controlValues, "backgroundColor", 0x000000).name("Background Color").onChange((v: any) => {
-        console.log(v)
-        setControlChangeId(shortUUID().generate())
-      })
+      gui.addColor(controlValues, "backgroundColor", 0x000000)
+        .name("Background Color")
+        .onChange(() => {
+          setControlChangeId(shortUUID().generate())
+        })
       controlRef.current.appendChild(gui.domElement)
     }
   }, [controlRef.current, preview])

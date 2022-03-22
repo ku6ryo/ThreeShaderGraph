@@ -12,6 +12,7 @@ import { Preview } from "./components/Preview";
 import { RiNodeTree as NodeIcon } from "react-icons/ri"
 import packageJson from "../package.json"
 import { REVISION } from "three";
+import "../node_modules/@blueprintjs/core/lib/css/blueprint.css"
 
 export function App() {
 

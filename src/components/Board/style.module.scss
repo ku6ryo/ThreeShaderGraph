@@ -3,6 +3,7 @@
   background-size: 12px 12px;
   font-family: Titillium;
   height: 100%;
+  position: relative;
   width: 100%;
 }
 
@@ -42,4 +43,10 @@
       background-color: #333;
     }
   }
+}
+
+.zoomSlider {
+  bottom: 20px;
+  position: absolute;
+  right: 20px;
 }

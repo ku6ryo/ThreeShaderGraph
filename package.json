@@ -8,6 +8,7 @@
   "author": "Ryo Kuroyanagi",
   "license": "MIT",
   "dependencies": {
+    "@blueprintjs/core": "^4.0.0-rc.2",
     "@types/react": "^17.0.40",
     "@types/react-dom": "^17.0.13",
     "@types/stats.js": "^0.17.0",
