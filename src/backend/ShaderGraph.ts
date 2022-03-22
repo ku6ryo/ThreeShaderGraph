@@ -92,10 +92,24 @@ export class ShaderGraph {
     }
 
     const nodeMap: { [key: string]: ShaderNode } = {}
-    const addNodeToMap = (n: ShaderNode, order: string) => {
+    const routeMap: { [key: string]: string[] } = {}
+
+    // Check routes and calculate the order to generate code.
+    // And also finds one of circular references if exists.
+    const addNodeToMap = (n: ShaderNode, order: string, prevN: ShaderNode | null) => {
+      if (routeMap[n.getId()]) {
+        routeMap[n.getId()].forEach(o => {
+          if (order.indexOf(o) === 0) {
+            throw new CircularReferenceError(n.getId(), "")
+          }
+        })
+        routeMap[n.getId()].push(order)
+      } else {
+        routeMap[n.getId()] = [order]
+      }
       nodeMap[order] = n
       n.getInSockets().forEach((s, i) => {
-        const nextOrder = order + Array(i + 1).fill("_")
+        const nextOrder = order + i//Array(i + 1).fill("_")
         const wires = this.#wires.filter((w) => w.getOutSocket() === s)
         if (wires.length > 1) {
           throw new Error(`no wire or in socket has more than 1 wires connected to in socket ${s.getId()}`)
@@ -112,14 +126,15 @@ export class ShaderGraph {
           return
         }
         inSocket.markConnected(true)
-        addNodeToMap(nn, nextOrder)
+        addNodeToMap(nn, nextOrder, null)
       })
     }
-    addNodeToMap(outputNode as ShaderNode, "")
+    addNodeToMap(outputNode as ShaderNode, "1", null)
     const resolvedNodes: ShaderNode[] = []
-    Object.keys(nodeMap).sort((a, b) => b.length - a.length).forEach((k) => {
+    Object.keys(nodeMap).sort((a, b) => Number(b) - Number(a)).forEach((k) => {
       // Removes duplications.
       const n = nodeMap[k]
+      console.log(k, n.getId())
       if (!resolvedNodes.includes(n)) {
         resolvedNodes.push(n)
       }

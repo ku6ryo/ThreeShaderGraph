@@ -4,7 +4,7 @@ import { NodeProps, WireProps } from "./components/Board/types";
 import { factories } from "./definitions/factories";
 import { createGraphFromInputs } from "./backend/createGraphFromInputs";
 import { useEffect, useRef, useState } from "react";
-import { ShaderGraph } from "./backend/ShaderGraph";
+import { CircularReferenceError, ShaderGraph } from "./backend/ShaderGraph";
 import { InNodeInputValue } from "./components/NodeBox";
 import { PrismLight } from "react-syntax-highlighter"
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -27,13 +27,24 @@ export function App() {
 
   const onChange = (nodes: NodeProps[], wires: WireProps[]) => {
     try {
-      const graph = createGraphFromInputs(nodes, wires)
-      setGraph(graph)
-      if (toasterRef.current) {
-        toasterRef.current.show({
-          message: "New graph",
-          intent: "success"
-        })
+      try {
+        const graph = createGraphFromInputs(nodes, wires)
+        setGraph(graph)
+        if (toasterRef.current) {
+          toasterRef.current.show({
+            message: "New graph",
+            intent: "success"
+          })
+        }
+      } catch (e) {
+        if (e instanceof CircularReferenceError) {
+          if (toasterRef.current) {
+            toasterRef.current.show({
+              message: "Circular reference",
+              intent: "danger"
+            })
+          }
+        }
       }
     } catch (e) {
       console.error(e)

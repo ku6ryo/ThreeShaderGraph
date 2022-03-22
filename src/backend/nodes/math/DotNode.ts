@@ -14,15 +14,13 @@ export class DotNode extends ShaderNode {
     this.#type = type
     this.addInSocket("in0", type)
     this.addInSocket("in1", type)
-    this.addOutSocket("out", type)
+    this.addOutSocket("out", ShaderDataType.Float)
   }
 
   generateFragCode(): string {
     const i0 = this.getInSocket(0)
     const i1 = this.getInSocket(1)
     const o = this.getOutSocket(0)
-    return `
-    ${this.#type} ${o.getVarName()} = dot(${i0.getVarName()}, ${i1.getVarName()});
-    `
+    return `float ${o.getVarName()} = dot(${i0.getVarName()}, ${i1.getVarName()});`
   }
 }
