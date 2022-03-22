@@ -63,9 +63,8 @@ export function NodeSelector({
           <div key={c.id} className={style.item}>
             <Tooltip2
               content={c.label}
-              placement={"right"}
+              placement={"left"}
               usePortal={false}
-              isOpen={selectedCatId === c.id ? false : undefined}
             >
               <Button onClick={onCategoryClick} data-id={c.id}>
                 <Icon icon={c.icon as any} />

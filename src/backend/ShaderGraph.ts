@@ -4,6 +4,12 @@ import { BuiltIn, ShaderNode } from "./ShaderNode"
 import { InNodeInputValue } from "../components/NodeBox"
 import { Wire } from "./Wire"
 
+export class CircularReferenceError extends Error {
+  constructor(nodeOutId: string, nodeInId: string) {
+    super(`Circular reference detected: ${nodeOutId} -> ${nodeInId}`)
+  }
+}
+
 export class ShaderGraph {
   #nodes: ShaderNode[] = []
 

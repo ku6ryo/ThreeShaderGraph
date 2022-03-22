@@ -3,7 +3,7 @@ import { Board } from "./components/Board";
 import { NodeProps, WireProps } from "./components/Board/types";
 import { factories } from "./definitions/factories";
 import { createGraphFromInputs } from "./backend/createGraphFromInputs";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ShaderGraph } from "./backend/ShaderGraph";
 import { InNodeInputValue } from "./components/NodeBox";
 import { PrismLight } from "react-syntax-highlighter"
@@ -12,19 +12,29 @@ import { Preview } from "./components/Preview";
 import { RiNodeTree as NodeIcon } from "react-icons/ri"
 import packageJson from "../package.json"
 import { REVISION } from "three";
+import { Toaster, Position } from "@blueprintjs/core/lib/esm";
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css"
 import "../node_modules/@blueprintjs/icons/lib/css/blueprint-icons.css"
 import "../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css"
 
 export function App() {
 
-  const [graph, setGraph] = useState<ShaderGraph | null>(null);
-  const [codeShown, setCodeShown] = useState(false);
+  const [graph, setGraph] = useState<ShaderGraph | null>(null)
+  const [codeShown, setCodeShown] = useState(false)
+  const toasterRef = useRef<Toaster>(null)
+  const version = packageJson.version;
+
 
   const onChange = (nodes: NodeProps[], wires: WireProps[]) => {
     try {
       const graph = createGraphFromInputs(nodes, wires)
       setGraph(graph)
+      if (toasterRef.current) {
+        toasterRef.current.show({
+          message: "New graph",
+          intent: "success"
+        })
+      }
     } catch (e) {
       console.error(e)
     }
@@ -35,8 +45,6 @@ export function App() {
       graph.setInputValue(nodeId, socketIndex, value)
     }
   }
-
-  const version = packageJson.version;
 
   return (
     <>
@@ -99,6 +107,7 @@ export function App() {
           </PrismLight>
         </div>
       )}
+      <Toaster position={Position.BOTTOM} ref={toasterRef}/>
     </>
   )
 }

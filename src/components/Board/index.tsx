@@ -213,8 +213,15 @@ export function Board({
     }
   }, [board.zoom])
 
-  const onSocketMouseUp = useCallback((id: string, dir: SocketDirection, i: number, x: number, y: number) => {
+  const onSocketMouseUp = useCallback((
+    id: string,
+    dir: SocketDirection,
+    i: number,
+    x: number,
+    y: number
+  ) => {
     if (drawingWire === null || drawingWire.startNodeId === id || drawingWire.startDirection === dir) {
+      setDrawingWire(null)
       return
     }
     const node = nwManager.getNode(id)
@@ -260,7 +267,7 @@ export function Board({
     saveHistory()
     notifyChange()
     setDrawingWire(null)
-  }, [board.zoom, drawingWire])
+  }, [board.zoom, drawingWire, setDrawingWire])
 
   const onNodeDragStart = useCallback((id: string, mouseX: number, mouseY: number) => {
     const nodes = nwManager.getNodes()
@@ -507,7 +514,6 @@ export function Board({
       ]
       nwManager.updateNodes(newNodes)
       saveHistory()
-      notifyChange()
     } else {
       throw new Error("No factory found for node type " + typeId)
     }
