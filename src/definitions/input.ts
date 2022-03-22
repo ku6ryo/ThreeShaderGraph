@@ -1,10 +1,18 @@
 import { NodeTypeId } from "./NodeTypeId"
 import { NodeColor, InNodeInputType } from "../components/NodeBox"
-import { NodeBlueprint } from "../components/Board"
+import { NodeCategory } from "./types"
+import { NodeBlueprint } from "../components/Board/types"
+
+export const inputCategory: NodeCategory = {
+  id: "input",
+  label: "Input",
+  icon: "numerical",
+}
 
 export const inputFactories = [{
   id: NodeTypeId.InputUv,
-  name: "Input / UV",
+  name: "UV",
+  category: inputCategory,
   factory: () => {
     return {
       color: NodeColor.Red,
@@ -16,7 +24,8 @@ export const inputFactories = [{
   }
 }, {
   id: NodeTypeId.InputTime,
-  name: "Input / Time",
+  name: "Time",
+  category: inputCategory,
   factory: () => {
     return {
       color: NodeColor.Red,
@@ -31,7 +40,8 @@ export const inputFactories = [{
   }
 }, {
   id: NodeTypeId.InputTexture,
-  name: "Input / Texture",
+  name: "Texture",
+  category: inputCategory,
   factory: () => {
     return {
       color: NodeColor.Red,
@@ -48,7 +58,8 @@ export const inputFactories = [{
   }
 }, {
   id: NodeTypeId.InputFloat,
-  name: "Input / Float",
+  name: "Float",
+  category: inputCategory,
   factory: () => {
     return {
       color: NodeColor.Red,

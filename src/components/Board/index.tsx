@@ -1,14 +1,15 @@
 import React, { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { NodeBox, InSocket, OutSocket, SocketDirection, NodeColor, InNodeInputValue } from "../NodeBox";
+import { NodeBox, SocketDirection, InNodeInputValue } from "../NodeBox";
 import { WireLine } from "../WireLine";
 import style from "./style.module.scss"
 import classnames from "classnames"
 import { HistoryManager } from "./HistoryManager";
-import { NodeProps, WireProps } from "./types"
+import { NodeProps, WireProps, NodeFactory } from "./types"
 import shortUUID from "short-uuid";
 import { NodeWireManager } from "./NodeWireManger";
 import { outputFactories } from "../../definitions/output";
 import { Slider } from "@blueprintjs/core";
+import { NodeSelector } from "./NodeSelector";
 
 /**
  * ZOOM configurations
@@ -73,19 +74,6 @@ type BoardStats = {
   domHeight: number,
   domWidth: number,
   zoom: number,
-}
-
-export type NodeBlueprint = {
-  color: NodeColor,
-  inSockets: InSocket[],
-  outSockets: OutSocket[],
-  deletable?: boolean,
-}
-
-export type NodeFactory = {
-  id: string,
-  name: string
-  factory: () => NodeBlueprint
 }
 
 type Rect = {
@@ -497,8 +485,7 @@ export function Board({
     setNodeRects({ ...nodeRects })
   }, [svgRootRef.current, nodeRects])
 
-  const onNodeAdd: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
-    const typeId = e.currentTarget.dataset.nodeTypeId
+  const onNodeAdd = useCallback((typeId: string) => {
     const f = factories.find(f => f.id === typeId)
     if (f) {
       const nodes = nwManager.getNodes().map(n => ({...n, selected: false}))
@@ -577,8 +564,11 @@ export function Board({
 
   // mouse wheel
   useEffect(() => {
+    if (!svgRootRef.current) {
+
+    }
     const mouseWheelListener = (e: WheelEvent) => {
-      if (!cursorOnBoad || draggingBoard) {
+      if (draggingBoard) {
         return
       }
       const s = Math.sign(e.deltaY)
@@ -589,11 +579,11 @@ export function Board({
         })
       }
     }
-    window.addEventListener("wheel", mouseWheelListener)
+    svgRootRef.current?.addEventListener("wheel", mouseWheelListener)
     return () => {
-      window.removeEventListener("wheel", mouseWheelListener)
+      svgRootRef.current?.removeEventListener("wheel", mouseWheelListener)
     }
-  }, [board, cursorOnBoad, draggingBoard])
+  }, [board, draggingBoard])
 
   const onZoomSliderChange = useCallback((v: number) => {
     setBoard({
@@ -642,16 +632,6 @@ export function Board({
 
   return (
     <div className={style.frame}>
-      <div className={style.nodeSelector}>
-        {factories.map(f => (
-          <div
-            key={f.id}
-            className={style.item}
-            data-node-type-id={f.id}
-            onClick={onNodeAdd}
-          >{f.name}</div>
-        ))}
-      </div>
       <svg
         className={classnames({
           [style.board]: true,
@@ -721,6 +701,9 @@ export function Board({
           />
         )}
       </svg>
+      <div className={style.nodeSelector}>
+        <NodeSelector definitions={factories} onSelected={onNodeAdd} />
+      </div>
       <div className={style.zoomSlider}>
         <Slider
           min={MIN_ZOOM}

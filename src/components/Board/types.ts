@@ -1,3 +1,4 @@
+import { NodeCategory } from "../../definitions/types";
 import { InSocket, OutSocket, NodeColor } from "../NodeBox";
 
 // Put commonly used types in this file.
@@ -25,4 +26,18 @@ export type WireProps = {
   inY: number,
   outX: number,
   outY: number,
+}
+
+export type NodeBlueprint = {
+  color: NodeColor,
+  inSockets: InSocket[],
+  outSockets: OutSocket[],
+  deletable?: boolean,
+}
+
+export type NodeFactory = {
+  id: string,
+  name: string
+  category: NodeCategory,
+  factory: () => NodeBlueprint
 }

@@ -1,11 +1,19 @@
 import { NodeTypeId } from "./NodeTypeId"
 import { InNodeInputType, NodeColor } from "../components/NodeBox"
-import { NodeBlueprint } from "../components/Board"
 import { Vector4 } from "three"
+import { NodeCategory } from "./types"
+import { NodeBlueprint } from "../components/Board/types"
+
+export const outputCategory: NodeCategory = {
+  id: "output",
+  label: "Output",
+  icon: "arrow-right",
+}
 
 export const outputFactories = [{
   id: NodeTypeId.OutputColor,
-  name: "Output / Fragment Color",
+  name: "Fragment Color",
+  category: outputCategory,
   factory: () => {
     return {
       color: NodeColor.Pink,

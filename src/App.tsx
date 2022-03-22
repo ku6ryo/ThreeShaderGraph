@@ -3,7 +3,7 @@ import { Board } from "./components/Board";
 import { NodeProps, WireProps } from "./components/Board/types";
 import { factories } from "./definitions/factories";
 import { createGraphFromInputs } from "./backend/createGraphFromInputs";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ShaderGraph } from "./backend/ShaderGraph";
 import { InNodeInputValue } from "./components/NodeBox";
 import { PrismLight } from "react-syntax-highlighter"
@@ -13,6 +13,8 @@ import { RiNodeTree as NodeIcon } from "react-icons/ri"
 import packageJson from "../package.json"
 import { REVISION } from "three";
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css"
+import "../node_modules/@blueprintjs/icons/lib/css/blueprint-icons.css"
+import "../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css"
 
 export function App() {
 
@@ -39,10 +41,11 @@ export function App() {
   return (
     <>
       <div className={style.sidebar}>
-        <div className={style.title}>Three.js Shader Node Editor&nbsp;<NodeIcon/></div>
+        <div className={style.title}>Three.js Shader Graph Editor&nbsp;<NodeIcon/></div>
         <div className={style.versions}>
-          <div>{`Editor Ver.: ${version}`}</div>
-          <div>{`Three.js Revision.: ${REVISION}`}</div>
+          <span>{`Editor: v${version}`}</span>
+          <span>&nbsp;&nbsp;&nbsp;</span>
+          <span>{`Three.js: r${REVISION}`}</span>
         </div>
         <div className={style.preview}>
           <Preview graph={graph} />

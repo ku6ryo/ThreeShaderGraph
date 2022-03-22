@@ -1,10 +1,18 @@
 import { NodeTypeId } from "./NodeTypeId"
 import { NodeColor } from "../components/NodeBox"
-import { NodeBlueprint } from "../components/Board"
+import { NodeCategory } from "./types"
+import { NodeBlueprint } from "../components/Board/types"
+
+export const mathCategory: NodeCategory = {
+  id: "math",
+  label: "Math",
+  icon: "calculator",
+}
 
 export const mathFactories = [{
   id: NodeTypeId.MathAdd,
-  name: "Math / Add",
+  name: "Add",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -21,7 +29,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathSine,
-  name: "Math / Sine",
+  name: "Sine",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -36,7 +45,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathCosine,
-  name: "Math / Cosine",
+  name: "Cosine",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -51,7 +61,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathTangent,
-  name: "Math / Tangent",
+  name: "Tangent",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -66,7 +77,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathDot,
-  name: "Math / Dot",
+  name: "Dot",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -83,7 +95,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathFrac,
-  name: "Math / Frac",
+  name: "Frac",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -98,7 +111,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathSubtract,
-  name: "Math / Subtract",
+  name: "Subtract",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -115,7 +129,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathMultiply,
-  name: "Math / Multiply",
+  name: "Multiply",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -132,7 +147,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathCombine,
-  name: "Math / Combine",
+  name: "Combine",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -153,7 +169,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathSeparate,
-  name: "Math / Separate",
+  name: "Separate",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -174,7 +191,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathGreaterThan,
-  name: "Math / Greater Than",
+  name: "Greater Than",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,
@@ -191,7 +209,8 @@ export const mathFactories = [{
   }
 }, {
   id: NodeTypeId.MathLessThan,
-  name: "Math / Less Than",
+  name: "Less Than",
+  category: mathCategory,
   factory: () => {
     return {
       color: NodeColor.Blue,

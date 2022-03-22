@@ -1,11 +1,19 @@
 import { NodeTypeId } from "./NodeTypeId"
 import { InNodeInputType, NodeColor } from "../components/NodeBox"
-import { NodeBlueprint } from "../components/Board"
 import { Vector3 } from "three"
+import { NodeCategory } from "./types"
+import { NodeBlueprint } from "../components/Board/types"
+
+export const materialCategory: NodeCategory = {
+  id: "material",
+  label: "Material",
+  icon: "cube",
+}
 
 export const materialFactories = [{
   id: NodeTypeId.Material_Lambert,
-  name: "Material / Lambert",
+  name: "Lambert",
+  category: materialCategory,
   factory: () => {
     return {
       color: NodeColor.Green,
@@ -30,7 +38,8 @@ export const materialFactories = [{
   }
 }, {
   id: NodeTypeId.Material_Phong,
-  name: "Material / Phong",
+  name: "Phong",
+  category: materialCategory,
   factory: () => {
     return {
       color: NodeColor.Green,

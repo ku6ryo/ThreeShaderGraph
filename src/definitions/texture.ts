@@ -1,10 +1,18 @@
 import { NodeTypeId } from "./NodeTypeId"
 import { NodeColor } from "../components/NodeBox"
-import { NodeBlueprint } from "../components/Board"
+import { NodeCategory } from "./types"
+import { NodeBlueprint } from "../components/Board/types"
+
+export const textureCategory: NodeCategory = {
+  id: "texture",
+  label: "Texture",
+  icon: "media",
+}
 
 export const textureFactories = [{
   id: NodeTypeId.TextureSample,
-  name: "Texture / Sample",
+  name: "Sample",
+  category: textureCategory,
   factory: () => {
     return {
       color: NodeColor.Orange,
@@ -21,7 +29,8 @@ export const textureFactories = [{
   }
 }, {
   id: NodeTypeId.TexturePerlinNoise,
-  name: "Texture / Parlin Noise",
+  name: "Parlin Noise",
+  category: textureCategory,
   factory: () => {
     return {
       color: NodeColor.Orange,

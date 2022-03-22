@@ -13,3 +13,9 @@ export const mathTypes = [
   NodeDataType.Vector3,
   NodeDataType.Vector4,
 ]
+
+export type NodeCategory = {
+  id: string,
+  label: string,
+  icon: string,
+}
