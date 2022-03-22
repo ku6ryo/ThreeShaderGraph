@@ -69,13 +69,13 @@ export class ShaderGraph {
   /**
    * Resolve graph structure. Orders of nodes etc.
    */
-  resolveGraph() {
+  resolve() {
     let outputNode: ShaderNode | null = null
     let outputNodeCount = 0
     this.#nodes.forEach((n) => {
       if (n.isOutputNode()) {
         outputNode = n
-        outputNodeCount++
+        outputNodeCount += 1
       }
     })
     if (!outputNode) {
@@ -101,7 +101,7 @@ export class ShaderGraph {
         s.markConnected(true)
         const wire = wires[0]
         const inSocket = wire.getInSocket()
-        const nn = this.#nodes.find((n) => n.getOutSockets().includes(inSocket))
+        const nn = this.#nodes.find((node) => node.getOutSockets().includes(inSocket))
         if (!nn) {
           return
         }
@@ -150,19 +150,17 @@ export class ShaderGraph {
     return values
   }
 
-  generateVertCode(): string {
+  vert(): string {
     let uniformCode = ""
     let header = ""
     let common = ""
     let main = ""
 
-    const headerCodes: { [key: string]: string } = {}
+    const headers: { [key: string]: string } = {}
     const builtInMap: Map<BuiltIn, boolean> = new Map()
     this.#nodes.forEach((n) => {
-      const cCode = n.generateVertCommonCode()
-      if (cCode && !headerCodes[n.getTypeId()]) {
-        header += `${cCode}\n`
-      }
+      headers[n.getTypeId()] = n.generateVertCommonCode()
+
       n.getBuiltIns().forEach((a) => {
         builtInMap.set(a, true)
       })
@@ -174,6 +172,8 @@ export class ShaderGraph {
       })
       main += n.generateVertCode()
     })
+
+    header += Object.values(headers).join("\n")
 
     if (builtInMap.get(BuiltIn.UV)) {
       header += "varying vec2 vUv;\n"
@@ -195,17 +195,15 @@ ${main}
 `
   }
 
-  generateFragCode(): string {
+  frag(): string {
     let uniformCode = ""
     let header = ""
-    const commonCode = ""
     let main = ""
     const headers: { [key: string]: string } = {}
 
     const builtInMap: Map<BuiltIn, boolean> = new Map()
     this.#nodes.forEach((n) => {
-      const cCode = n.generateFragCommonCode()
-      headers[n.getTypeId()] = `${cCode}\n`
+      headers[n.getTypeId()] = n.generateFragCommonCode()
 
       n.getBuiltIns().forEach((a) => {
         builtInMap.set(a, true)

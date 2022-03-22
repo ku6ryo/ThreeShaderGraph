@@ -33,7 +33,7 @@ export class NodeWireManager {
   }
 
   addNode(node: NodeProps) {
-    const n = this.cloneNode(node)
+    const n = NodeWireManager.cloneNode(node)
     this.#nodes.push(n)
     this.#nodeDict[n.id] = n
     this.#updateId = shortUUID.generate()
@@ -45,7 +45,7 @@ export class NodeWireManager {
     if (!n) {
       throw new Error(`Node with id ${id} not found`)
     }
-    return this.cloneNode(n)
+    return NodeWireManager.cloneNode(n)
   }
 
   updateNode(node: NodeProps) {
@@ -53,12 +53,12 @@ export class NodeWireManager {
     if (index === -1) {
       throw new Error(`Node with id ${node.id} not found`)
     }
-    const n = this.cloneNode(node)
+    const n = NodeWireManager.cloneNode(node)
     this.#nodes[index] = n
     this.updateNodes(this.#nodes)
   }
 
-  private cloneNode(node: NodeProps) {
+  private static cloneNode(node: NodeProps) {
     const inSockets = node.inSockets.map((s) => ({ ...s }))
     const outSockets = node.outSockets.map((s) => ({ ...s }))
     const newNode = { ...node, outSockets, inSockets }

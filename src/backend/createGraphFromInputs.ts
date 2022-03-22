@@ -126,9 +126,9 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
   })
 
-  graph.resolveGraph()
-  const vert = graph.generateVertCode()
-  const frag = graph.generateFragCode()
+  graph.resolve()
+  const vert = graph.vert()
+  const frag = graph.frag()
   console.log(vert)
   console.log(frag)
   return graph

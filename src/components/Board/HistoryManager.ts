@@ -22,7 +22,7 @@ export class HistoryManager {
 
   goBack(): EditHistory | null {
     if (this.#index > 0) {
-      this.#index--
+      this.#index -= 1
       return this.#histories[this.#index]
     }
     return null
@@ -33,7 +33,6 @@ export class HistoryManager {
   }
 
   save = (nodes: NodeProps[], wires: WireProps[]) => {
-    console.log("save", this.#index + 1)
     const nodeDict: { [key: string]: NodeProps } = {}
     const wireDict: { [key: string]: WireProps } = {}
     nodes.forEach((node) => {
@@ -46,7 +45,7 @@ export class HistoryManager {
       nodes: nodeDict,
       wires: wireDict,
     }
-    if (this.#index == this.#maxHistories) {
+    if (this.#index === this.#maxHistories) {
       this.#histories.shift()
       this.#histories[this.#index] = newHistory
     } else {

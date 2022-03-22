@@ -53,6 +53,7 @@ export class ShaderPreview {
 
     const camera = new PerspectiveCamera(90, 1, 0.1, 1000)
     camera.position.z = 3
+    /* eslint-disable-next-line no-new */
     new OrbitControls(camera, renderer.domElement)
 
     const scene = new Scene()
@@ -108,10 +109,9 @@ export class ShaderPreview {
     graph.getNodes().forEach((n) => {
       n.updateOnDraw()
     })
-
     const m = new ShaderMaterial({
-      vertexShader: graph.generateVertCode(),
-      fragmentShader: graph.generateFragCode(),
+      vertexShader: graph.vert(),
+      fragmentShader: graph.frag(),
       uniforms: UniformsUtils.merge([
         ...builtInUniforms,
         uniforms,

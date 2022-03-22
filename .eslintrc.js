@@ -22,5 +22,18 @@ module.exports = {
   rules: {
     semi: ["error", "never"],
     quotes: ["error", "double"],
+    "import/prefer-default-export": "off",
+    "import/extensions": ["error", "never"],
+    "no-unused-vars": "off",
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error",
+    "@typescript-eslint/no-unused-vars": "error"
   },
+  settings: {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  }
 };

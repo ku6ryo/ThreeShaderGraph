@@ -1,5 +1,5 @@
 export function validVariableName(name: string): boolean {
-  return new RegExp("[a-zA-Z0-9_]+", "g").test(name)
+  return /^[a-zA-Z0-9_]+$/.test(name)
 }
 
 export function createValidNumberLiteral(v: number): string {
