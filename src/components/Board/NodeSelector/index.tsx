@@ -27,25 +27,28 @@ export function NodeSelector({
     })
     return [Array.from(catMap.values()), nodeMap]
   }, []);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-  const onCategoryClick: MouseEventHandler<HTMLButtonElement> & ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void)= useCallback((e) => {
-    setSelectedCategoryId(e.currentTarget.dataset.id!)
-  }, [])
+  const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
+  const onCategoryClick: MouseEventHandler<HTMLButtonElement> & ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void) = useCallback((e) => {
+    e.stopPropagation()
+    setSelectedCatId(e.currentTarget.dataset.id!)
+  }, [setSelectedCatId])
   const onNodeClick: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+    e.stopPropagation()
+    console.log(e.currentTarget.dataset.id)
     onSelected(e.currentTarget.dataset.id!)
-    setSelectedCategoryId(null)
-  }, [onSelected])
+    setSelectedCatId(null)
+  }, [onSelected, selectedCatId])
   useEffect(() => {
     const listener = () => {
-      if (selectedCategoryId) {
-        setSelectedCategoryId(null)
+      if (selectedCatId) {
+        setSelectedCatId(null)
       }
     }
-    window.addEventListener("click", listener, true)
+    window.addEventListener("click", listener)
     return () => {
       window.removeEventListener("click", listener)
     }
-  }, [])
+  }, [selectedCatId])
 
   return (
     <div className={style.frame}>
@@ -56,13 +59,13 @@ export function NodeSelector({
               content={c.label}
               placement={"right"}
               usePortal={false}
-              isOpen={selectedCategoryId === c.id ? false : undefined}
+              isOpen={selectedCatId === c.id ? false : undefined}
             >
               <Button onClick={onCategoryClick} data-id={c.id}>
                 <Icon icon={c.icon as any} />
               </Button>
             </Tooltip2>
-            {selectedCategoryId === c.id && (
+            {selectedCatId === c.id && (
               <div className={style.nodes}>
                 {nodeMap.get(c.id)!.map((n) => {
                   return (
