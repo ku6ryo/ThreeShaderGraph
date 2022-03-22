@@ -12,9 +12,6 @@ jobs:
   all:
     name: Build check
     runs-on: ubuntu-18.04
-    defaults:
-      run:
-        working-directory: ./frontend
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node
