@@ -454,13 +454,15 @@ export function Board({
     const mouseY = e.clientY - svgRect.y
 
     // Start dragging board
-    if (e.button == 1) {
+    // Mouse wheel click or Left click + shift (for trackpad devices like Macbook)
+    if (e.button == 1 || (e.button == 0 && e.shiftKey)) {
       setDraggingBoard({
         startCenterX: board.centerX,
         startCenterY: board.centerY,
         startMouseX: mouseX,
         startMouseY: mouseY,
       })
+      return
     }
 
     // Start drawing selection rect
@@ -653,7 +655,7 @@ export function Board({
       <svg
         className={classnames({
           [style.board]: true,
-          [style.grabbing]: !!draggingNode
+          [style.grabbing]: !!draggingNode || !!draggingBoard,
         })}
         ref={svgRootRef}
         viewBox={viewBox}
