@@ -98,11 +98,13 @@ export class ShaderGraph {
     // And also finds one of circular references if exists.
     const addNodeToMap = (n: ShaderNode, order: string, prevN: ShaderNode | null) => {
       if (routeMap[n.getId()]) {
-        routeMap[n.getId()].forEach(o => {
-          if (order.indexOf(o) === 0) {
-            throw new CircularReferenceError(n.getId(), "")
-          }
-        })
+        if (prevN) {
+          routeMap[n.getId()].forEach(o => {
+            if (order.indexOf(o) === 0) {
+              throw new CircularReferenceError(n.getId(), prevN.getId())
+            }
+          })
+        }
         routeMap[n.getId()].push(order)
       } else {
         routeMap[n.getId()] = [order]
@@ -126,7 +128,7 @@ export class ShaderGraph {
           return
         }
         inSocket.markConnected(true)
-        addNodeToMap(nn, nextOrder, null)
+        addNodeToMap(nn, nextOrder, n)
       })
     }
     addNodeToMap(outputNode as ShaderNode, "1", null)
