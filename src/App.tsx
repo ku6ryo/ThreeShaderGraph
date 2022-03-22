@@ -3,13 +3,15 @@ import { Board } from "./components/Board";
 import { NodeProps, WireProps } from "./components/Board/types";
 import { factories } from "./definitions/factories";
 import { createGraphFromInputs } from "./backend/createGraphFromInputs";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ShaderGraph } from "./backend/ShaderGraph";
 import { InNodeInputValue } from "./components/NodeBox";
 import { PrismLight } from "react-syntax-highlighter"
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Preview } from "./components/Preview";
 import { RiNodeTree as NodeIcon } from "react-icons/ri"
+import packageJson from "../package.json"
+import { REVISION } from "three";
 
 export function App() {
 
@@ -31,11 +33,17 @@ export function App() {
     }
   }
 
+  const version = packageJson.version;
+
   return (
     <>
       <div className={style.sidebar}>
         <div className={style.title}>Three.js Shader Node Editor&nbsp;<NodeIcon/></div>
-        <div>
+        <div className={style.versions}>
+          <div>{`Editor Ver.: ${version}`}</div>
+          <div>{`Three.js Revision.: ${REVISION}`}</div>
+        </div>
+        <div className={style.preview}>
           <Preview graph={graph} />
         </div>
       </div>

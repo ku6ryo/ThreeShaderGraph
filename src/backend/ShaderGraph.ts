@@ -8,11 +8,6 @@ export class ShaderGraph {
   #nodes: ShaderNode[] = []
   #wires: Wire[] = []
 
-  /**
-   * Nodes that are effective. The order is sorted for code generation.
-   */
-  #resolvedNodes: ShaderNode[] = []
-
   #id: string
 
   constructor() {
@@ -37,10 +32,6 @@ export class ShaderGraph {
     return [...this.#nodes]
   }
 
-  getResolvedNodes(): ShaderNode[] {
-    return [...this.#resolvedNodes]
-  }
-
   /**
    * Addes a wire to the graph.
    */
@@ -57,7 +48,7 @@ export class ShaderGraph {
 
   setInputValue(nodeId: string, socketIndex: number, value: InNodeInputValue) {
     console.log("graph " + this.#id + " set input value " + nodeId + " " + socketIndex + " " + value)
-    const node = this.#resolvedNodes.find(n => n.getId() === nodeId)
+    const node = this.#nodes.find(n => n.getId() === nodeId)
     if (!node) {
       throw new Error("node not found")
     }
@@ -66,7 +57,7 @@ export class ShaderGraph {
 
   getBuiltIns(): BuiltIn[] {
     const builtInMap: Map<BuiltIn, boolean> = new Map()
-    this.#resolvedNodes.forEach(n => {
+    this.#nodes.forEach(n => {
       n.getBuiltIns().forEach(b => {
         builtInMap.set(b, true)
       })
@@ -132,12 +123,12 @@ export class ShaderGraph {
         resolvedNodes.push(n)
       }
     })
-    this.#resolvedNodes = resolvedNodes
+    this.#nodes = resolvedNodes
   }
 
   getUniformValueMap() {
     const values: { [key: string]: any } = {}
-    this.getResolvedNodes().forEach(n => {
+    this.getNodes().forEach(n => {
       n.getInSockets().forEach((s, i)=> {
         if (!s.connected() && n.getUniforms()[i]) {
           const { name, type, valueVector3, valueFloat, valueVector2, valueSampler2D, valueVector4 } = n.getUniforms()[i]
@@ -170,7 +161,7 @@ export class ShaderGraph {
 
     let headerCodes: { [key: string]: string } = {}
     const builtInMap: Map<BuiltIn, boolean> = new Map()
-    this.#resolvedNodes.forEach(n => {
+    this.#nodes.forEach(n => {
       const cCode = n.generateVertCommonCode()
       if (cCode && !headerCodes[n.getTypeId()]) {
         header += cCode + "\n"
@@ -215,7 +206,7 @@ ${main}
     let headers: { [key: string]: string } = {}
 
     const builtInMap: Map<BuiltIn, boolean> = new Map()
-    this.#resolvedNodes.forEach(n => {
+    this.#nodes.forEach(n => {
       const cCode = n.generateFragCommonCode()
       headers[n.getTypeId()] = cCode + "\n"
 

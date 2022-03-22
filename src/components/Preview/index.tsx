@@ -32,7 +32,7 @@ export function Preview({
   const controlValues = useMemo(() => {
     return {
       modelType: Model.Sphere,
-      backgroundColor: 0xFFFFFF,
+      backgroundColor: "0xFFFFFF",
     }
   }, [])
 
@@ -59,12 +59,10 @@ export function Preview({
     }
   }, [graph])
 
-  console.log("aaa")
-
   return (
     <div className={style.frame}>
       <div className={style.rederArea} style={{
-        backgroundColor: "#" + controlValues.backgroundColor.toString(16)
+        backgroundColor: controlValues.backgroundColor,
       }}>
         <canvas ref={canvasRef} />
       </div>

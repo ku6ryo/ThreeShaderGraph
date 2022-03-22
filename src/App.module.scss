@@ -9,6 +9,7 @@ $SIDEBAR_WIDTH: 308px;
 }
 
 .sidebar {
+  background-color: #111;
   height: 100vh;
   left: 0;
   position: fixed;
@@ -17,8 +18,28 @@ $SIDEBAR_WIDTH: 308px;
 
   .title {
     color: white;
+    font-family: 'Titillium';
+    font-weight: bold;
+    font-size: 14px;
     padding: 8px 4px;
+    text-align: center;
+
+    svg {
+      position: relative;
+      top: 2px;
+    }
   }
+
+  .versions {
+    color: white;
+    font-size: 10px;
+    margin: 0 4px;
+    text-align: right;
+  }
+}
+
+.preview {
+  margin: 0 4px;
 }
 
 .codeModal {
