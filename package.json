@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "scripts": {
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "lint": "eslint --ext .js,.ts ./src",
+    "lint:fix": "yarn lint --fix"
   },
   "author": "Ryo Kuroyanagi",
   "license": "MIT",
@@ -31,6 +33,13 @@
   },
   "devDependencies": {
     "@types/react-syntax-highlighter": "^13.5.2",
-    "eslint": "^8.11.0"
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
+    "@typescript-eslint/parser": "^5.16.0",
+    "eslint": "^8.11.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.3.0"
   }
 }

@@ -1,26 +1,25 @@
-import { BuiltIn, ShaderNode } from "../../ShaderNode";
-import { ShaderDataType } from "../../data_types";
+import { BuiltIn, ShaderNode } from '../../ShaderNode';
+import { ShaderDataType } from '../../data_types';
 
 export class LambertNode extends ShaderNode {
-
   constructor(id: string) {
-    super(id, "Material_Lambert", [BuiltIn.Normal, BuiltIn.DirectionalLight])
-    this.addInSocket("diffuse", ShaderDataType.Vector3)
-    this.addInSocket("emissive", ShaderDataType.Vector3)
-    this.addOutSocket("color", ShaderDataType.Vector4)
+    super(id, 'Material_Lambert', [BuiltIn.Normal, BuiltIn.DirectionalLight]);
+    this.addInSocket('diffuse', ShaderDataType.Vector3);
+    this.addInSocket('emissive', ShaderDataType.Vector3);
+    this.addOutSocket('color', ShaderDataType.Vector4);
   }
 
   generateVertCommonCode(): string {
     return `
       varying vec3 vViewPosition;
-    `
+    `;
   }
 
   generateVertCode(): string {
     return `
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
     vViewPosition = mvPosition.xyz;
-    `
+    `;
   }
 
   generateFragCommonCode(): string {
@@ -94,17 +93,17 @@ vec4 builtIn_lambertMaterial(vec3 diffuse, vec3 emissive) {
   vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + totalEmissiveRadiance;
   return vec4(outgoingLight, diffuseColor.a);
 }
-    `
+    `;
   }
 
   generateFragCode(): string {
-    const i0 = this.getInSocket(0)
-    const i1 = this.getInSocket(1)
-    const o = this.getOutSocket(0)
+    const i0 = this.getInSocket(0);
+    const i1 = this.getInSocket(1);
+    const o = this.getOutSocket(0);
     return `
     vec3 mvPosition = vViewPosition;
     vec3 transformedNormal = vNormal;
     vec4 ${o.getVarName()} = builtIn_lambertMaterial(${i0.getVarName()}, ${i1.getVarName()});
-    `
+    `;
   }
 }
