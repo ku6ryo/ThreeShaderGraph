@@ -65,6 +65,10 @@ export class ShaderGraph {
     return [...this.#nodes]
   }
 
+  hasNode(nodeId: string): boolean {
+    return !!this.#nodes.find((n) => n.getId() === nodeId)
+  }
+
   /**
    * Addes a wire to the graph.
    */

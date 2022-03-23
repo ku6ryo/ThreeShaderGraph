@@ -25,6 +25,7 @@ import { GreaterThanNode } from "./nodes/math/GreaterThanNode"
 import { LessThanNode } from "./nodes/math/LessThanNode"
 import { LambertNode } from "./nodes/materials/LambertNode"
 import { PhongNode } from "./nodes/materials/PhongNode"
+import { ColorInputNode } from "./nodes/inputs/ColorInputNode"
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
   const graph = new ShaderGraph()
@@ -97,6 +98,9 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     if (n.typeId === NodeTypeId.Material_Phong) {
       sn = new PhongNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.InputColor) {
+      sn = new ColorInputNode(n.id)
     }
 
     if (sn) {

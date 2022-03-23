@@ -17,6 +17,7 @@ import "../node_modules/@blueprintjs/core/lib/css/blueprint.css"
 import "../node_modules/@blueprintjs/icons/lib/css/blueprint-icons.css"
 import "../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css"
 import { UniformValueNotSetError } from "./backend/ShaderNode";
+import { getJSDocOverrideTagNoCache } from "typescript";
 
 export function App() {
 
@@ -29,7 +30,6 @@ export function App() {
   const onShowCodeClick = useCallback(() => {
     setCodeShown(true)
   }, [])
-
 
   const onChange = (nodes: NodeProps[], wires: WireProps[]) => {
     try {
@@ -90,7 +90,7 @@ export function App() {
   }
 
   const onInSocketValueChange = (nodeId: string, socketIndex: number, value: InNodeInputValue) => {
-    if (graph) {
+    if (graph && graph.hasNode(nodeId)) {
       graph.setInputValue(nodeId, socketIndex, value)
     }
   }

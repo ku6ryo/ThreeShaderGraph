@@ -4,6 +4,7 @@ import classnames from "classnames"
 import { FloatInput } from "./FloatInput"
 import { Texture, Vector2, Vector3, Vector4 } from "three"
 import { ImageInput } from "./ImageInput"
+import { ColorInput } from "./ColorInput"
 
 export type SocketDirection = "in" | "out"
 
@@ -17,8 +18,9 @@ export enum NodeColor {
 }
 
 export enum InNodeInputType {
-  Float = "float",
   Image = "image",
+  Color = "color",
+  Float = "float",
   Vector2 = "vetor2",
   Vector3 = "vetor3",
   Vector4 = "vetor4",
@@ -205,6 +207,9 @@ export const NodeBox = memo(function NodeBox({
                       )}
                       {socket.alternativeValueInputType === InNodeInputType.Image && (
                         <ImageInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
+                      )}
+                      {socket.alternativeValueInputType === InNodeInputType.Color && (
+                        <ColorInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
                       )}
                     </div>
                   )}

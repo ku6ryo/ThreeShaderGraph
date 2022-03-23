@@ -719,7 +719,7 @@ export function Board({
           stepSize={ZOOM_STEP}
           labelStepSize={10}
           onChange={onZoomSliderChange}
-          labelRenderer={(value) => `${(value * 100).toFixed()}%`}
+          labelRenderer={(value: any) => `${(value * 100).toFixed()}%`}
           showTrackFill={false}
           value={board.zoom}
           vertical={true}

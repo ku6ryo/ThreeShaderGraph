@@ -1,0 +1,38 @@
+
+.frame {
+  position: relative;
+}
+
+.colorBar {
+  background-color: white;
+  border-radius: 2px;
+  cursor: pointer;
+  height: 20px;
+  overflow: hidden;
+  position: relative;
+  transition: .4s;
+
+  &:hover {
+    opacity: .7;
+  }
+
+  .background {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAADFJREFUOE9jZGBgEGHAD97gk2YcNYBhmIQBgWSAP52AwoAQwJvQRg1gACckQoC2gQgAIF8IscwEtKYAAAAASUVORK5CYII=") left center;
+    height: 100%;
+    width: 100%;
+  }
+
+  .color {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+}
+
+.picker {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+}
