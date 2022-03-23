@@ -115,6 +115,7 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     if (inNode && outNode) {
       graph.addWire(
         new Wire(
+          w.id,
           inNode.getOutSocket(w.inSocketIndex),
           outNode.getInSocket(w.outSocketIndex),
         ),

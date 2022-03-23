@@ -1,4 +1,11 @@
 
 .wire {
   filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, .4));
+  stroke: url(#wire-linear);
+  stroke-width: 2.5;
+  fill: transparent;
+  stroke-linecap: round;
+  &.invalid {
+    stroke: red;
+  }
 }

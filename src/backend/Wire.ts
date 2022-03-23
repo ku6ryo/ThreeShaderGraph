@@ -2,13 +2,20 @@ import { ShaderDataType } from "./data_types"
 import { Socket } from "./Socket"
 
 export class Wire {
+  #id: string
+
   #inSocket: Socket
 
   #outSocket: Socket
 
-  constructor(inSocket: Socket, outSocket: Socket) {
+  constructor(id: string, inSocket: Socket, outSocket: Socket) {
+    this.#id = id
     this.#inSocket = inSocket
     this.#outSocket = outSocket
+  }
+
+  getId() {
+    return this.#id
   }
 
   getInSocket(): Socket {

@@ -1,11 +1,13 @@
 import { useMemo, memo } from "react"
 import style from "./style.module.scss"
+import classnames from "classnames"
 
 type Props = {
   x1: number,
   y1: number,
   x2: number,
   y2: number,
+  valid: boolean,
 }
 
 export const WireLine = memo(function WireLine({
@@ -13,6 +15,7 @@ export const WireLine = memo(function WireLine({
   y1,
   x2,
   y2,
+  valid,
 }: Props) {
   const d = Math.abs(x2 - x1) / 3
   const path = useMemo(() => {
@@ -24,9 +27,11 @@ export const WireLine = memo(function WireLine({
   }, [x1, y1, x2, y2])
   return (
     <path
-      className={style.wire}
-      d={path} stroke="url(#wire-linear)" strokeWidth={2.5} fill="transparent"
-      strokeLinecap="round"
+      className={classnames({
+        [style.wire]: true,
+        [style.invalid]: !valid,
+      })}
+      d={path}
     />
   )
 })

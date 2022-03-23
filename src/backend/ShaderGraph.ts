@@ -5,8 +5,18 @@ import { InNodeInputValue } from "../components/NodeBox"
 import { Wire } from "./Wire"
 
 export class CircularReferenceError extends Error {
-  constructor(nodeOutId: string, nodeInId: string) {
-    super(`Circular reference detected: ${nodeOutId} -> ${nodeInId}`)
+  nodeOutId: string
+
+  nodeInId: string
+
+  wireId: string
+
+  constructor(nodeOutId: string, nodeInId: string, wireId: string) {
+    super(`Circular reference detected: ${nodeInId} -> ${nodeOutId}`)
+
+    this.nodeInId = nodeInId
+    this.nodeOutId = nodeOutId
+    this.wireId = wireId
   }
 }
 
@@ -96,12 +106,12 @@ export class ShaderGraph {
 
     // Check routes and calculate the order to generate code.
     // And also finds one of circular references if exists.
-    const addNodeToMap = (n: ShaderNode, order: string, prevN: ShaderNode | null) => {
+    const addNodeToMap = (n: ShaderNode, order: string, prevN: ShaderNode | null, wire: Wire | null) => {
       if (routeMap[n.getId()]) {
-        if (prevN) {
-          routeMap[n.getId()].forEach(o => {
+        if (prevN && wire) {
+          routeMap[n.getId()].forEach((o) => {
             if (order.indexOf(o) === 0) {
-              throw new CircularReferenceError(n.getId(), prevN.getId())
+              throw new CircularReferenceError(n.getId(), prevN.getId(), wire.getId())
             }
           })
         }
@@ -111,7 +121,7 @@ export class ShaderGraph {
       }
       nodeMap[order] = n
       n.getInSockets().forEach((s, i) => {
-        const nextOrder = order + i//Array(i + 1).fill("_")
+        const nextOrder = order + i// Array(i + 1).fill("_")
         const wires = this.#wires.filter((w) => w.getOutSocket() === s)
         if (wires.length > 1) {
           throw new Error(`no wire or in socket has more than 1 wires connected to in socket ${s.getId()}`)
@@ -128,10 +138,10 @@ export class ShaderGraph {
           return
         }
         inSocket.markConnected(true)
-        addNodeToMap(nn, nextOrder, n)
+        addNodeToMap(nn, nextOrder, n, wire)
       })
     }
-    addNodeToMap(outputNode as ShaderNode, "1", null)
+    addNodeToMap(outputNode as ShaderNode, "1", null, null)
     const resolvedNodes: ShaderNode[] = []
     Object.keys(nodeMap).sort((a, b) => Number(b) - Number(a)).forEach((k) => {
       // Removes duplications.

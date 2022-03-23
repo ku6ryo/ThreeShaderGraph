@@ -22,6 +22,7 @@ export function App() {
   const [graph, setGraph] = useState<ShaderGraph | null>(null)
   const [codeShown, setCodeShown] = useState(false)
   const toasterRef = useRef<Toaster>(null)
+  const [invalidWireId, setInvalidaWireId] = useState<string | null>(null)
   const version = packageJson.version;
 
 
@@ -30,19 +31,16 @@ export function App() {
       try {
         const graph = createGraphFromInputs(nodes, wires)
         setGraph(graph)
-        if (toasterRef.current) {
-          toasterRef.current.show({
-            message: "New graph",
-            intent: "success"
-          })
-        }
+        setInvalidaWireId(null)
       } catch (e) {
         if (e instanceof CircularReferenceError) {
           if (toasterRef.current) {
             toasterRef.current.show({
               message: "Circular reference",
-              intent: "danger"
+              intent: "danger",
+              icon: "refresh"
             })
+            setInvalidaWireId(e.wireId)
           }
         }
       }
@@ -75,6 +73,7 @@ export function App() {
           factories={factories}
           onChange={onChange}
           onInSocketValueChange={onInSocketValueChange}
+          invalidWireId={invalidWireId}
         />
       </div>
       {codeShown && (

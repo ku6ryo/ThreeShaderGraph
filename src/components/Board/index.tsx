@@ -87,6 +87,7 @@ type Props = {
   factories: NodeFactory[]
   onChange: (nodes: NodeProps[], wires: WireProps[]) => void
   onInSocketValueChange: (id: string, index: number, value: InNodeInputValue) => void
+  invalidWireId: string | null
 }
 
 /**
@@ -96,6 +97,7 @@ export function Board({
   factories,
   onChange,
   onInSocketValueChange,
+  invalidWireId,
 }: Props) {
   const svgRootRef = useRef<SVGSVGElement | null>(null)
   const [board, setBoard] = useState<BoardStats>({
@@ -668,7 +670,7 @@ export function Board({
         </defs>
         <circle cx={0} cy={0} r={100000} fill="url(#board-background-pattern)" />
         {wires.map(w => (
-          <WireLine key={w.id} x1={w.inX} y1={w.inY} x2={w.outX} y2={w.outY}/>
+          <WireLine key={w.id} x1={w.inX} y1={w.inY} x2={w.outX} y2={w.outY} valid={w.id !== invalidWireId}/>
         ))}
         {nodes.map((n) => (
           <NodeBox
@@ -689,9 +691,9 @@ export function Board({
           />
         ))}
         {drawingWire && (drawingWire.startDirection == "in" ? (
-          <WireLine x1={drawingWire.movingX} y1={drawingWire.movingY} x2={drawingWire.startX} y2={drawingWire.startY}/>
+          <WireLine x1={drawingWire.movingX} y1={drawingWire.movingY} x2={drawingWire.startX} y2={drawingWire.startY} valid={true}/>
         ) : (
-          <WireLine x1={drawingWire.startX} y1={drawingWire.startY} x2={drawingWire.movingX} y2={drawingWire.movingY}/>
+          <WireLine x1={drawingWire.startX} y1={drawingWire.startY} x2={drawingWire.movingX} y2={drawingWire.movingY} valid={true}/>
         ))}
         {drawingRect && (
           <rect
