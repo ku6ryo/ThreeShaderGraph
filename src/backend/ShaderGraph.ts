@@ -3,6 +3,7 @@ import { ShaderDataType } from "./data_types"
 import { BuiltIn, ShaderNode } from "./ShaderNode"
 import { InNodeInputValue } from "../components/NodeBox"
 import { Wire } from "./Wire"
+import { isCompatibleSocketConnection } from "./utils"
 
 export class CircularReferenceError extends Error {
   nodeOutId: string
@@ -14,6 +15,21 @@ export class CircularReferenceError extends Error {
   constructor(nodeOutId: string, nodeInId: string, wireId: string) {
     super(`Circular reference detected: ${nodeInId} -> ${nodeOutId}`)
 
+    this.nodeInId = nodeInId
+    this.nodeOutId = nodeOutId
+    this.wireId = wireId
+  }
+}
+
+export class IncompatibleSocketConnectionError extends Error {
+  nodeOutId: string
+
+  nodeInId: string
+
+  wireId: string
+
+  constructor(nodeOutId: string, nodeInId: string, wireId: string) {
+    super(`Incompatible connection detected: ${nodeInId} -> ${nodeOutId}`)
     this.nodeInId = nodeInId
     this.nodeOutId = nodeOutId
     this.wireId = wireId
@@ -64,7 +80,6 @@ export class ShaderGraph {
   }
 
   setInputValue(nodeId: string, socketIndex: number, value: InNodeInputValue) {
-    console.log(`graph ${this.#id} set input value ${nodeId} ${socketIndex} ${value}`)
     const node = this.#nodes.find((n) => n.getId() === nodeId)
     if (!node) {
       throw new Error("node not found")
@@ -111,7 +126,7 @@ export class ShaderGraph {
         if (prevN && wire) {
           routeMap[n.getId()].forEach((o) => {
             if (order.indexOf(o) === 0) {
-              throw new CircularReferenceError(n.getId(), prevN.getId(), wire.getId())
+              throw new CircularReferenceError(prevN.getId(), n.getId(), wire.getId())
             }
           })
         }
@@ -135,7 +150,10 @@ export class ShaderGraph {
         const inSocket = wire.getInSocket()
         const nn = this.#nodes.find((node) => node.getOutSockets().includes(inSocket))
         if (!nn) {
-          return
+          throw new Error(`no node found which has the input socket. socket id: ${inSocket.getId()}`)
+        }
+        if (!isCompatibleSocketConnection(inSocket, s)) {
+          throw new IncompatibleSocketConnectionError(n.getId(), nn.getId(), wire.getId())
         }
         inSocket.markConnected(true)
         addNodeToMap(nn, nextOrder, n, wire)

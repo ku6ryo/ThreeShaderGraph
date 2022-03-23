@@ -22,6 +22,8 @@ export enum BuiltIn {
   DirectionalLight = "DirectionalLight",
 }
 
+export class UniformValueNotSetError extends Error {}
+
 export abstract class ShaderNode {
   // Unique id for this node
   #id: string
@@ -172,31 +174,31 @@ export abstract class ShaderNode {
     }
     if (u.type === ShaderDataType.Float) {
       if (value.float === undefined) {
-        throw new Error("float value is undefined")
+        throw new UniformValueNotSetError("float value is not set")
       }
       u.valueFloat = value.float
     }
     if (u.type === ShaderDataType.Vector2) {
       if (value.vec2 === undefined) {
-        throw new Error("vec2 value is undefined")
+        throw new UniformValueNotSetError("vec2 value is not set")
       }
       u.valueVector2 = value.vec2
     }
     if (u.type === ShaderDataType.Vector3) {
       if (value.vec3 === undefined) {
-        throw new Error("vec3 value is undefined")
+        throw new UniformValueNotSetError("vec3 value is not set")
       }
       u.valueVector3 = value.vec3
     }
     if (u.type === ShaderDataType.Vector4) {
       if (value.vec4 === undefined) {
-        throw new Error("vec4 value is undefined")
+        throw new UniformValueNotSetError("vec4 value is not set")
       }
       u.valueVector4 = value.vec4
     }
     if (u.type === ShaderDataType.Sampler2D) {
       if (value.image === undefined) {
-        throw new Error("image value is undefined")
+        throw new UniformValueNotSetError("Image value is not set")
       }
       u.valueSampler2D = value.image
     }

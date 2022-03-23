@@ -4,7 +4,7 @@ import { NodeProps, WireProps } from "./components/Board/types";
 import { factories } from "./definitions/factories";
 import { createGraphFromInputs } from "./backend/createGraphFromInputs";
 import { useEffect, useRef, useState } from "react";
-import { CircularReferenceError, ShaderGraph } from "./backend/ShaderGraph";
+import { CircularReferenceError, IncompatibleSocketConnectionError, ShaderGraph } from "./backend/ShaderGraph";
 import { InNodeInputValue } from "./components/NodeBox";
 import { PrismLight } from "react-syntax-highlighter"
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -16,6 +16,7 @@ import { Toaster, Position } from "@blueprintjs/core/lib/esm";
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css"
 import "../node_modules/@blueprintjs/icons/lib/css/blueprint-icons.css"
 import "../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css"
+import { UniformValueNotSetError } from "./backend/ShaderNode";
 
 export function App() {
 
@@ -28,24 +29,59 @@ export function App() {
 
   const onChange = (nodes: NodeProps[], wires: WireProps[]) => {
     try {
-      try {
-        const graph = createGraphFromInputs(nodes, wires)
-        setGraph(graph)
-        setInvalidaWireId(null)
-      } catch (e) {
-        if (e instanceof CircularReferenceError) {
-          if (toasterRef.current) {
-            toasterRef.current.show({
-              message: "Circular reference",
-              intent: "danger",
-              icon: "refresh"
-            })
-            setInvalidaWireId(e.wireId)
-          }
-        }
+      const graph = createGraphFromInputs(nodes, wires)
+      setGraph(graph)
+      setInvalidaWireId(null)
+      if (invalidWireId) {
+        toasterRef.current?.show({
+          message: "Well done!",
+          icon: "tick",
+          intent: "success",
+        })
       }
     } catch (e) {
       console.error(e)
+      if (toasterRef.current) {
+        if (e instanceof CircularReferenceError) {
+          toasterRef.current.show({
+            message: "Circular reference",
+            intent: "danger",
+            icon: "refresh"
+          })
+          setInvalidaWireId(e.wireId)
+          return
+        }
+        if (e instanceof UniformValueNotSetError) {
+          toasterRef.current.show({
+            message: e.message,
+            intent: "danger",
+            icon: "error"
+          })
+          return
+        }
+        if (e instanceof IncompatibleSocketConnectionError) {
+          toasterRef.current.show({
+            message: "Incompatible wire. Socket type mismatch.",
+            intent: "danger",
+            icon: "disable"
+          })
+          setInvalidaWireId(e.wireId)
+          return
+        }
+        if (e instanceof Error) {
+          toasterRef.current.show({
+            message: e.message,
+            intent: "danger",
+            icon: "error"
+          })
+          return
+        }
+        toasterRef.current.show({
+          message: "Fatal error: non Error thrown",
+          intent: "danger",
+          icon: "error"
+        })
+      }
     }
   }
 
@@ -117,7 +153,7 @@ export function App() {
           </PrismLight>
         </div>
       )}
-      <Toaster position={Position.BOTTOM} ref={toasterRef}/>
+      <Toaster position={Position.BOTTOM} ref={toasterRef} maxToasts={1}/>
     </>
   )
 }

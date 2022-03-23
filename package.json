@@ -1,6 +1,6 @@
 {
   "name": "three-shader-graph",
-  "version": "0.0.1",
+  "version": "0.0.1-beta",
   "scripts": {
     "build": "vite build",
     "dev": "vite",

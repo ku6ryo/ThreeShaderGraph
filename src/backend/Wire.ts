@@ -41,6 +41,7 @@ export class Wire {
       if (oType !== ShaderDataType.Sampler2D) {
         throw this.createError("Sampler2D can only be connected to Sampler2D")
       } else {
+        // Sampler2D cannot be a variable, so override input socket variable name.
         this.#outSocket.overrideVariableName(iVar)
         return ""
       }
@@ -49,6 +50,7 @@ export class Wire {
     if (iType === oType) {
       return `${oType} ${oVar} = ${iVar};\n`
     }
+
     // float
     if (iType === ShaderDataType.Float && oType === ShaderDataType.Vector2) {
       return `vec2 ${oVar} = vec2(${iVar});\n`
