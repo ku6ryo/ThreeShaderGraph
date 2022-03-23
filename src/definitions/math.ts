@@ -1,5 +1,5 @@
 import { NodeTypeId } from "./NodeTypeId"
-import { NodeColor } from "../components/NodeBox"
+import { InNodeInputType, NodeColor } from "../components/NodeBox"
 import { NodeCategory } from "./types"
 import { NodeBlueprint } from "../components/Board/types"
 
@@ -178,8 +178,16 @@ export const mathFactories = [{
     inNodeInputSlots: [],
     inSockets: [{
       label: "Value",
+      alternativeValueInputType: InNodeInputType.Float,
+      alternativeValue: {
+        float: 1,
+      }
     }, {
       label: "Threshold",
+      alternativeValueInputType: InNodeInputType.Float,
+      alternativeValue: {
+        float: 0,
+      }
     }],
     outSockets: [{
       label: "Result",
