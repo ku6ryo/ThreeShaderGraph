@@ -3,7 +3,7 @@ import { Board } from "./components/Board";
 import { NodeProps, WireProps } from "./components/Board/types";
 import { factories } from "./definitions/factories";
 import { createGraphFromInputs } from "./backend/createGraphFromInputs";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { CircularReferenceError, IncompatibleSocketConnectionError, ShaderGraph } from "./backend/ShaderGraph";
 import { InNodeInputValue } from "./components/NodeBox";
 import { PrismLight } from "react-syntax-highlighter"
@@ -12,7 +12,7 @@ import { Preview } from "./components/Preview";
 import { RiNodeTree as NodeIcon } from "react-icons/ri"
 import packageJson from "../package.json"
 import { REVISION } from "three";
-import { Toaster, Position } from "@blueprintjs/core/lib/esm";
+import { Toaster, Position, Button } from "@blueprintjs/core/lib/esm";
 import "../node_modules/@blueprintjs/core/lib/css/blueprint.css"
 import "../node_modules/@blueprintjs/icons/lib/css/blueprint-icons.css"
 import "../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css"
@@ -25,6 +25,10 @@ export function App() {
   const toasterRef = useRef<Toaster>(null)
   const [invalidWireId, setInvalidaWireId] = useState<string | null>(null)
   const version = packageJson.version;
+
+  const onShowCodeClick = useCallback(() => {
+    setCodeShown(true)
+  }, [])
 
 
   const onChange = (nodes: NodeProps[], wires: WireProps[]) => {
@@ -102,6 +106,9 @@ export function App() {
         </div>
         <div className={style.preview}>
           <Preview graph={graph} />
+        </div>
+        <div>
+          <Button text="Three.js code" icon="code" disabled={!!invalidWireId} onClick={onShowCodeClick}/>
         </div>
       </div>
       <div className={style.board}>
