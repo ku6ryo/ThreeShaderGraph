@@ -47,11 +47,20 @@ $SIDEBAR_WIDTH: 308px;
   display: flex;
   height: 100vh;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
   position: fixed;
   width: 100vw;
   z-index: 100000;
 
+  .codeContainer {
+    display: inline-block;
+    max-width: 50%;
+    max-height: 90%;
+    overflow: scroll;
+  }
+
   pre {
-    margin: 0 auto;
+    display: inline-block;
   }
 }

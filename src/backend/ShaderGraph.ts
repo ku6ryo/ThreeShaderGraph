@@ -4,6 +4,7 @@ import { BuiltIn, ShaderNode } from "./ShaderNode"
 import { InNodeInputValue } from "../components/NodeBox"
 import { Wire } from "./Wire"
 import { isCompatibleSocketConnection } from "./utils"
+import { Texture, Vector2, Vector3, Vector4 } from "three"
 
 export class CircularReferenceError extends Error {
   nodeOutId: string
@@ -294,5 +295,56 @@ void main() {
 ${main}
 }
     `
+  }
+
+  js() {
+    let code = ""
+    const vert = this.vert()
+    const frag = this.frag()
+    code += `
+const vert = \`
+${vert}
+\`
+`
+code += `
+const frag = \`
+${frag}
+\`
+`
+    const uMap = this.getUniformValueMap()
+    code += "const myUniforms = {\n"
+    Object.keys(uMap).forEach((name) => {
+      const value = uMap[name]
+      if (typeof value === "number") {
+        code += `  "${name}": new THREE.Uniform(${value}),\n`
+      }
+      if (value instanceof Vector2) {
+        code += `  "${name}": new THREE.Uniform(new THREE.Vector2(${value.x}, ${value.y})),\n`
+      }
+      if (value instanceof Vector3) {
+        code += `  "${name}": new THREE.Uniform(new THREE.Vector3(${value.x}, ${value.y}, ${value.z})),\n`
+      }
+      if (value instanceof Vector4) {
+        code += `  "${name}": new THREE.Uniform(new THREE.Vector4(${value.x}, ${value.y}, ${value.z}, ${value.w})),\n`
+      }
+      if (value instanceof Texture) {
+        code += `  "${name}": null, // Please set your texture e.g. new THREE.Uniform(new THREE.Texture([your image element]))\n`
+      }
+    })
+    code += "}\n"
+
+    code += "\n"
+    code += `
+const yourMaterial = new THREE.ShaderMaterial({
+  vertexShader: vert,
+  fragmentShader: frag,
+  uniforms: THREE.UniformsUtils.merge([
+    THREE.UniformsLib.lights,
+    myUniforms,
+  ]),
+  lights: true,
+})
+`
+    return code
   }
 }

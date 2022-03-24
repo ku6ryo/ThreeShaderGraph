@@ -17,11 +17,11 @@ import "../node_modules/@blueprintjs/core/lib/css/blueprint.css"
 import "../node_modules/@blueprintjs/icons/lib/css/blueprint-icons.css"
 import "../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css"
 import { UniformValueNotSetError } from "./backend/ShaderNode";
-import { getJSDocOverrideTagNoCache } from "typescript";
 
 export function App() {
 
   const [graph, setGraph] = useState<ShaderGraph | null>(null)
+  const [jsCode, setJsCode] = useState<string>("")
   const [codeShown, setCodeShown] = useState(false)
   const toasterRef = useRef<Toaster>(null)
   const [invalidWireId, setInvalidaWireId] = useState<string | null>(null)
@@ -29,7 +29,10 @@ export function App() {
 
   const onShowCodeClick = useCallback(() => {
     setCodeShown(true)
-  }, [])
+    if (graph) {
+      setJsCode(graph.js())
+    }
+  }, [graph])
 
   const onChange = (nodes: NodeProps[], wires: WireProps[]) => {
     try {
@@ -108,7 +111,12 @@ export function App() {
           <Preview graph={graph} />
         </div>
         <div>
-          <Button text="Three.js code" icon="code" disabled={!!invalidWireId} onClick={onShowCodeClick}/>
+          <Button
+            text="Three.js code"
+            icon="code"
+            disabled={!!invalidWireId && !jsCode}
+            onClick={onShowCodeClick}
+          />
         </div>
       </div>
       <div className={style.board}>
@@ -120,44 +128,12 @@ export function App() {
         />
       </div>
       {codeShown && (
-        <div className={style.codeModal}>
-          <PrismLight language="typescript" style={dracula}>
-            {`
-      const uniforms: { [key: string ]: Uniform } = {} 
-      const uMap = graph.getUniformValueMap()
-      Object.keys(uMap).forEach(name => {
-        uniforms[name] = new Uniform(uMap[name])
-      })
-      const builtIns = graph.getBuiltIns()
-      const builtInUniforms: any[] = []
-      const useLight = builtIns.includes(BuiltIn.DirectionalLight)
-      if (useLight) {
-        builtInUniforms.push(UniformsLib.lights)
-      }
-      graph.getNodes().forEach(n => {
-        n.updateOnDraw()
-      })
-
-      const m = new ShaderMaterial({
-        vertexShader: graph.generateVertCode(),
-        fragmentShader: graph.generateFragCode(),
-        uniforms: UniformsUtils.merge([
-          ...builtInUniforms,
-          uniforms, 
-        ]),
-        lights: useLight,
-      })
-      this.#mesh.onBeforeRender = () => {
-        graph.getNodes().forEach(n => {
-          n.updateOnDraw()
-        })
-        const values = graph.getUniformValueMap()
-        Object.keys(values).forEach(name => {
-          m.uniforms[name].value = values[name]
-        })
-      }
-          `}
-          </PrismLight>
+        <div className={style.codeModal} onClick={() => setCodeShown(false)}>
+          <div onClick={e => e.stopPropagation()} className={style.codeContainer}>
+            <PrismLight language="typescript" style={dracula}>
+              {jsCode}
+            </PrismLight>
+          </div>
         </div>
       )}
       <Toaster position={Position.BOTTOM} ref={toasterRef} maxToasts={1}/>
