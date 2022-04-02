@@ -6,6 +6,7 @@ import {
 } from "react-icons/md"
 import classNames from "classnames"
 
+const DELTA = 0.01
 
 type Props = {
   label?: string
@@ -39,7 +40,7 @@ export function FloatInputBase({
   const onMouseMoveGuage = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation()
     if (operatingGuage && e.button === 0) {
-      onChange(value + Math.sign(e.movementX) * 0.1)
+      onChange(value + Math.sign(e.movementX) * DELTA)
     }
   }, [value, operatingGuage, onChange])
   const onMouseLeaveGuage = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -50,7 +51,7 @@ export function FloatInputBase({
   }, [])
   const onMouseWheelGuage = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
     e.stopPropagation()
-    onChange(value - Math.sign(e.deltaY) * 0.1)
+    onChange(value - Math.sign(e.deltaY) * DELTA)
   }, [value, onChange])
   return (
     <div className={style.frame}>
@@ -64,7 +65,7 @@ export function FloatInputBase({
         >
           <div
             className={classNames(style.arrow, style.left)}
-            data-value={-0.1}
+            data-value={- DELTA}
             onClick={onArrowClick}
           >
             <LeftArrowIcon />
@@ -79,7 +80,7 @@ export function FloatInputBase({
           </div>
           <div
             className={classNames(style.arrow, style.right)}
-            data-value={0.1}
+            data-value={DELTA}
             onClick={onArrowClick}
           >
             <RightArrowIcon />

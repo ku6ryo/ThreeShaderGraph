@@ -24,6 +24,7 @@ export enum NodeTypeId {
   MathGreaterThan = "math_greaterThan",
   MathLessThan = "math_lessThan",
   MathVectorRotate = "math_vectorRotate",
+  MathInvert = "math_invert",
   // Output
   OutputColor = "output_color",
   // Texture

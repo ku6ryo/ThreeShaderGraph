@@ -2,6 +2,7 @@ import { NodeTypeId } from "./NodeTypeId"
 import { InNodeInputType, NodeColor } from "../components/NodeBox"
 import { NodeCategory } from "./types"
 import { NodeBlueprint } from "../components/Board/types"
+import { Vector3 } from "three"
 
 export const mathCategory: NodeCategory = {
   id: "math",
@@ -218,6 +219,20 @@ export const mathFactories = [{
     }],
   } as NodeBlueprint),
 }, {
+  id: NodeTypeId.MathInvert,
+  name: "Invert",
+  category: mathCategory,
+  factory: () => ({
+    color: NodeColor.Blue,
+    inNodeInputSlots: [],
+    inSockets: [{
+      label: "Vector",
+    }],
+    outSockets: [{
+      label: "Result",
+    }],
+  } as NodeBlueprint),
+}, {
   id: NodeTypeId.MathVectorRotate,
   name: "Vector Rotate",
   category: mathCategory,
@@ -228,8 +243,16 @@ export const mathFactories = [{
       label: "Vector",
     }, {
       label: "Center",
+      alternativeValueInputType: InNodeInputType.Vector3,
+      alternativeValue: {
+        vec3: new Vector3(0, 0, 0),
+      }
     }, {
       label: "Axis",
+      alternativeValueInputType: InNodeInputType.Vector3,
+      alternativeValue: {
+        vec3: new Vector3(0, 1, 0),
+      }
     }, {
       label: "Angle",
       alternativeValueInputType: InNodeInputType.Float,

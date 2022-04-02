@@ -29,6 +29,7 @@ import { ColorInputNode } from "./nodes/inputs/ColorInputNode"
 import { VertexPositionNode } from "./nodes/inputs/VertexPositionNode"
 import { VectorRotateNode } from "./nodes/math/VectorRotateNode"
 import { Vector3InputNode } from "./nodes/inputs/Vector3InputNode"
+import { InvertNode } from "./nodes/math/InvertNode"
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
   const graph = new ShaderGraph()
@@ -99,6 +100,9 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     if (n.typeId === NodeTypeId.MathVectorRotate) {
       sn = new VectorRotateNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.MathInvert) {
+      sn = new InvertNode(n.id)
     }
     // Texture
     if (n.typeId === NodeTypeId.TexturePerlinNoise) {
