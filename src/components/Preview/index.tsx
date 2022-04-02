@@ -4,6 +4,7 @@ import { Model, ShaderPreview } from "./ShaderPreview";
 import style from "./style.module.scss"
 import GUI from "lil-gui"
 import shortUUID from "short-uuid";
+import { GitPull } from "@blueprintjs/icons/lib/esm/generated/16px/paths";
 
 type Props = {
   graph: ShaderGraph | null
@@ -33,6 +34,7 @@ export function Preview({
     return {
       modelType: Model.Sphere,
       backgroundColor: "#EEEEEE",
+      rotating: false,
     }
   }, [])
 
@@ -54,6 +56,9 @@ export function Preview({
         .onChange(() => {
           setControlChangeId(shortUUID().generate())
         })
+      gui.add(controlValues, "rotating").name("Rotate model").onChange((v: boolean) => {
+        preview.setRotate(v)
+      })
       controlRef.current.appendChild(gui.domElement)
     }
   }, [controlRef.current, preview])

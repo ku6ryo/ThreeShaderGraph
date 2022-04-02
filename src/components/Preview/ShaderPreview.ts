@@ -38,6 +38,8 @@ export class ShaderPreview {
 
   #playing = false
 
+  #rotating = false
+
   constructor(canvas: HTMLCanvasElement, fpsContainer: HTMLDivElement) {
     const stats = new Stats()
     this.#stats = stats
@@ -58,14 +60,19 @@ export class ShaderPreview {
 
     const scene = new Scene()
 
-    const geometry = new SphereGeometry(1, 64, 64)
+    const geometry = new SphereGeometry(1, 128, 128)
     const material = new MeshPhysicalMaterial({
       color: "#ffffff",
       metalness: 0.5,
       roughness: 0.5,
     })
-    const light = new DirectionalLight(0xffffff, 0.5)
-    scene.add(light)
+    const numLights = 3
+    for (let i = 0; i < numLights; i++) {
+      const light = new DirectionalLight(0xffffff, 0.3)
+      light.position.set(Math.cos(i * 2 * Math.PI / numLights), 1, Math.sin(i * 2 * Math.PI / numLights))
+      light.lookAt(0, 0, 0)
+      scene.add(light)
+    }
 
     const ambient = new AmbientLight(0xffffff, 0.5)
     scene.add(ambient)
@@ -84,7 +91,7 @@ export class ShaderPreview {
 
   changeModel(model: Model) {
     if (model === Model.Sphere) {
-      this.#mesh.geometry = new SphereGeometry(1, 64, 64)
+      this.#mesh.geometry = new SphereGeometry(1, 128, 128)
     }
     if (model === Model.Box) {
       this.#mesh.geometry = new BoxGeometry(1, 1, 1)
@@ -132,8 +139,14 @@ export class ShaderPreview {
     this.#mesh.material = m
   }
 
+  setRotate(rotating: boolean) {
+    this.#rotating = rotating
+  }
+
   render() {
-    this.#mesh.rotation.set(0, performance.now() / 1000, 0)
+    if (this.#rotating) {
+      this.#mesh.rotation.set(0, performance.now() / 1000, 0)
+    }
     this.#renderer.render(this.#scene, this.#camera)
   }
 
