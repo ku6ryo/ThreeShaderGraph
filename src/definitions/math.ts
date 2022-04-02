@@ -202,11 +202,43 @@ export const mathFactories = [{
     inNodeInputSlots: [],
     inSockets: [{
       label: "Value",
+      alternativeValueInputType: InNodeInputType.Float,
+      alternativeValue: {
+        float: 0,
+      }
     }, {
       label: "Threshold",
+      alternativeValueInputType: InNodeInputType.Float,
+      alternativeValue: {
+        float: 1,
+      }
     }],
     outSockets: [{
       label: "Result",
+    }],
+  } as NodeBlueprint),
+}, {
+  id: NodeTypeId.MathVectorRotate,
+  name: "Vector Rotate",
+  category: mathCategory,
+  factory: () => ({
+    color: NodeColor.Blue,
+    inNodeInputSlots: [],
+    inSockets: [{
+      label: "Vector",
+    }, {
+      label: "Center",
+    }, {
+      label: "Axis",
+    }, {
+      label: "Angle",
+      alternativeValueInputType: InNodeInputType.Float,
+      alternativeValue: {
+        float: 0,
+      }
+    }],
+    outSockets: [{
+      label: "Vector",
     }],
   } as NodeBlueprint),
 }]

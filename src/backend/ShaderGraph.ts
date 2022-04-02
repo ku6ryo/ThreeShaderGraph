@@ -239,6 +239,10 @@ export class ShaderGraph {
       header += "varying vec3 vNormal;\n"
       common += "vNormal = normal;\n"
     }
+    if (builtInMap.get(BuiltIn.VertexPositon)) {
+      header += "varying vec3 vPosition;\n"
+      common += "vPosition = position;\n"
+    }
     return `
 ${uniformCode}
 ${header}
@@ -285,6 +289,9 @@ ${main}
     }
     if (builtInMap.get(BuiltIn.Normal)) {
       header += "varying vec3 vNormal;\n"
+    }
+    if (builtInMap.get(BuiltIn.VertexPositon)) {
+      header += "varying vec3 vPosition;\n"
     }
     header += Object.values(headers).join("\n")
     return `

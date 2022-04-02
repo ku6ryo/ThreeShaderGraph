@@ -26,6 +26,9 @@ import { LessThanNode } from "./nodes/math/LessThanNode"
 import { LambertNode } from "./nodes/materials/LambertNode"
 import { PhongNode } from "./nodes/materials/PhongNode"
 import { ColorInputNode } from "./nodes/inputs/ColorInputNode"
+import { VertexPositionNode } from "./nodes/inputs/VertexPositionNode"
+import { VectorRotateNode } from "./nodes/math/VectorRotateNode"
+import { Vector3InputNode } from "./nodes/inputs/Vector3InputNode"
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
   const graph = new ShaderGraph()
@@ -35,14 +38,23 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     if (n.typeId === NodeTypeId.InputUv) {
       sn = new UvInputNode(n.id)
     }
+    if (n.typeId === NodeTypeId.InputVertexPosition) {
+      sn = new VertexPositionNode(n.id)
+    }
     if (n.typeId === NodeTypeId.InputTime) {
       sn = new TimeInputNode(n.id)
     }
     if (n.typeId === NodeTypeId.InputFloat) {
       sn = new FloatInputNode(n.id)
     }
+    if (n.typeId === NodeTypeId.InputVector3) {
+      sn = new Vector3InputNode(n.id)
+    }
     if (n.typeId === NodeTypeId.InputTexture) {
       sn = new TextureInputNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.InputColor) {
+      sn = new ColorInputNode(n.id)
     }
     // Output
     if (n.typeId === NodeTypeId.OutputColor) {
@@ -85,6 +97,9 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     if (n.typeId === NodeTypeId.MathLessThan) {
       sn = new LessThanNode(n.id)
     }
+    if (n.typeId === NodeTypeId.MathVectorRotate) {
+      sn = new VectorRotateNode(n.id)
+    }
     // Texture
     if (n.typeId === NodeTypeId.TexturePerlinNoise) {
       sn = new PerlinNoiseNode(n.id)
@@ -98,9 +113,6 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     if (n.typeId === NodeTypeId.Material_Phong) {
       sn = new PhongNode(n.id)
-    }
-    if (n.typeId === NodeTypeId.InputColor) {
-      sn = new ColorInputNode(n.id)
     }
 
     if (sn) {

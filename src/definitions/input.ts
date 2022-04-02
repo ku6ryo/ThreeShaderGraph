@@ -1,4 +1,4 @@
-import { Vector4 } from "three"
+import { Vector3, Vector4 } from "three"
 import { NodeTypeId } from "./NodeTypeId"
 import { NodeColor, InNodeInputType } from "../components/NodeBox"
 import { NodeCategory } from "./types"
@@ -19,6 +19,17 @@ export const inputFactories = [{
     inSockets: [],
     outSockets: [{
       label: "UV",
+    }],
+  } as NodeBlueprint),
+}, {
+  id: NodeTypeId.InputVertexPosition,
+  name: "Vertex Position",
+  category: inputCategory,
+  factory: () => ({
+    color: NodeColor.Red,
+    inSockets: [],
+    outSockets: [{
+      label: "Position",
     }],
   } as NodeBlueprint),
 }, {
@@ -67,6 +78,24 @@ export const inputFactories = [{
     }],
     outSockets: [{
       label: "Value",
+    }],
+  } as NodeBlueprint),
+}, {
+  id: NodeTypeId.InputVector3,
+  name: "Vector 3",
+  category: inputCategory,
+  factory: () => ({
+    color: NodeColor.Red,
+    inSockets: [{
+      label: "Value",
+      alternativeValueInputType: InNodeInputType.Vector3,
+      alternativeValue: {
+        vec3: new Vector3(0, 0, 0),
+      },
+      socketHidden: true,
+    }],
+    outSockets: [{
+      label: "Vector",
     }],
   } as NodeBlueprint),
 }, {

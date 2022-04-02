@@ -1,7 +1,9 @@
 export enum NodeTypeId {
   // Input
   InputUv = "input_uv",
+  InputVertexPosition = "input_vertex_position",
   InputFloat = "input_float",
+  InputVector3 = "input_vector3",
   InputTexture = "input_texture",
   InputTime = "input_time",
   InputColor = "input_color",
@@ -21,6 +23,7 @@ export enum NodeTypeId {
   MathSeparate = "math_separate",
   MathGreaterThan = "math_greaterThan",
   MathLessThan = "math_lessThan",
+  MathVectorRotate = "math_vectorRotate",
   // Output
   OutputColor = "output_color",
   // Texture
