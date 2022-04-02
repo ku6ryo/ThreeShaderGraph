@@ -1,15 +1,17 @@
-import React, { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { NodeBox, SocketDirection, InNodeInputValue } from "../NodeBox";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { NodeBox, SocketDirection } from "../NodeBox";
 import { WireLine } from "../WireLine";
 import style from "./style.module.scss"
 import classnames from "classnames"
 import { HistoryManager } from "./HistoryManager";
-import { NodeProps, WireProps, NodeFactory } from "./types"
+import { NodeProps, WireProps } from "./types"
 import shortUUID from "short-uuid";
 import { NodeWireManager } from "./NodeWireManger";
-import { outputFactories } from "../../definitions/output";
+import { outputDefs } from "../../definitions/output";
 import { Slider } from "@blueprintjs/core";
 import { NodeSelector } from "./NodeSelector";
+import { NodeDefinition, NodeInputValue } from "../../definitions/types";
+import { createNodeProps } from "./createNodeProps";
 
 /**
  * ZOOM configurations
@@ -84,9 +86,9 @@ type Rect = {
 }
 
 type Props = {
-  factories: NodeFactory[]
+  nodeDefinitions: NodeDefinition[],
   onChange: (nodes: NodeProps[], wires: WireProps[]) => void
-  onInSocketValueChange: (id: string, index: number, value: InNodeInputValue) => void
+  onInSocketValueChange: (id: string, index: number, value: NodeInputValue) => void
   invalidWireId: string | null
 }
 
@@ -94,7 +96,7 @@ type Props = {
  * A board to place nodes and wires.
  */
 export function Board({
-  factories,
+  nodeDefinitions,
   onChange,
   onInSocketValueChange,
   invalidWireId,
@@ -138,20 +140,13 @@ export function Board({
   }, [])
 
   useEffect(() => {
-    const f = outputFactories[0]
-    const n = f.factory()
-    const newNodes = [{
-      id: f.id + generateId(),
-      typeId: f.id,
-      x: board.centerX,
-      y: board.centerY,
-      color: n.color,
-      name: f.name,
-      selected: true,
-      inSockets: n.inSockets,
-      outSockets: n.outSockets,
-      deletable: n.deletable === undefined ? true : n.deletable,
-    } as NodeProps]
+    const d = outputDefs[0]
+    const newNodes = [createNodeProps(
+      d.id + "_" + generateId(),
+      board.centerX,
+      board.centerY,
+      d
+    )]
     nwManager.updateNodes(newNodes)
     saveHistory()
     notifyChange()
@@ -495,31 +490,19 @@ export function Board({
   }, [svgRootRef.current, nodeRects])
 
   const onNodeAdd = useCallback((typeId: string) => {
-    const f = factories.find(f => f.id === typeId)
-    if (f) {
+    const d = nodeDefinitions.find(d => d.id === typeId)
+    if (d) {
       const nodes = nwManager.getNodes().map(n => ({...n, selected: false}))
-      const n = f.factory()
       const newNodes = [
         ...nodes,
-        {
-          id: f.id + "_" + generateId(),
-          typeId: f.id,
-          x: board.centerX,
-          y: board.centerY,
-          color: n.color,
-          name: f.name,
-          selected: true,
-          inSockets: n.inSockets,
-          outSockets: n.outSockets,
-          deletable: n.deletable === undefined ? true : n.deletable,
-        } as NodeProps
+        createNodeProps(d.id + "_" + generateId(), board.centerX, board.centerY, d)
       ]
       nwManager.updateNodes(newNodes)
       saveHistory()
     } else {
       throw new Error("No factory found for node type " + typeId)
     }
-  }, [factories, nwManager, board.centerX, board.centerY])
+  }, [nodeDefinitions, nwManager, board.centerX, board.centerY])
 
   useEffect(() => {
     const keydownListener = (e: KeyboardEvent) => {
@@ -613,7 +596,7 @@ export function Board({
     }
   }, [svgRootRef.current])
   // Fires when socket value is changed in the node UI component.
-  const onInSocketValueChangeInternal = useCallback((nodeId: string, index: number, value: InNodeInputValue) => {
+  const onInSocketValueChangeInternal = useCallback((nodeId: string, index: number, value: NodeInputValue) => {
     const n = nwManager.getNode(nodeId)
     if (n) {
       const s = n.inSockets[index]
@@ -710,7 +693,7 @@ export function Board({
         )}
       </svg>
       <div className={style.nodeSelector}>
-        <NodeSelector definitions={factories} onSelected={onNodeAdd} />
+        <NodeSelector definitions={nodeDefinitions} onSelected={onNodeAdd} />
       </div>
       <div className={style.zoomSlider}>
         <Slider

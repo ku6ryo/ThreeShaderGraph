@@ -26,7 +26,7 @@ export class VectorRotateNode extends ShaderNode {
     const tsvt = `tsvt${id}` // Transformed shifted Vector tip
 
     const n = `n${id}` // normalized axis
-    const q = `q${id}` // quaternion 
+    const q = `q${id}` // quaternion
     const m = `m${id}` // matrix
     return `
     vec3 ${svo} = - ${c};

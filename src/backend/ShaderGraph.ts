@@ -1,10 +1,12 @@
 import shortUUID from "short-uuid"
+import {
+  Texture, Vector2, Vector3, Vector4,
+} from "three"
 import { ShaderDataType } from "./data_types"
 import { BuiltIn, ShaderNode } from "./ShaderNode"
-import { InNodeInputValue } from "../components/NodeBox"
 import { Wire } from "./Wire"
 import { isCompatibleSocketConnection } from "./utils"
-import { Texture, Vector2, Vector3, Vector4 } from "three"
+import { NodeInputValue } from "../definitions/types"
 
 export class CircularReferenceError extends Error {
   nodeOutId: string
@@ -84,7 +86,7 @@ export class ShaderGraph {
     return [...this.#wires]
   }
 
-  setInputValue(nodeId: string, socketIndex: number, value: InNodeInputValue) {
+  setInputValue(nodeId: string, socketIndex: number, value: NodeInputValue) {
     const node = this.#nodes.find((n) => n.getId() === nodeId)
     if (!node) {
       throw new Error("node not found")
@@ -313,7 +315,7 @@ const vert = \`
 ${vert}
 \`
 `
-code += `
+    code += `
 const frag = \`
 ${frag}
 \`

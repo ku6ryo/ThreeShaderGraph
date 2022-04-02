@@ -4,7 +4,7 @@ import {
 import { validVariableName } from "./utils"
 import { Socket } from "./Socket"
 import { ShaderDataType } from "./data_types"
-import { InNodeInputValue } from "../components/NodeBox"
+import { NodeInputValue } from "../definitions/types"
 
 export type Uniform = {
   type: ShaderDataType;
@@ -168,7 +168,7 @@ export abstract class ShaderNode {
     }
   }
 
-  setInputValue(index: number, value: InNodeInputValue): void {
+  setInputValue(index: number, value: NodeInputValue): void {
     const u = this.#uniforms[index]
     if (!u) {
       throw new Error(`Uniform index ${index} does not exist. Node: ${this.#id}`)

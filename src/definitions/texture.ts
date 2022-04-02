@@ -1,42 +1,35 @@
 import { NodeTypeId } from "./NodeTypeId"
-import { NodeColor } from "../components/NodeBox"
-import { NodeCategory } from "./types"
-import { NodeBlueprint } from "../components/Board/types"
+import {
+  NodeCategory, NodeColor, NodeDefinition,
+} from "./types"
 
 export const textureCategory: NodeCategory = {
   id: "texture",
   label: "Texture",
   icon: "media",
+  color: NodeColor.Orange,
 }
 
-export const textureFactories = [{
+export const textureDefs: NodeDefinition[] = [{
   id: NodeTypeId.TextureSample,
   name: "Sample",
   category: textureCategory,
-  factory: () => ({
-    color: NodeColor.Orange,
-    inNodeInputSlots: [],
-    inSockets: [{
-      label: "Texture",
-    }, {
-      label: "UV",
-    }],
-    outSockets: [{
-      label: "Color",
-    }],
-  } as NodeBlueprint),
+  inSockets: [{
+    label: "Texture",
+  }, {
+    label: "UV",
+  }],
+  outSockets: [{
+    label: "Color",
+  }],
 }, {
   id: NodeTypeId.TexturePerlinNoise,
   name: "Parlin Noise",
   category: textureCategory,
-  factory: () => ({
-    color: NodeColor.Orange,
-    inNodeInputSlots: [],
-    inSockets: [{
-      label: "UV",
-    }],
-    outSockets: [{
-      label: "Color",
-    }],
-  } as NodeBlueprint),
+  inSockets: [{
+    label: "UV",
+  }],
+  outSockets: [{
+    label: "Color",
+  }],
 }]

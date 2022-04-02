@@ -1,22 +1,24 @@
-import { NodeFactory } from "../types"
 import style from "./style.module.scss"
 import { Button, Icon } from "@blueprintjs/core/lib/esm";
 import { Tooltip2 } from "@blueprintjs/popover2"
 import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from "react";
-import { NodeCategory } from "../../../definitions/types";
+import { NodeCategory, NodeDefinition } from "../../../definitions/types";
 
 type Props = {
-  definitions: NodeFactory[]
+  definitions: NodeDefinition[]
   onSelected: (nodeTypeId: string) => void
 }
 
+/**
+ * Selector for node types grouped by category. 
+ */
 export function NodeSelector({
   definitions,
   onSelected,
 }: Props) {
   const [categories, nodeMap] = useMemo(() => {
     const catMap = new Map<string, NodeCategory>();
-    const nodeMap = new Map<string, NodeFactory[]>();
+    const nodeMap = new Map<string, NodeDefinition[]>();
     definitions.forEach(def => {
       catMap.set(def.category.id, def.category)
       if (!nodeMap.has(def.category.id)) {

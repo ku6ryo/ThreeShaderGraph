@@ -1,30 +1,25 @@
 import { Vector4 } from "three"
 import { NodeTypeId } from "./NodeTypeId"
-import { InNodeInputType, NodeColor } from "../components/NodeBox"
-import { NodeCategory } from "./types"
-import { NodeBlueprint } from "../components/Board/types"
+import { NodeCategory, NodeColor, NodeInputType } from "./types"
 
 export const outputCategory: NodeCategory = {
   id: "output",
   label: "Output",
   icon: "arrow-right",
+  color: NodeColor.Pink,
 }
 
-export const outputFactories = [{
+export const outputDefs = [{
   id: NodeTypeId.OutputColor,
   name: "Fragment Color",
   category: outputCategory,
-  factory: () => ({
-    color: NodeColor.Pink,
-    inNodeInputSlots: [],
-    inSockets: [{
-      label: "Color",
-      alternativeValue: {
-        vec4: new Vector4(0),
-      },
-      alternativeValueInputType: InNodeInputType.Vector4,
-    }],
-    outSockets: [],
-    deletable: false,
-  } as NodeBlueprint),
+  inSockets: [{
+    label: "Color",
+    alternativeValue: {
+      vec4: new Vector4(0),
+    },
+    alternativeValueInputType: NodeInputType.Vector4,
+  }],
+  outSockets: [],
+  deletable: false,
 }]

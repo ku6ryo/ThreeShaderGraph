@@ -1,11 +1,10 @@
 import style from "./App.module.scss";
 import { Board } from "./components/Board";
 import { NodeProps, WireProps } from "./components/Board/types";
-import { factories } from "./definitions/factories";
+import { definitions } from "./definitions";
 import { createGraphFromInputs } from "./backend/createGraphFromInputs";
 import { useCallback, useRef, useState } from "react";
 import { CircularReferenceError, IncompatibleSocketConnectionError, ShaderGraph } from "./backend/ShaderGraph";
-import { InNodeInputValue } from "./components/NodeBox";
 import { PrismLight } from "react-syntax-highlighter"
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Preview } from "./components/Preview";
@@ -17,6 +16,7 @@ import "../node_modules/@blueprintjs/core/lib/css/blueprint.css"
 import "../node_modules/@blueprintjs/icons/lib/css/blueprint-icons.css"
 import "../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css"
 import { UniformValueNotSetError } from "./backend/ShaderNode";
+import { NodeInputValue } from "./definitions/types";
 
 export function App() {
 
@@ -92,7 +92,7 @@ export function App() {
     }
   }
 
-  const onInSocketValueChange = (nodeId: string, socketIndex: number, value: InNodeInputValue) => {
+  const onInSocketValueChange = (nodeId: string, socketIndex: number, value: NodeInputValue) => {
     if (graph && graph.hasNode(nodeId)) {
       graph.setInputValue(nodeId, socketIndex, value)
     }
@@ -121,7 +121,7 @@ export function App() {
       </div>
       <div className={style.board}>
         <Board
-          factories={factories}
+          nodeDefinitions={definitions}
           onChange={onChange}
           onInSocketValueChange={onInSocketValueChange}
           invalidWireId={invalidWireId}

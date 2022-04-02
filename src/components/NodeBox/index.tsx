@@ -2,48 +2,23 @@ import { MouseEventHandler, MouseEvent, useRef, memo, useCallback, useEffect } f
 import style from "./style.module.scss"
 import classnames from "classnames"
 import { FloatInput } from "./FloatInput"
-import { Texture, Vector2, Vector3, Vector4 } from "three"
 import { ImageInput } from "./ImageInput"
 import { ColorInput } from "./ColorInput"
 import { Vector3Input } from "./Vector3Input"
+import { NodeInputType, NodeInputValue, NodeColor } from "../../definitions/types"
 
 export type SocketDirection = "in" | "out"
 
-export enum NodeColor {
-  Orange = "orange",
-  Blue = "blue",
-  Red = "red",
-  Green = "green",
-  Pink = "pink",
-  Purple = "purple",
-}
-
-export enum InNodeInputType {
-  Image = "image",
-  Color = "color",
-  Float = "float",
-  Vector2 = "vetor2",
-  Vector3 = "vetor3",
-  Vector4 = "vetor4",
-}
-
-export type InNodeInputValue = {
-  float?: number,
-  vec2?: Vector2,
-  vec3?: Vector3,
-  vec4?: Vector4,
-  image?: Texture,
-}
-
-export type InSocket = {
+export type InSocketProps = {
   label: string,
-  alternativeValueInputType?: InNodeInputType,
-  alternativeValue?: InNodeInputValue,
+  alternativeValueInputType?: NodeInputType,
+  alternativeValue?: NodeInputValue,
   socketHidden?: boolean,
   hidden?: boolean
+  connected: boolean,
 }
 
-export type OutSocket = {
+export type OutSocketProps = {
   label: string,
 }
 
@@ -74,13 +49,13 @@ type Props = {
   name: string,
   x: number,
   y: number,
-  inSockets: InSocket[],
-  outSockets: OutSocket[],
+  inSockets: InSocketProps[],
+  outSockets: OutSocketProps[],
   selected: boolean,
   onSocketMouseUp: (id: string, direction: SocketDirection, i: number, x: number, y: number) => void,
   onSocketMouseDown: (id: string, direction: SocketDirection, i: number, x: number, y: number) => void,
   onDragStart: (id: string, x: number, y: number) => void,
-  onInSocketValueChange: (id: string, i: number, value: InNodeInputValue) => void,
+  onInSocketValueChange: (id: string, i: number, value: NodeInputValue) => void,
   onNodeResize: (id: string, rect: DOMRect) => void,
 }
 
@@ -127,7 +102,7 @@ export const NodeBox = memo(function NodeBox({
     }
   }, [id, onDragStart])
 
-  const onSocketValueChange = useCallback((index: number, value: InNodeInputValue) => {
+  const onSocketValueChange = useCallback((index: number, value: NodeInputValue) => {
     onInSocketValueChange(id, index, value)
   }, [id, onInSocketValueChange])
 
@@ -203,16 +178,16 @@ export const NodeBox = memo(function NodeBox({
                   <div>{socket.label}</div>
                   {socket.alternativeValue && socket.alternativeValueInputType && (
                     <div className={style.inputContainer}>
-                      {socket.alternativeValueInputType === InNodeInputType.Float && (
+                      {socket.alternativeValueInputType === NodeInputType.Float && (
                         <FloatInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
                       )}
-                      {socket.alternativeValueInputType === InNodeInputType.Image && (
+                      {socket.alternativeValueInputType === NodeInputType.Image && (
                         <ImageInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
                       )}
-                      {socket.alternativeValueInputType === InNodeInputType.Color && (
+                      {socket.alternativeValueInputType === NodeInputType.Color && (
                         <ColorInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
                       )}
-                      {socket.alternativeValueInputType === InNodeInputType.Vector3 && (
+                      {socket.alternativeValueInputType === NodeInputType.Vector3 && (
                         <Vector3Input index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
                       )}
                     </div>
