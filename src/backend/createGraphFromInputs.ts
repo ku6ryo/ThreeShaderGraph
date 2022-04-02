@@ -30,6 +30,7 @@ import { VertexPositionNode } from "./nodes/inputs/VertexPositionNode"
 import { VectorRotateNode } from "./nodes/math/VectorRotateNode"
 import { Vector3InputNode } from "./nodes/inputs/Vector3InputNode"
 import { InvertNode } from "./nodes/math/InvertNode"
+import { ClampNode } from "./nodes/math/ClampNode"
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
   const graph = new ShaderGraph()
@@ -76,6 +77,9 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     if (n.typeId === NodeTypeId.MathDot) {
       sn = new DotNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathClamp) {
+      sn = new ClampNode(n.id, ShaderDataType.Vector4)
     }
     if (n.typeId === NodeTypeId.MathMultiply) {
       sn = new MultiplyNode(n.id, ShaderDataType.Vector4)

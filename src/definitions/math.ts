@@ -85,6 +85,32 @@ export const mathFactories = [{
     }],
   } as NodeBlueprint),
 }, {
+  id: NodeTypeId.MathClamp,
+  name: "Clamp",
+  category: mathCategory,
+  factory: () => ({
+    color: NodeColor.Blue,
+    inNodeInputSlots: [],
+    inSockets: [{
+      label: "Value",
+    }, {
+      label: "Min",
+      alternativeValueInputType: InNodeInputType.Float,
+      alternativeValue: {
+        float: 0,
+      }
+    }, {
+      label: "Max",
+      alternativeValueInputType: InNodeInputType.Float,
+      alternativeValue: {
+        float: 1,
+      }
+    }],
+    outSockets: [{
+      label: "Result",
+    }],
+  } as NodeBlueprint),
+}, {
   id: NodeTypeId.MathFrac,
   name: "Frac",
   category: mathCategory,

@@ -16,6 +16,7 @@ export enum NodeTypeId {
   MathSubtract = "math_subtract",
   MathFrac = "math_frac",
   MathDot = "math_dot",
+  MathClamp = "math_clamp",
   MathSine = "math_sine",
   MathCosine = "math_cosine",
   MathTangent = "math_tangent",
