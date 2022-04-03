@@ -164,7 +164,7 @@ export const NodeBox = memo(function NodeBox({
                     </div>
                   )}
                   <div>{socket.label}</div>
-                  {socket.alternativeValue && socket.alternativeValueInputType && (
+                  {!socket.connected && socket.alternativeValue && socket.alternativeValueInputType && (
                     <div className={style.inputContainer}>
                       {socket.alternativeValueInputType === NodeInputType.Float && (
                         <FloatInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />

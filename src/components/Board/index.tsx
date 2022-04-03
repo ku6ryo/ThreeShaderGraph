@@ -108,7 +108,6 @@ export function Board({
     domHeight: 1000,
     zoom: 1,
   })
-  const [cursorOnBoad, setCursorOnBoard] = useState(false)
   const [draggingBoard, setDraggingBoard] = useState<DraggingBoardStats | null>(null)
   const [drawingWire, setDrawingWire] = useState<DrawingWireStats | null>(null)
   const [draggingNode, setDraggingNode] = useState<DraggingNodeStats | null>(null)
@@ -194,6 +193,9 @@ export function Board({
           movingY: zoomedY,
           editExisting: true,
         })
+        const n = nwManager.getNode(id)
+        n.inSockets[i].connected = false
+        nwManager.updateNode(n)
       } else {
         setDrawingWire({
           startDirection: dir,
@@ -240,6 +242,9 @@ export function Board({
           outY: drawingWire.startY,
         }
       ]
+      const startNode = nwManager.getNode(drawingWire.startNodeId)
+      startNode.inSockets[drawingWire.startSocketIndex].connected = true
+      nwManager.updateNode(startNode)
     } else {
       const newWire = {
         id: "w" + generateId(),
@@ -252,6 +257,9 @@ export function Board({
         outX: zoomedX,
         outY: zoomedY,
       }
+      const startNode = nwManager.getNode(id)
+      startNode.inSockets[i].connected = true
+      nwManager.updateNode(startNode)
       const existingWire = wires.find(w => w.outNodeId === id && w.outSocketIndex === i)
       if (existingWire) {
         newWires = wires.filter(w => w !== existingWire).concat(newWire)
@@ -422,13 +430,8 @@ export function Board({
     }
     setDrawingRect(null)
   }, [drawingRect, nodeRects, draggingNode, drawingWire])
-  
-  const onMouseEnter = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
-    setCursorOnBoard(true)
-  }, [])
 
   const onMouseLeave = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
-    setCursorOnBoard(false)
     setDrawingWire(null)
     setDraggingNode(null)
     setDraggingBoard(null)
@@ -553,9 +556,6 @@ export function Board({
 
   // mouse wheel
   useEffect(() => {
-    if (!svgRootRef.current) {
-
-    }
     const mouseWheelListener = (e: WheelEvent) => {
       if (draggingBoard) {
         return
@@ -632,7 +632,6 @@ export function Board({
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onMouseDown={onMouseDown}
-        onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
        <defs>

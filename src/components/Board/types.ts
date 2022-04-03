@@ -65,7 +65,7 @@ export function createNodeProps(id: string, x: number, y: number, def: NodeDefin
       }
       return value
     }),
-    outSockets: def.outSockets.map((s) => ({ ...s })),
+    outSockets: def.outSockets.map((s) => ({ ...s, })),
     deletable: def.deletable === false ? false : true,
     unique: def.unique || false,
   }
