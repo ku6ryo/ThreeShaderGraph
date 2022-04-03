@@ -7,6 +7,27 @@
   width: 100%;
 }
 
+.inputContainer {
+  overflow: hidden;
+  .input {
+    appearance: none;
+    border: none;
+    font-size: 10px;
+    font-family: Titillum;
+    height: 20px;
+    line-height: 1;
+    outline: none;
+    padding: 4px;
+    width: 100%;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
 .guage {
   color: white;
   position: relative;

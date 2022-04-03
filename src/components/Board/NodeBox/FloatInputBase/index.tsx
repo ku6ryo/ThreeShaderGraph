@@ -1,4 +1,12 @@
-import { useCallback, useMemo, useState } from "react"
+import {
+  MouseEventHandler,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  KeyboardEventHandler,
+  ChangeEventHandler
+ } from "react"
 import style from "./style.module.scss"
 import {
   MdKeyboardArrowRight as RightArrowIcon,
@@ -21,6 +29,7 @@ export function FloatInputBase({
 }: Props) {
   const [typing, setTyping] = useState(false)
   const [operatingGuage, setOperatingGuage] = useState(false)
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const onArrowClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation()
     const v = Number(e.currentTarget.dataset.value)
@@ -53,6 +62,25 @@ export function FloatInputBase({
     e.stopPropagation()
     onChange(value - Math.sign(e.deltaY) * DELTA)
   }, [value, onChange])
+  const onNumberClick: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+    setTyping(true)
+    if (inputRef.current) {
+      console.log(inputRef.current)
+      inputRef.current.focus()
+    }
+  }, [setTyping, inputRef.current])
+
+  const onInputChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
+    onChange(Number(e.currentTarget.value))
+  }, [onChange])
+
+  const onInputKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback((e) => {
+    e.stopPropagation()
+    if (e.code === "Enter") {
+      setTyping(false)
+    }
+  }, [])
+
   return (
     <div className={style.frame}>
       {!typing && (
@@ -74,8 +102,8 @@ export function FloatInputBase({
             className={style.text}
             onMouseDown={onMouseDownGuage}
             onWheel={onMouseWheelGuage}
+            onClick={onNumberClick}
           >
-            <span>{label}</span>
             <span>{valueStr}</span>
           </div>
           <div
@@ -87,11 +115,22 @@ export function FloatInputBase({
           </div>
         </div>
       )}
-      {typing && (
-        <div>
-          <input value={value} onBlur={onInputBlur}/>
-        </div>
-      )}
+      <div
+        className={style.inputContainer}
+        style={{
+          height: typing ? "initial" : "0"
+        }}
+      >
+        <input
+          className={style.input}
+          value={value}
+          onBlur={onInputBlur}
+          type="number"
+          ref={inputRef}
+          onKeyDown={onInputKeyDown}
+          onChange={onInputChange}
+        />
+      </div>
     </div>
   )
 }
