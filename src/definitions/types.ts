@@ -41,7 +41,7 @@ export type NodeInputValue = {
 
 export function cloneNodeInputValue(v: NodeInputValue) {
   return {
-    float: v.float || undefined,
+    float: v.float === undefined ? undefined : v.float,
     vec2: v.vec2 ? v.vec2.clone() : undefined,
     vec3: v.vec3 ? v.vec3.clone() : undefined,
     vec4: v.vec4 ? v.vec4.clone() : undefined,
@@ -67,5 +67,6 @@ export type NodeDefinition = {
   category: NodeCategory,
   inSockets: InSocket[],
   outSockets: OutSocket[]
+  unique?: boolean,
   deletable?: boolean,
 }

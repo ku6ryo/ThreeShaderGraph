@@ -5,22 +5,10 @@ import { FloatInput } from "./FloatInput"
 import { ImageInput } from "./ImageInput"
 import { ColorInput } from "./ColorInput"
 import { Vector3Input } from "./Vector3Input"
-import { NodeInputType, NodeInputValue, NodeColor } from "../../definitions/types"
+import { NodeInputType, NodeInputValue, NodeColor } from "../../../definitions/types"
+import { InSocketProps, OutSocketProps } from "../types"
 
 export type SocketDirection = "in" | "out"
-
-export type InSocketProps = {
-  label: string,
-  alternativeValueInputType?: NodeInputType,
-  alternativeValue?: NodeInputValue,
-  socketHidden?: boolean,
-  hidden?: boolean
-  connected: boolean,
-}
-
-export type OutSocketProps = {
-  label: string,
-}
 
 function extractInfoFromCircle(e: MouseEvent<HTMLElement>, frame: SVGForeignObjectElement) {
   const circle = e.currentTarget

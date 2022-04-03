@@ -21,5 +21,6 @@ export const outputDefs = [{
     alternativeValueInputType: NodeInputType.Vector4,
   }],
   outSockets: [],
+  unique: true,
   deletable: false,
 }]

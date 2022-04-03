@@ -1,17 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { NodeBox, SocketDirection } from "../NodeBox";
+import { NodeBox, SocketDirection } from "./NodeBox";
 import { WireLine } from "../WireLine";
 import style from "./style.module.scss"
 import classnames from "classnames"
 import { HistoryManager } from "./HistoryManager";
-import { NodeProps, WireProps } from "./types"
+import { NodeProps, WireProps, createNodeProps } from "./types"
 import shortUUID from "short-uuid";
 import { NodeWireManager } from "./NodeWireManger";
 import { outputDefs } from "../../definitions/output";
 import { Slider } from "@blueprintjs/core";
 import { NodeSelector } from "./NodeSelector";
 import { NodeDefinition, NodeInputValue } from "../../definitions/types";
-import { createNodeProps } from "./createNodeProps";
 
 /**
  * ZOOM configurations
@@ -506,19 +505,10 @@ export function Board({
 
   useEffect(() => {
     const keydownListener = (e: KeyboardEvent) => {
-      const nodes = nwManager.getNodes()
-      const wires = nwManager.getWires()
       if (e.code === "Delete" || e.code === "Backspace") {
-        const nodesToKeep = nodes.filter(n => !n.selected || !n.deletable)
-        const nodesToRemove = nodes.filter(n => n.selected && n.deletable)
-        const wiresToKeep = wires.filter(w => {
-          return !nodesToRemove.find(n => {
-            return w.inNodeId === n.id || w.outNodeId === n.id
-          })
-        })
-        if (nodesToRemove.length > 0) {
-          nwManager.updateNodes(nodesToKeep)
-          nwManager.updateWires(wiresToKeep)
+        console.log("Delete key pressed")
+        const removed = nwManager.removeSelected()
+        if (removed) {
           saveHistory()
           notifyChange()
         }
@@ -528,6 +518,14 @@ export function Board({
       }
       if (e.code === "KeyZ" && e.ctrlKey) {
         goToPrevHistory()
+      }
+      if (e.code === "KeyD" && e.ctrlKey) {
+        e.preventDefault()
+        const duplicated = nwManager.duplicateSelected()
+        if (duplicated) {
+          saveHistory()
+          notifyChange()
+        }
       }
     }
     window.addEventListener("keydown", keydownListener)

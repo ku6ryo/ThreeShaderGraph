@@ -1,5 +1,6 @@
 import shortUUID from "short-uuid"
-import { NodeProps, WireProps } from "./types"
+import { NodeProps, WireProps, cloneNodeProps, cloneWireProps } from "./types"
+import { NodeTypeId } from "../../definitions/NodeTypeId"
 
 export class NodeWireManager {
   #updateId = shortUUID.generate()
@@ -33,7 +34,7 @@ export class NodeWireManager {
   }
 
   addNode(node: NodeProps) {
-    const n = NodeWireManager.cloneNode(node)
+    const n = cloneNodeProps(node)
     this.#nodes.push(n)
     this.#nodeDict[n.id] = n
     this.#updateId = shortUUID.generate()
@@ -45,7 +46,7 @@ export class NodeWireManager {
     if (!n) {
       throw new Error(`Node with id ${id} not found`)
     }
-    return NodeWireManager.cloneNode(n)
+    return cloneNodeProps(n)
   }
 
   updateNode(node: NodeProps) {
@@ -53,16 +54,9 @@ export class NodeWireManager {
     if (index === -1) {
       throw new Error(`Node with id ${node.id} not found`)
     }
-    const n = NodeWireManager.cloneNode(node)
+    const n = cloneNodeProps(node)
     this.#nodes[index] = n
     this.updateNodes(this.#nodes)
-  }
-
-  private static cloneNode(node: NodeProps) {
-    const inSockets = node.inSockets.map((s) => ({ ...s }))
-    const outSockets = node.outSockets.map((s) => ({ ...s }))
-    const newNode = { ...node, outSockets, inSockets }
-    return newNode
   }
 
   updateNodes(nodes: NodeProps[]) {
@@ -97,5 +91,72 @@ export class NodeWireManager {
     this.#wireDict = dict
     this.#updateId = shortUUID.generate()
     this.notifyUpdate()
+  }
+
+  private static generateNodeId(type: NodeTypeId) {
+    return `${type}_${shortUUID.generate()}`
+  }
+
+  private static generateWireId() {
+    return shortUUID.generate()
+  }
+
+  duplicateSelected(): boolean {
+    const placementOffset = 20
+    const cloneNodeDict: { [id: string]: NodeProps } = {}
+    this.#nodes.filter((n) => n.selected && !n.unique).forEach(n => {
+      n.selected = false
+      const cn = cloneNodeProps(n)
+      cn.id = NodeWireManager.generateNodeId(n.typeId)
+      cn.selected = true
+      cn.x = n.x + placementOffset
+      cn.y = n.y + placementOffset
+      cloneNodeDict[n.id] = cn
+    })
+    const cloneWireDict: { [id: string]: WireProps } = {}
+    Object.keys(cloneNodeDict).forEach((oldNodeId) => {
+      const cn = cloneNodeDict[oldNodeId]
+      this.#wires.filter((w) => {
+        return cloneNodeDict[w.inNodeId] && cloneNodeDict[w.outNodeId]
+      }).forEach((w) => {
+        if (!cloneWireDict[w.id]) {
+          const cw = cloneWireProps(w)
+          cw.id = NodeWireManager.generateWireId()
+          cw.inX = w.inX + placementOffset
+          cw.inY = w.inY + placementOffset
+          cw.outX = w.outX + placementOffset
+          cw.outY = w.outY + placementOffset
+          cloneWireDict[w.id] = cw
+        }
+        const cw = cloneWireDict[w.id]
+        if (cw.inNodeId === oldNodeId) {
+          cw.inNodeId = cn.id
+        }
+        if (cw.outNodeId === oldNodeId) {
+          cw.outNodeId = cn.id
+        }
+      })
+    })
+    const newNodes = Object.values(cloneNodeDict)
+    const newWires = Object.values(cloneWireDict)
+
+    this.updateNodes([...this.#nodes, ...newNodes])
+    this.updateWires([...this.#wires, ...newWires])
+    return newNodes.length > 0
+  }
+
+  removeSelected() {
+    const nodesToKeep = this.#nodes.filter(n => !n.selected || !n.deletable)
+    const nodesToRemove = this.#nodes.filter(n => n.selected && n.deletable)
+    const wiresToKeep = this.#wires.filter(w => {
+      return !nodesToRemove.find(n => {
+        return w.inNodeId === n.id || w.outNodeId === n.id
+      })
+    })
+    if (nodesToRemove.length > 0) {
+      this.updateNodes(nodesToKeep)
+      this.updateWires(wiresToKeep)
+    }
+    return nodesToRemove.length > 0
   }
 }
