@@ -6,7 +6,7 @@ export const materialCategory: NodeCategory = {
   id: "material",
   label: "Material",
   icon: "cube",
-  color: NodeColor.Green,
+  color: NodeColor.Emerald,
 }
 
 export const materialDefs = [{

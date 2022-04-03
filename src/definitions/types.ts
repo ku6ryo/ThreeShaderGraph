@@ -13,6 +13,8 @@ export enum NodeColor {
   Green = "green",
   Pink = "pink",
   Purple = "purple",
+  White = "white",
+  Emerald = "emerald",
 }
 
 export type NodeCategory = {

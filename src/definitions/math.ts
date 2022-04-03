@@ -8,7 +8,7 @@ export const mathCategory: NodeCategory = {
   id: "math",
   label: "Math",
   icon: "calculator",
-  color: NodeColor.Blue,
+  color: NodeColor.Purple,
 }
 
 export const mathDefs: NodeDefinition[] = [{

@@ -34,7 +34,6 @@ $SELECTED_COLOR: #ff9f0f;
   box-sizing: border-box;
   box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.8);
   position: relative;
-  transition: .1s;
   user-select: none;
   width: 150px;
 }
@@ -52,23 +51,32 @@ $SELECTED_COLOR: #ff9f0f;
     background-color: rgb(255, 175, 71);
   }
   &.blue {
-    background: linear-gradient(45deg, #6800c7, #700085);
+    background: #3333ff;
     color: white;
   }
   &.red {
-    background: linear-gradient(45deg, #ff0047, #ff6a93);
+    background-color: #ff0047;
     color: white;
   }
   &.pink {
-    background: linear-gradient(45deg, #ef00ff, #87009f);
+    background-color: #ef00ff;
     color: white;
   }
   &.purple {
-    background-color: rgb(58, 19, 150);
+    background-color: #6800c7;
+    color: white;
   }
   &.green {
-    background: linear-gradient(45deg, #00ffad, #00a549);
+    background: #00a549;
+    color: white;
+  }
+  &.emerald {
+    background-color: #00ffad;
     color: black;
+  }
+  &.white {
+    background-color: #fff;
+    color: #000;
   }
 }
 

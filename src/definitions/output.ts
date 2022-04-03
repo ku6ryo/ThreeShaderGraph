@@ -6,7 +6,7 @@ export const outputCategory: NodeCategory = {
   id: "output",
   label: "Output",
   icon: "arrow-right",
-  color: NodeColor.Pink,
+  color: NodeColor.White,
 }
 
 export const outputDefs = [{
