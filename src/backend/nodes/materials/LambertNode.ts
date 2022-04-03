@@ -101,8 +101,6 @@ vec4 builtIn_lambertMaterial(vec3 diffuse, vec3 emissive) {
     const i1 = this.getInSocket(1)
     const o = this.getOutSocket(0)
     return `
-    vec3 mvPosition = vViewPosition;
-    vec3 transformedNormal = vNormal;
     vec4 ${o.getVarName()} = builtIn_lambertMaterial(${i0.getVarName()}, ${i1.getVarName()});
     `
   }

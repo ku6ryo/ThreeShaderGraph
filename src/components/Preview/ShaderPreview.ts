@@ -13,6 +13,10 @@ import {
   UniformsLib,
   TorusGeometry,
   BoxGeometry,
+  CubeTextureLoader,
+  RGBAFormat,
+  CubeReflectionMapping,
+  sRGBEncoding,
 } from "three"
 import Stats from "stats.js"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
@@ -23,6 +27,23 @@ export enum Model {
   Sphere = 0,
   Box = 1,
   Torus = 2,
+}
+
+function createEnvMap() {
+  const baseUrl = "/textures/cubemap/";
+  const urls = [
+    baseUrl + "posx.jpg",
+    baseUrl + "negx.jpg",
+    baseUrl + "posy.jpg",
+    baseUrl + "negy.jpg",
+    baseUrl + "posz.jpg",
+    baseUrl + "negz.jpg"
+  ];
+  const textureCube = new CubeTextureLoader().load(urls);
+  textureCube.format = RGBAFormat;
+  textureCube.mapping = CubeReflectionMapping;
+  textureCube.encoding = sRGBEncoding;
+  return textureCube;
 }
 
 export class ShaderPreview {
@@ -107,6 +128,7 @@ export class ShaderPreview {
     Object.keys(uMap).forEach((name) => {
       uniforms[name] = new Uniform(uMap[name])
     })
+    uniforms["envMap"] = new Uniform(createEnvMap())
     const builtIns = graph.getBuiltIns()
     const builtInUniforms: any[] = []
     const useLight = builtIns.includes(BuiltIn.DirectionalLight)
@@ -124,7 +146,13 @@ export class ShaderPreview {
         uniforms,
       ]),
       lights: useLight,
+      defines: {
+        // USE_ENVMAP: true,
+      }
     })
+    ;(m as any).envMap = createEnvMap()
+    m.extensions.derivatives = true
+
     this.#mesh.onBeforeRender = () => {
       graph.getNodes().forEach((n) => {
         n.updateOnDraw()

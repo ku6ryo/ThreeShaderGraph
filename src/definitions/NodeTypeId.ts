@@ -10,6 +10,7 @@ export enum NodeTypeId {
   // Built-in Materials
   Material_Lambert = "material_lambert",
   Material_Phong = "material_phong",
+  Material_Physical = "material_physical",
   // Math
   MathAdd = "math_add",
   MathMultiply = "math_multiply",

@@ -34,6 +34,7 @@ import { ClampNode } from "./nodes/math/ClampNode"
 import { ArcsineNode } from "./nodes/math/ArcsineNode"
 import { ArctangentNode } from "./nodes/math/ArctangentNode"
 import { ArccosineNode } from "./nodes/math/ArccosineNode"
+import { PhysicalNode } from "./nodes/materials/PhysicalNode"
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
   const graph = new ShaderGraph()
@@ -133,6 +134,9 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     if (n.typeId === NodeTypeId.Material_Phong) {
       sn = new PhongNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.Material_Physical) {
+      sn = new PhysicalNode(n.id)
     }
 
     if (sn) {

@@ -1,20 +1,20 @@
-import { Vector3 } from "three"
+import { Vector4 } from "three"
 import { BuiltIn, ShaderNode } from "../../ShaderNode"
 import { ShaderDataType } from "../../data_types"
 
 export class PhongNode extends ShaderNode {
   constructor(id: string) {
     super(id, "Material_Phong", [BuiltIn.DirectionalLight])
-    this.addInSocket("diffuse", ShaderDataType.Vector3)
-    this.setUniformValue(0, new Vector3())
-    this.addInSocket("emissive", ShaderDataType.Vector3)
-    this.setUniformValue(0, new Vector3())
-    this.addInSocket("specular", ShaderDataType.Vector3)
-    this.setUniformValue(0, new Vector3())
+    this.addInSocket("diffuse", ShaderDataType.Vector4)
+    this.setUniformValue(0, new Vector4())
+    this.addInSocket("emissive", ShaderDataType.Vector4)
+    this.setUniformValue(1, new Vector4())
+    this.addInSocket("specular", ShaderDataType.Vector4)
+    this.setUniformValue(2, new Vector4())
     this.addInSocket("shininess", ShaderDataType.Float)
-    this.setUniformValue(0, 1)
+    this.setUniformValue(3, 1)
     this.addInSocket("opacity", ShaderDataType.Float)
-    this.setUniformValue(0, 1)
+    this.setUniformValue(4, 1)
     this.addOutSocket("color", ShaderDataType.Vector4)
   }
 
@@ -122,7 +122,7 @@ vec4 builtIn_PhongMaterial(vec3 diffuse, vec3 emissive, vec3 specular, float shi
   #include <encodings_fragment>
   #include <fog_fragment>
   #include <premultiplied_alpha_fragment>
-  #include <dithering_fragment> 
+  #include <dithering_fragment>
 
   return vec4(outgoingLight, opacity);
 }
@@ -137,9 +137,13 @@ vec4 builtIn_PhongMaterial(vec3 diffuse, vec3 emissive, vec3 specular, float shi
     const i4 = this.getInSocket(4)
     const o = this.getOutSocket(0)
     return `
-    vec3 mvPosition = vViewPosition;
-    vec3 transformedNormal = vNormal;
-    vec4 ${o.getVarName()} = builtIn_PhongMaterial(${i0.getVarName()}, ${i1.getVarName()}, ${i2.getVarName()}, ${i3.getVarName()}, ${i4.getVarName()});
-    `
+  vec4 ${o.getVarName()} = builtIn_PhongMaterial(
+    ${i0.getVarName()}.rgb,
+    ${i1.getVarName()}.rgb,
+    ${i2.getVarName()}.rgb,
+    ${i3.getVarName()},
+    ${i4.getVarName()}
+  );
+`
   }
 }

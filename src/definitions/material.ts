@@ -1,4 +1,4 @@
-import { Vector3 } from "three"
+import { Vector3, Vector4 } from "three"
 import { NodeTypeId } from "./NodeTypeId"
 import { NodeCategory, NodeInputType, NodeColor } from "./types"
 
@@ -36,23 +36,79 @@ export const materialDefs = [{
   inSockets: [{
     label: "Diffuse",
     alternativeValue: {
-      vec3: new Vector3(1, 1, 1),
+      vec4: new Vector4(1, 1, 1, 1),
     },
-    alternativeValueInputType: NodeInputType.Vector3,
+    alternativeValueInputType: NodeInputType.Color,
   }, {
     label: "Emissive",
     alternativeValue: {
-      vec3: new Vector3(),
+      vec4: new Vector4(),
     },
-    alternativeValueInputType: NodeInputType.Vector3,
+    alternativeValueInputType: NodeInputType.Color,
   }, {
     label: "Specular",
     alternativeValue: {
-      vec3: new Vector3(),
+      vec4: new Vector4(),
     },
-    alternativeValueInputType: NodeInputType.Vector3,
+    alternativeValueInputType: NodeInputType.Color,
   }, {
     label: "Shininess",
+    alternativeValue: {
+      float: 1,
+    },
+    alternativeValueInputType: NodeInputType.Float,
+  }, {
+    label: "Opacity",
+    alternativeValue: {
+      float: 1,
+    },
+    alternativeValueInputType: NodeInputType.Float,
+  }],
+  outSockets: [{
+    label: "Color",
+  }],
+}, {
+  id: NodeTypeId.Material_Physical,
+  name: "Physical",
+  category: materialCategory,
+  inSockets: [{
+    label: "Diffuse",
+    alternativeValue: {
+      vec4: new Vector4(1, 1, 1, 1),
+    },
+    alternativeValueInputType: NodeInputType.Color,
+  }, {
+    label: "Emissive",
+    alternativeValue: {
+      vec4: new Vector4(),
+    },
+    alternativeValueInputType: NodeInputType.Color,
+  }, {
+    label: "Roughness",
+    alternativeValue: {
+      float: 0.5,
+    },
+    alternativeValueInputType: NodeInputType.Float,
+  }, {
+    label: "Metalness",
+    alternativeValue: {
+      float: 1,
+    },
+    alternativeValueInputType: NodeInputType.Float,
+  }, {
+    label: "Reflectivity",
+    alternativeValue: {
+      float: 1,
+    },
+    alternativeValueInputType: NodeInputType.Float,
+  }, {
+    label: "Clearcoat",
+    alternativeValue: {
+      float: 1,
+    },
+    alternativeValueInputType: NodeInputType.Float,
+  }, {
+    label: "Clearcoat Roughness",
     alternativeValue: {
       float: 1,
     },
