@@ -16,9 +16,9 @@ export const outputDefs = [{
   inSockets: [{
     label: "Color",
     alternativeValue: {
-      vec4: new Vector4(0),
+      vec4: new Vector4(1, 1, 1, 1),
     },
-    alternativeValueInputType: NodeInputType.Vector4,
+    alternativeValueInputType: NodeInputType.Color,
   }],
   outSockets: [],
   unique: true,

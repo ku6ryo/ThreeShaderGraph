@@ -4,7 +4,6 @@ import { Model, ShaderPreview } from "./ShaderPreview";
 import style from "./style.module.scss"
 import GUI from "lil-gui"
 import shortUUID from "short-uuid";
-import { GitPull } from "@blueprintjs/icons/lib/esm/generated/16px/paths";
 
 type Props = {
   graph: ShaderGraph | null

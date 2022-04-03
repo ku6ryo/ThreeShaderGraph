@@ -7,6 +7,7 @@ import { ColorInput } from "./ColorInput"
 import { Vector3Input } from "./Vector3Input"
 import { NodeInputType, NodeInputValue, NodeColor } from "../../../definitions/types"
 import { InSocketProps, OutSocketProps } from "../types"
+import { outputDefs } from "../../../definitions/output"
 
 export type SocketDirection = "in" | "out"
 
@@ -100,9 +101,7 @@ export const NodeBox = memo(function NodeBox({
     }
   }, [boxRef.current])
   return (
-    <g
-      transform={`translate(${x}, ${y})`}
-    >
+    <g transform={`translate(${x}, ${y})`}>
       <foreignObject
         ref={frameRef}
         width={1}
@@ -123,25 +122,27 @@ export const NodeBox = memo(function NodeBox({
               [style[color]]: true
             })
           }>{name}</div>
-          <div className={style.outputs}>
-            {outSockets.map((socket, i) => (
-              <div
-                className={style.row}
-                key={i}
-              >
-                <div>{socket.label}</div>
+          {outSockets.length > 0 && (
+            <div className={style.outputs}>
+              {outSockets.map((socket, i) => (
                 <div
-                  className={style.socket}
-                  data-socket-index={i}
-                  data-socket-direction="out"
-                  onMouseDown={onSocketMouseDownInternal}
-                  onMouseUp={onSocketMouseUpInternal}
+                  className={style.row}
+                  key={i}
                 >
-                  <div className={style.circle} />
+                  <div>{socket.label}</div>
+                  <div
+                    className={style.socket}
+                    data-socket-index={i}
+                    data-socket-direction="out"
+                    onMouseDown={onSocketMouseDownInternal}
+                    onMouseUp={onSocketMouseUpInternal}
+                  >
+                    <div className={style.circle} />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           <div className={style.inputs}>
             {inSockets.map((socket, i) => {
               if (socket.hidden) {

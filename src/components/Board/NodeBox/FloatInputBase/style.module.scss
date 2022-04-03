@@ -1,6 +1,6 @@
 
 .frame {
-  background-color: #666;
+  background-color: #3c3c3c;
   font-size: 12px;
   line-height: 1;
   position: relative;
@@ -10,8 +10,9 @@
 .inputContainer {
   overflow: hidden;
   .input {
-    appearance: none;
+    background-color: #222;
     border: none;
+    color: rgb(255, 181, 97);
     font-size: 10px;
     font-family: Titillum;
     height: 20px;
@@ -29,7 +30,7 @@
 }
 
 .guage {
-  color: white;
+  color: #ccc;
   position: relative;
   width: 100%;
 

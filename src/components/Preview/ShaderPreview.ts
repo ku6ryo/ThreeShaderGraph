@@ -60,7 +60,7 @@ export class ShaderPreview {
 
     const scene = new Scene()
 
-    const geometry = new SphereGeometry(1, 128, 128)
+    const geometry = new SphereGeometry(1, 256, 256)
     const material = new MeshPhysicalMaterial({
       color: "#ffffff",
       metalness: 0.5,
@@ -91,7 +91,7 @@ export class ShaderPreview {
 
   changeModel(model: Model) {
     if (model === Model.Sphere) {
-      this.#mesh.geometry = new SphereGeometry(1, 128, 128)
+      this.#mesh.geometry = new SphereGeometry(1, 256, 256)
     }
     if (model === Model.Box) {
       this.#mesh.geometry = new BoxGeometry(1, 1, 1)
