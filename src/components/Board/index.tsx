@@ -509,7 +509,6 @@ export function Board({
   useEffect(() => {
     const keydownListener = (e: KeyboardEvent) => {
       if (e.code === "Delete" || e.code === "Backspace") {
-        console.log("Delete key pressed")
         const removed = nwManager.removeSelected()
         if (removed) {
           saveHistory()
@@ -641,10 +640,10 @@ export function Board({
           </linearGradient>
           <pattern id="board-background-pattern" viewBox="0 0 24 24" width={"0.02%"} height="0.02%">
             <g className={style.boardPattern} fill="#000000">
-              <polygon id="Rectangle-20" points="1.99840144e-15 18 6 18 12 12 12 18 18 18 12 24 3.99680289e-15 24"></polygon>
-              <polygon id="Rectangle-20-Copy" points="24 18 24 24 18 24"></polygon>
-              <polygon id="Rectangle-20-Copy-2" points="24 1.77635684e-15 18 6 12 6 18 1.77635684e-15"></polygon>
-              <polygon id="Rectangle-20-Copy-3" points="12 -4.08562073e-14 12 6 0 18 1.99840144e-15 12 6 6 1.99840144e-15 6 1.99840144e-15 1.11022302e-15"></polygon>
+              <polygon points="0 18 6 18 12 12 12 18 18 18 12 24 0 24"/>
+              <polygon points="24 18 24 24 18 24"/>
+              <polygon points="24 0 18 6 12 6 18 0"/>
+              <polygon points="12 0 12 6 0 18 0 12 6 6 0 0 0"/>
             </g>
           </pattern>
         </defs>
