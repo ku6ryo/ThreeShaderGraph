@@ -145,18 +145,35 @@ export class NodeWireManager {
     return newNodes.length > 0
   }
 
-  removeSelected() {
-    const nodesToKeep = this.#nodes.filter(n => !n.selected || !n.deletable)
-    const nodesToRemove = this.#nodes.filter(n => n.selected && n.deletable)
-    const wiresToKeep = this.#wires.filter(w => {
-      return !nodesToRemove.find(n => {
-        return w.inNodeId === n.id || w.outNodeId === n.id
-      })
+  /**
+   * @returns Whether any nodes were removed.
+   */
+  removeSelected(): boolean {
+    const nodesToKeepDict: { [id: string]: NodeProps } = {}
+    this.#nodes.forEach(n => {
+      if (!n.selected || !n.deletable) {
+        nodesToKeepDict[n.id] = n
+      }
     })
-    if (nodesToRemove.length > 0) {
-      this.updateNodes(nodesToKeep)
-      this.updateWires(wiresToKeep)
+    const nodesToKeep = Object.values(nodesToKeepDict)
+    if (this.#nodes.length === nodesToKeep.length) {
+      return false
     }
-    return nodesToRemove.length > 0
+    const wiresToKeepDict: { [id: string]: WireProps } = {}
+    this.#wires.forEach(w => {
+      if (nodesToKeepDict[w.inNodeId] && nodesToKeepDict[w.outNodeId]) {
+        wiresToKeepDict[w.id] = w
+      }
+    })
+    this.#wires.forEach(w => {
+      const isWireKept = !!wiresToKeepDict[w.id]
+      const outNode = nodesToKeepDict[w.outNodeId]
+      if (!isWireKept && outNode) {
+        outNode.inSockets[w.outSocketIndex].connected = false
+      }
+    })
+    this.updateNodes(nodesToKeep)
+    this.updateWires(Object.values(wiresToKeepDict))
+    return true
   }
 }

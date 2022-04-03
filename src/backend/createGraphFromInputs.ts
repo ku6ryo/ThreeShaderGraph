@@ -31,6 +31,9 @@ import { VectorRotateNode } from "./nodes/math/VectorRotateNode"
 import { Vector3InputNode } from "./nodes/inputs/Vector3InputNode"
 import { InvertNode } from "./nodes/math/InvertNode"
 import { ClampNode } from "./nodes/math/ClampNode"
+import { ArcsineNode } from "./nodes/math/ArcsineNode"
+import { ArctangentNode } from "./nodes/math/ArctangentNode"
+import { ArccosineNode } from "./nodes/math/ArccosineNode"
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
   const graph = new ShaderGraph()
@@ -74,6 +77,15 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     if (n.typeId === NodeTypeId.MathTangent) {
       sn = new TangentNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathArcsine) {
+      sn = new ArcsineNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathArccosine) {
+      sn = new ArccosineNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathArctangent) {
+      sn = new ArctangentNode(n.id, ShaderDataType.Vector4)
     }
     if (n.typeId === NodeTypeId.MathDot) {
       sn = new DotNode(n.id, ShaderDataType.Vector4)

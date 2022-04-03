@@ -54,6 +54,36 @@ export const mathDefs: NodeDefinition[] = [{
     label: "Result",
   }],
 }, {
+  id: NodeTypeId.MathArcsine,
+  name: "Arcsine",
+  category: mathCategory,
+  inSockets: [{
+    label: "Value",
+  }],
+  outSockets: [{
+    label: "Result",
+  }],
+}, {
+  id: NodeTypeId.MathArccosine,
+  name: "Arccosine",
+  category: mathCategory,
+  inSockets: [{
+    label: "Value",
+  }],
+  outSockets: [{
+    label: "Result",
+  }],
+}, {
+  id: NodeTypeId.MathArctangent,
+  name: "Arctangent",
+  category: mathCategory,
+  inSockets: [{
+    label: "Value",
+  }],
+  outSockets: [{
+    label: "Result",
+  }],
+}, {
   id: NodeTypeId.MathDot,
   name: "Dot",
   category: mathCategory,
