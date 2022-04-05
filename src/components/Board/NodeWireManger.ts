@@ -1,8 +1,9 @@
 import shortUUID from "short-uuid"
 import {
-  NodeProps, WireProps, cloneNodeProps, cloneWireProps,
+  NodeProps, WireProps, cloneNodeProps, cloneWireProps, createNodeProps,
 } from "./types"
 import { NodeTypeId } from "../../definitions/NodeTypeId"
+import { NodeDefinition } from "../../definitions/types"
 
 export class NodeWireManager {
   #updateId = shortUUID.generate()
@@ -33,14 +34,6 @@ export class NodeWireManager {
 
   getNodes() {
     return [...this.#nodes]
-  }
-
-  addNode(node: NodeProps) {
-    const n = cloneNodeProps(node)
-    this.#nodes.push(n)
-    this.#nodeDict[n.id] = n
-    this.#updateId = shortUUID.generate()
-    this.notifyUpdate()
   }
 
   getNode(id: string) {
@@ -101,6 +94,25 @@ export class NodeWireManager {
 
   private static generateWireId() {
     return shortUUID.generate()
+  }
+
+  selectAll() {
+    this.updateNodes(this.getNodes().map((n) => ({ ...n, selected: true })))
+  }
+
+  unselectAll() {
+    this.updateNodes(this.getNodes().map((n) => ({ ...n, selected: false })))
+  }
+
+  addNode(def: NodeDefinition, x: number, y: number) {
+    const node = createNodeProps(NodeWireManager.generateNodeId(def.id), x, y, def)
+    const n = cloneNodeProps(node)
+    this.#nodes.push(n)
+    this.#nodeDict[n.id] = n
+    this.#updateId = shortUUID.generate()
+    node.selected = true
+    this.notifyUpdate()
+    return node
   }
 
   duplicateSelected(): boolean {

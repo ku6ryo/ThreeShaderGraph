@@ -5,7 +5,7 @@ import { WireLine } from "../WireLine";
 import style from "./style.module.scss"
 import classnames from "classnames"
 import { HistoryManager } from "./HistoryManager";
-import { NodeProps, WireProps, createNodeProps } from "./types"
+import { NodeProps, WireProps } from "./types"
 import shortUUID from "short-uuid";
 import { NodeWireManager } from "./NodeWireManger";
 import { outputDefs } from "../../definitions/output";
@@ -110,6 +110,8 @@ export function Board({
   const nwManager = useMemo(() => {
     const m = new NodeWireManager()
     m.setOnUpdate((id) => {
+      console.log("nw update", id)
+      console.log(nwManager.getNodes())
       setNwUpdate(id)
     })
     return m
@@ -132,13 +134,7 @@ export function Board({
   // Initialize the board
   useEffect(() => {
     const d = outputDefs[0]
-    const newNodes = [createNodeProps(
-      d.id + "_" + generateId(),
-      board.centerX,
-      board.centerY,
-      d
-    )]
-    nwManager.updateNodes(newNodes)
+    nwManager.addNode(d, board.centerX, board.centerY)
     saveHistory()
     notifyChange()
   }, [])
@@ -281,36 +277,36 @@ export function Board({
 
   const onNodeDragStart = useCallback((id: string, mouseX: number, mouseY: number) => {
     const nodes = nwManager.getNodes()
-    const targetNode = nodes.find(n => n.id === id)
-    if (targetNode) {
-      const mouseOnBoardX = mouseX - board.domX
-      const mouseOnBoardY = mouseY - board.domY
-      if (!targetNode.selected) {
-        nodes.forEach(n => {
-          n.selected = false
-        })
-      }
-      targetNode.selected = true
-      const nodesToSave: { [key: string]: NodeProps } = {}
+    const targetNode = nwManager.getNode(id)
+    const mouseOnBoardX = mouseX - board.domX
+    const mouseOnBoardY = mouseY - board.domY
+    console.log("hoge", targetNode)
+    if (!targetNode.selected) {
       nodes.forEach(n => {
-        nodesToSave[n.id] = {...n}
+        n.selected = false
       })
-      const wiresToSave: { [key: string]: WireProps } = {}
-      const wires = nwManager.getWires()
-      wires.forEach(w => {
-        wiresToSave[w.id] = {...w}
-      })
-      setDraggingNode({
-        startMouseX: mouseOnBoardX,
-        startMouseY: mouseOnBoardY,
-        nodes: nodesToSave,
-        wires: wiresToSave,
-      })
-      const newNodes = [...nodes]
-      const newWires = [...wires]
-      nwManager.updateNodes(newNodes)
-      nwManager.updateWires(newWires)
     }
+    targetNode.selected = true
+    const nodesToSave: { [key: string]: NodeProps } = {}
+    nodes.forEach(n => {
+      nodesToSave[n.id] = {...n}
+    })
+    const wiresToSave: { [key: string]: WireProps } = {}
+    const wires = nwManager.getWires()
+    wires.forEach(w => {
+      wiresToSave[w.id] = {...w}
+    })
+    setDraggingNode({
+      startMouseX: mouseOnBoardX,
+      startMouseY: mouseOnBoardY,
+      nodes: nodesToSave,
+      wires: wiresToSave,
+    })
+    const newNodes = [...nodes]
+    const newWires = [...wires]
+    nwManager.updateNodes(newNodes)
+    nwManager.updateWires(newWires)
+    nwManager.updateNode(targetNode)
   }, [board])
 
   const onMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
@@ -333,13 +329,13 @@ export function Board({
       const savedWires = draggingNode.wires
       const nodes = nwManager.getNodes()
       const wires = nwManager.getWires()
-      const updatedNodes = nodes.map(n => {
+      nodes.forEach(n => {
         if (!n.selected) {
-          return n
+          return
         }
         const lastNode = savedNodes[n.id]
         if (!lastNode) {
-          throw new Error("no last node ... might be a bug")
+          return
         }
         const nx = lastNode.x + dMouseX / board.zoom
         const ny = lastNode.y + dMouseY / board.zoom
@@ -362,7 +358,7 @@ export function Board({
         })
         return n
       })
-      nwManager.updateNodes(updatedNodes)
+      nwManager.updateNodes([...nodes])
       nwManager.updateWires([...wires])
     }
     if (draggingBoard) {
@@ -400,7 +396,9 @@ export function Board({
       saveHistory()
       setDraggingNode(null)
     }
-    setDraggingBoard(null)
+    if (draggingBoard) {
+      setDraggingBoard(null)
+    }
     if (drawingRect) {
       const newNodes = nodes.map(n => {
         if (rectsManager.isOverlapped(n.id, drawingRect)) {
@@ -412,13 +410,9 @@ export function Board({
       })
       nwManager.updateNodes(newNodes)
       saveHistory()
-    } else if (e.target === svgRootRef.current) {
-      const newNodes = nodes.map(n => { n.selected = false; return n })
-      nwManager.updateNodes(newNodes)
-      saveHistory()
+      setDrawingRect(null)
     }
-    setDrawingRect(null)
-  }, [drawingRect, draggingNode, drawingWire])
+  }, [drawingRect, draggingNode, drawingWire, draggingBoard])
 
   const onMouseLeave = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     setDrawingWire(null)
@@ -463,12 +457,8 @@ export function Board({
     if (!d) {
       throw new Error("No factory found for node type " + typeId)
     }
-    const nodes = nwManager.getNodes().map(n => ({ ...n, selected: false }))
-    const newNodes = [
-      ...nodes,
-      createNodeProps(d.id + "_" + generateId(), board.centerX, board.centerY, d)
-    ]
-    nwManager.updateNodes(newNodes)
+    nwManager.unselectAll()
+    nwManager.addNode(d, board.centerX, board.centerY)
     saveHistory()
   }, [nodeDefinitions, nwManager, board.centerX, board.centerY])
 
@@ -638,6 +628,7 @@ export function Board({
     return `${board.centerX - board.domWidth / 2 / board.zoom} ${board.centerY - board.domHeight / 2 / board.zoom} ${board.domWidth / board.zoom} ${board.domHeight / board.zoom}`
   }, [board])
   const nodes = useMemo(() => {
+    console.log("update nodes")
     return nwManager.getNodes()
   }, [nwManager.getUpdateId()])
   const wires = useMemo(() => {
