@@ -36,6 +36,7 @@ import { ArctangentNode } from "./nodes/math/ArctangentNode"
 import { ArccosineNode } from "./nodes/math/ArccosineNode"
 import { PhysicalNode } from "./nodes/materials/PhysicalNode"
 import { NormalNode } from "./nodes/inputs/NormalNode"
+import { VolonoiNode } from "./nodes/noises/VolonoiNode"
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
   const graph = new ShaderGraph()
@@ -131,6 +132,9 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     if (n.typeId === NodeTypeId.TextureSample) {
       sn = new SampleTextureNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.TextureVolonoi) {
+      sn = new VolonoiNode(n.id)
     }
     // Materials
     if (n.typeId === NodeTypeId.Material_Lambert) {

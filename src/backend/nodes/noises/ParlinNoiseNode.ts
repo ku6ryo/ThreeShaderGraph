@@ -8,7 +8,9 @@ export class PerlinNoiseNode extends ShaderNode {
   constructor(id: string) {
     super(id, "Math_PerlinNoise")
     this.addInSocket("uv", ShaderDataType.Vector2)
-    this.addOutSocket("pnoise", ShaderDataType.Float)
+    this.addInSocket("s", ShaderDataType.Float)
+    this.setUniformValue(1, 10)
+    this.addOutSocket("o", ShaderDataType.Float)
   }
 
   generateFragCommonCode(): string {
@@ -71,10 +73,11 @@ float cnoise(vec2 P)
   }
 
   generateFragCode(): string {
-    const i = this.getInSocket(0)
-    const o = this.getOutSocket(0)
+    const i0 = this.getInSocket(0).getVarName()
+    const i1 = this.getInSocket(1).getVarName()
+    const o = this.getOutSocket(0).getVarName()
     return `
-    float ${o.getVarName()} = cnoise(${i.getVarName()});
+    float ${o} = cnoise(${i0} * ${i1});
     `
   }
 }

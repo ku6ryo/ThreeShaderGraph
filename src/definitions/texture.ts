@@ -1,6 +1,6 @@
 import { NodeTypeId } from "./NodeTypeId"
 import {
-  NodeCategory, NodeColor, NodeDefinition,
+  NodeCategory, NodeColor, NodeDefinition, NodeInputType,
 } from "./types"
 
 export const textureCategory: NodeCategory = {
@@ -28,8 +28,36 @@ export const textureDefs: NodeDefinition[] = [{
   category: textureCategory,
   inSockets: [{
     label: "UV",
+  }, {
+    label: "Scale",
+    alternativeValueInputType: NodeInputType.Float,
+    alternativeValue: {
+      float: 10,
+    },
   }],
   outSockets: [{
     label: "Color",
+  }],
+}, {
+  id: NodeTypeId.TextureVolonoi,
+  name: "Volonoi",
+  category: textureCategory,
+  inSockets: [{
+    label: "UV",
+  }, {
+    label: "Scale",
+    alternativeValueInputType: NodeInputType.Float,
+    alternativeValue: {
+      float: 10,
+    },
+  }, {
+    label: "Randomness",
+    alternativeValueInputType: NodeInputType.Float,
+    alternativeValue: {
+      float: 1,
+    },
+  }],
+  outSockets: [{
+    label: "Distance",
   }],
 }]

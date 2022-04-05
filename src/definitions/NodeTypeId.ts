@@ -36,4 +36,5 @@ export enum NodeTypeId {
   // Texture
   TextureSample = "texture_sample",
   TexturePerlinNoise = "texture_perlin_noise",
+  TextureVolonoi = "texture_volonoi",
 }
