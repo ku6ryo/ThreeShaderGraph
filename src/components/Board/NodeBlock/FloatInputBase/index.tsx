@@ -15,6 +15,9 @@ import {
 import classNames from "classnames"
 
 const DELTA = 0.01
+const MAX_DECIMAL_PLACES = 5
+const MAX_VALUE = Math.pow(10, 10)
+const MIN_VALUE = -Math.pow(10, 10)
 
 type Props = {
   value: number,
@@ -26,52 +29,64 @@ export function FloatInputBase({
   onChange,
 }: Props) {
   const [typing, setTyping] = useState(false)
-  const [operatingGuage, setOperatingGuage] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const [textValue, setTextValue] = useState("")
+
+  const emitOnChange = useCallback((v: number) => {
+    if (v > MAX_VALUE) {
+      onChange(MAX_VALUE)
+      return
+    }
+    if (v < MIN_VALUE) {
+      onChange(MIN_VALUE)
+      return
+    }
+    onChange(Number(v.toFixed(MAX_DECIMAL_PLACES)))
+  }, [onChange])
+
   const onArrowClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation()
     const v = Number(e.currentTarget.dataset.value)
-    onChange(value + v)
-  }, [value, onChange])
-  const valueStr = useMemo(() => {
-    return value.toFixed(3)
+    emitOnChange(value + v)
+  }, [value, emitOnChange])
+
+  const displayValue = useMemo(() => {
+    return value.toFixed(MAX_DECIMAL_PLACES)
   }, [value])
-  const onMouseDownGuage = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-    setOperatingGuage(true)
-  }, [])
-  const onMouseUpGuage = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-    setOperatingGuage(false)
-  }, [])
-  const onMouseMoveGuage = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-    if (operatingGuage && e.button === 0) {
-      onChange(value + Math.sign(e.movementX) * DELTA)
-    }
-  }, [value, operatingGuage, onChange])
-  const onMouseLeaveGuage = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    setOperatingGuage(false)
-  }, [])
-  const onInputBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    setTyping(false)
-  }, [])
+
   const onNumberClick: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
     setTyping(true)
     if (inputRef.current) {
       inputRef.current.focus()
+      setTextValue(value.toFixed(5).replace(/\.?0+$/, ""))
     }
-  }, [setTyping, inputRef.current])
+  }, [setTyping, inputRef.current, value, setTextValue])
 
-  const onInputChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
-    onChange(Number(e.currentTarget.value))
-  }, [onChange])
+  const onTextInputComplete = useCallback(() => {
+    setTyping(false)
+    const v = Number(textValue)
+    if (isNaN(v)) {
+      return
+    }
+    emitOnChange(v)
+  }, [textValue, emitOnChange])
+
+  const onTextInputChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
+    setTextValue(e.currentTarget.value)
+  }, [setTextValue])
+
+  const onInputBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    onTextInputComplete()
+  }, [onTextInputComplete])
 
   const onInputKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback((e) => {
     e.stopPropagation()
     if (e.code === "Enter") {
-      setTyping(false)
+      onTextInputComplete()
     }
+  }, [onTextInputComplete])
+  const onInputMouseDown: MouseEventHandler<HTMLInputElement> = useCallback((e) => {
+    e.stopPropagation()
   }, [])
 
   return (
@@ -79,9 +94,6 @@ export function FloatInputBase({
       {!typing && (
         <div
           className={style.guage}
-          onMouseMove={onMouseMoveGuage}
-          onMouseLeave={onMouseLeaveGuage}
-          onMouseUp={onMouseUpGuage}
           onMouseDown={e => e.stopPropagation()}
         >
           <div
@@ -93,10 +105,9 @@ export function FloatInputBase({
           </div>
           <div
             className={style.text}
-            onMouseDown={onMouseDownGuage}
             onClick={onNumberClick}
           >
-            <span>{valueStr}</span>
+            <span>{displayValue}</span>
           </div>
           <div
             className={classNames(style.arrow, style.right)}
@@ -115,12 +126,12 @@ export function FloatInputBase({
       >
         <input
           className={style.input}
-          value={value}
+          value={textValue}
           onBlur={onInputBlur}
-          type="number"
           ref={inputRef}
+          onMouseDown={onInputMouseDown}
           onKeyDown={onInputKeyDown}
-          onChange={onInputChange}
+          onChange={onTextInputChange}
         />
       </div>
     </div>
