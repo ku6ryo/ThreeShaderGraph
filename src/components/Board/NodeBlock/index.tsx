@@ -45,8 +45,11 @@ export const NodeBlock = memo(function ({
 }: Props) {
   const frameRef = useRef<SVGForeignObjectElement | null>(null)
   const boxRef = useRef<HTMLDivElement | null>(null)
-  const socketRectMap = useMemo(() => {
-    return new Map<string, DOMRect>()
+  const inSocketRects: DOMRect[] = useMemo(() => {
+    return []
+  }, [])
+  const outSocketRects: DOMRect[] = useMemo(() => {
+    return []
   }, [])
 
   const onSocketMouseUpInternal = useCallback((dir: SocketDirection, index: number, x: number, y: number) => {
@@ -70,23 +73,21 @@ export const NodeBlock = memo(function ({
   }, [id, onInSocketValueChange])
 
   const onSocketRender = useCallback((dir: SocketDirection, index: number, rect: DOMRect) => {
-    socketRectMap.set(`${dir}-${index}`, rect)
+    if (dir === "in") {
+      inSocketRects[index] = rect
+    }
+    if (dir === "out") {
+      outSocketRects[index] = rect
+    }
   }, [id])
 
   useEffect(() => {
     if (boxRef.current) {
-      console.log("resize")
-      const inRects = inSockets.map((_, i) => {
-        return socketRectMap.get(`in-${i}`)
-      })
-      const outRects = outSockets.map((_, i) => {
-        return socketRectMap.get(`out-${i}`)
-      })
       onGeometryUpdate({
         id,
         nodeRect: boxRef.current.getBoundingClientRect(),
-        inRects,
-        outRects,
+        inRects: inSocketRects,
+        outRects: outSocketRects,
       })
     }
   })
@@ -117,6 +118,7 @@ export const NodeBlock = memo(function ({
             <div className={style.outputs}>
               {outSockets.map((socket, i) => (
                 <SocketRow
+                  key={`out-${i}`}
                   label={socket.label}
                   direction="out"
                   index={i}
@@ -137,6 +139,7 @@ export const NodeBlock = memo(function ({
               }
               return (
                 <SocketRow
+                  key={`out-${i}`}
                   label={socket.label}
                   direction="in"
                   index={i}

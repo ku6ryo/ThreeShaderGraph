@@ -74,6 +74,24 @@ type BoardStats = {
   zoom: number,
 }
 
+/**
+ * Considering the current zoom level and the center of the board, calculates the position of the geometries. 
+ * Arguments x, y, width, height must be client coordinates (getBoundingClientRect()).
+ */
+const calcGeoOnBoard = (board: BoardStats, x: number, y: number, width: number, height: number) => {
+  const { centerX, centerY, zoom, domX, domY, domHeight, domWidth } = board
+  const newX = (x - domX - domWidth / 2) / zoom + centerX
+  const newY = (y - domY - domHeight / 2) / zoom + centerY
+  const newW = width / zoom
+  const newH = height / zoom
+  return {
+    x: newX,
+    y: newY,
+    width: newW,
+    height: newH,
+  }
+}
+
 type Props = {
   nodeDefinitions: NodeDefinition[],
   onChange: (nodes: NodeProps[], wires: WireProps[]) => void
@@ -110,8 +128,6 @@ export function Board({
   const nwManager = useMemo(() => {
     const m = new NodeWireManager()
     m.setOnUpdate((id) => {
-      console.log("nw update", id)
-      console.log(nwManager.getNodes())
       setNwUpdate(id)
     })
     return m
@@ -139,20 +155,6 @@ export function Board({
     notifyChange()
   }, [])
 
-  const calcGeoOnBoard = useCallback((x: number, y: number, width: number, height: number) => {
-    const { centerX, centerY, zoom, domX, domY, domHeight, domWidth } = board
-    const newX = (x - domX - domWidth / 2) / zoom + centerX
-    const newY = (y - domY - domHeight / 2) / zoom + centerY
-    const newW = width / zoom
-    const newH = height / zoom
-    return {
-      x: newX,
-      y: newY,
-      width: newW,
-      height: newH,
-    }
-  }, [board])
-
   const goToPrevHistory = () => {
     const history = historyManager.goBack()
     if (!history) {
@@ -167,7 +169,7 @@ export function Board({
   }
 
   const onSocketMouseDown = useCallback((id: string, dir: SocketDirection, i: number, x: number, y: number) => {
-    const { x: zoomedX, y: zoomedY } = calcGeoOnBoard(x, y, 0, 0)
+    const { x: zoomedX, y: zoomedY } = calcGeoOnBoard(board, x, y, 0, 0)
     if (dir === "out") {
       setDrawingWire({
         startDirection: dir,
@@ -211,7 +213,7 @@ export function Board({
         })
       }
     }
-  }, [board.zoom])
+  }, [board])
 
   const onSocketMouseUp = useCallback((
     id: string,
@@ -224,7 +226,7 @@ export function Board({
       setDrawingWire(null)
       return
     }
-    const { x: zoomedX, y: zoomedY } = calcGeoOnBoard(x, y, 0, 0)
+    const { x: zoomedX, y: zoomedY } = calcGeoOnBoard(board, x, y, 0, 0)
     const wires = nwManager.getWires()
     let newWires: WireProps[] = []
     if (drawingWire.startDirection === "in") {
@@ -273,14 +275,13 @@ export function Board({
     saveHistory()
     notifyChange()
     setDrawingWire(null)
-  }, [board.zoom, drawingWire, setDrawingWire])
+  }, [board, drawingWire, setDrawingWire])
 
   const onNodeDragStart = useCallback((id: string, mouseX: number, mouseY: number) => {
     const nodes = nwManager.getNodes()
     const targetNode = nwManager.getNode(id)
     const mouseOnBoardX = mouseX - board.domX
     const mouseOnBoardY = mouseY - board.domY
-    console.log("hoge", targetNode)
     if (!targetNode.selected) {
       nodes.forEach(n => {
         n.selected = false
@@ -312,7 +313,7 @@ export function Board({
   const onMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const mouseX = e.clientX - board.domX
     const mouseY = e.clientY - board.domY
-    const { x: boardX, y: boardY } = calcGeoOnBoard(e.clientX, e.clientY, 0, 0)
+    const { x: boardX, y: boardY } = calcGeoOnBoard(board, e.clientX, e.clientY, 0, 0)
 
     if (drawingWire) {
       setDrawingWire({
@@ -380,7 +381,7 @@ export function Board({
         height: Math.abs(startY - boardY),
       })
     }
-  }, [board.zoom, board.centerX, board.centerY, drawingWire, draggingNode, draggingBoard, drawingRect])
+  }, [board, drawingWire, draggingNode, draggingBoard, drawingRect])
 
   const onMouseUp = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const nodes = nwManager.getNodes()
@@ -439,7 +440,7 @@ export function Board({
 
     // Start drawing selection rect
     if (e.button == 0 && svgRootRef.current) {
-      const { x, y } = calcGeoOnBoard(e.clientX, e.clientY, 0, 0)
+      const { x, y } = calcGeoOnBoard(board, e.clientX, e.clientY, 0, 0)
       setDrawingRect({
         startX: x,
         startY: y,
@@ -601,7 +602,7 @@ export function Board({
           if (r) {
             const cx = r.x + r.width / 2
             const cy = r.y + r.height / 2
-            const { x, y } = calcGeoOnBoard(cx, cy, 0, 0)
+            const { x, y } = calcGeoOnBoard(board, cx, cy, 0, 0)
             w.inX = x
             w.inY = y
           }
@@ -611,7 +612,7 @@ export function Board({
           if (r) {
             const cx = r.x + r.width / 2
             const cy = r.y + r.height / 2
-            const { x, y } = calcGeoOnBoard(cx, cy, 0, 0)
+            const { x, y } = calcGeoOnBoard(board, cx, cy, 0, 0)
             w.outX = x
             w.outY = y
           }
@@ -628,7 +629,6 @@ export function Board({
     return `${board.centerX - board.domWidth / 2 / board.zoom} ${board.centerY - board.domHeight / 2 / board.zoom} ${board.domWidth / board.zoom} ${board.domHeight / board.zoom}`
   }, [board])
   const nodes = useMemo(() => {
-    console.log("update nodes")
     return nwManager.getNodes()
   }, [nwManager.getUpdateId()])
   const wires = useMemo(() => {
@@ -660,7 +660,7 @@ export function Board({
               <polygon points="0 18 6 18 12 12 12 18 18 18 12 24 0 24"/>
               <polygon points="24 18 24 24 18 24"/>
               <polygon points="24 0 18 6 12 6 18 0"/>
-              <polygon points="12 0 12 6 0 18 0 12 6 6 0 0 0"/>
+              <polygon points="12 0 12 6 0 18 0 12 6 6 0 0"/>
             </g>
           </pattern>
         </defs>
