@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { NodeBox } from "./NodeBox";
-import { SocketDirection } from "./NodeBox/types";
+import { NodeBlock } from "./NodeBlock";
+import { SocketDirection } from "./NodeBlock/types";
 import { WireLine } from "../WireLine";
 import style from "./style.module.scss"
 import classnames from "classnames"
@@ -457,30 +457,19 @@ export function Board({
     }
   }, [board.zoom, board.centerX, board.centerY, board.domWidth, board.domHeight, svgRootRef.current])
 
-  const onNodeResize = useCallback((id: string, rect: DOMRect) => {
-    const x = (rect.x - board.domX - board.domWidth / 2) / board.zoom + board.centerX
-    const y = (rect.y - board.domY - board.domHeight / 2) / board.zoom + board.centerY
-    rectsManager.set(id, {
-      x,
-      y,
-      width: rect.width / board.zoom,
-      height: rect.height / board.zoom,
-    })
-  }, [svgRootRef.current, board.zoom, board.centerX, board.centerY, board.domHeight, board.domWidth])
-
+  // On a node is selected by the selector.
   const onNodeAdd = useCallback((typeId: string) => {
     const d = nodeDefinitions.find(d => d.id === typeId)
-    if (d) {
-      const nodes = nwManager.getNodes().map(n => ({ ...n, selected: false }))
-      const newNodes = [
-        ...nodes,
-        createNodeProps(d.id + "_" + generateId(), board.centerX, board.centerY, d)
-      ]
-      nwManager.updateNodes(newNodes)
-      saveHistory()
-    } else {
+    if (!d) {
       throw new Error("No factory found for node type " + typeId)
     }
+    const nodes = nwManager.getNodes().map(n => ({ ...n, selected: false }))
+    const newNodes = [
+      ...nodes,
+      createNodeProps(d.id + "_" + generateId(), board.centerX, board.centerY, d)
+    ]
+    nwManager.updateNodes(newNodes)
+    saveHistory()
   }, [nodeDefinitions, nwManager, board.centerX, board.centerY])
 
   useEffect(() => {
@@ -588,22 +577,6 @@ export function Board({
   }
   , [nwManager, onInSocketValueChange])
 
-  const onSocketRender = useCallback((nodeId: string, dir: SocketDirection, index: number, x: number, y: number) => {
-    const wires = nwManager.getWires()
-    const nx = (x - board.domX - board.domWidth / 2) / board.zoom + board.centerX
-    const ny = (y - board.domY - board.domHeight / 2) / board.zoom + board.centerY
-    wires.forEach(w => {
-      if (w.inNodeId === nodeId && w.inSocketIndex === index && dir === "out") {
-        w.inX = nx
-        w.inY = ny
-      }
-      if (w.outNodeId === nodeId && w.outSocketIndex === index && dir === "in") {
-        w.outX = nx
-        w.outY = ny
-      }
-    })
-  }, [board])
-
   const nodeGeoMap = useMemo(() => {
     return new Map<string, {
       id: string,
@@ -620,6 +593,14 @@ export function Board({
     outRects: (DOMRect | undefined)[]
   }) => {
     nodeGeoMap.set(g.id, g)
+    const nodeX = (g.nodeRect.x - board.domX - board.domWidth / 2) / board.zoom + board.centerX
+    const nodeY = (g.nodeRect.y - board.domY - board.domHeight / 2) / board.zoom + board.centerY
+    rectsManager.set(g.id, {
+      x: nodeX,
+      y: nodeY,
+      width: g.nodeRect.width / board.zoom,
+      height: g.nodeRect.height / board.zoom,
+    })
     if (nodeIdToGeoUpdate === g.id) {
       const newWires = nwManager.getWires().map(w => {
         if (w.inNodeId === g.id) {
@@ -696,7 +677,7 @@ export function Board({
           <WireLine key={w.id} x1={w.inX} y1={w.inY} x2={w.outX} y2={w.outY} valid={w.id !== invalidWireId}/>
         ))}
         {nodes.map((n) => (
-          <NodeBox
+          <NodeBlock
             key={n.id}
             id={n.id}
             name={n.name}
@@ -710,8 +691,6 @@ export function Board({
             onSocketMouseUp={onSocketMouseUp}
             onDragStart={onNodeDragStart}
             onInSocketValueChange={onInSocketValueChangeInternal}
-            onNodeResize={onNodeResize}
-            onSocketRender={onSocketRender}
             onGeometryUpdate={onNodeGeometryUpdate}
           />
         ))}

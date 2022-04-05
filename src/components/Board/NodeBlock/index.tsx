@@ -19,8 +19,6 @@ type Props = {
   onSocketMouseDown: (id: string, direction: SocketDirection, i: number, x: number, y: number) => void,
   onDragStart: (id: string, x: number, y: number) => void,
   onInSocketValueChange: (id: string, i: number, value: NodeInputValue) => void,
-  onNodeResize: (id: string, rect: DOMRect) => void,
-  onSocketRender: (id: string, direction: SocketDirection, i: number, x: number, y: number) => void,
   onGeometryUpdate: (g: {
     id: string,
     nodeRect: DOMRect,
@@ -30,7 +28,7 @@ type Props = {
   }) => void
 }
 
-export const NodeBox = memo(function NodeBox({
+export const NodeBlock = memo(function ({
   id,
   name,
   color,
@@ -38,13 +36,11 @@ export const NodeBox = memo(function NodeBox({
   y,
   inSockets,
   outSockets,
+  selected,
   onSocketMouseUp,
   onSocketMouseDown,
-  selected,
   onDragStart,
   onInSocketValueChange,
-  onNodeResize,
-  onSocketRender,
   onGeometryUpdate,
 }: Props) {
   const frameRef = useRef<SVGForeignObjectElement | null>(null)
@@ -80,18 +76,18 @@ export const NodeBox = memo(function NodeBox({
     }
   }, [id, onDragStart])
 
-  const onSocketValueChange = useCallback((dir: SocketDirection, index: number, value: NodeInputValue) => {
+  // Currently only input sockets have value input UI.
+  const onSocketValueChange = useCallback((_: SocketDirection, index: number, value: NodeInputValue) => {
     onInSocketValueChange(id, index, value)
   }, [id, onInSocketValueChange])
 
-  const onSocketRenderInternal = useCallback((dir: SocketDirection, index: number, rect: DOMRect) => {
+  const onSocketRender = useCallback((dir: SocketDirection, index: number, rect: DOMRect) => {
     socketRectMap.set(`${dir}-${index}`, rect)
-  }, [id, onSocketRender])
+  }, [id])
 
   useEffect(() => {
-    console.log("node render")
     if (boxRef.current) {
-      onNodeResize(id, boxRef.current.getBoundingClientRect())
+      console.log("resize")
       const inRects = inSockets.map((_, i) => {
         return socketRectMap.get(`in-${i}`)
       })
@@ -141,7 +137,7 @@ export const NodeBox = memo(function NodeBox({
                   onSocketMouseUp={onSocketMouseUpInternal}
                   onSocketValueChange={onSocketValueChange}
                   socketHidden={false}
-                  onRender={onSocketRenderInternal}
+                  onRender={onSocketRender}
                 />
               ))}
             </div>
@@ -164,7 +160,7 @@ export const NodeBox = memo(function NodeBox({
                   onSocketMouseUp={onSocketMouseUpInternal}
                   onSocketValueChange={onSocketValueChange}
                   socketHidden={socket.socketHidden || false}
-                  onRender={onSocketRenderInternal}
+                  onRender={onSocketRender}
                 />
               )
             })}
