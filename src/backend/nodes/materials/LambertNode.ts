@@ -1,11 +1,14 @@
 import { BuiltIn, ShaderNode } from "../../ShaderNode"
 import { ShaderDataType } from "../../data_types"
+import { Vector4 } from "three"
 
 export class LambertNode extends ShaderNode {
   constructor(id: string) {
     super(id, "Material_Lambert", [BuiltIn.Normal, BuiltIn.DirectionalLight])
-    this.addInSocket("diffuse", ShaderDataType.Vector3)
-    this.addInSocket("emissive", ShaderDataType.Vector3)
+    this.addInSocket("diffuse", ShaderDataType.Vector4)
+    this.setUniformValue(0, new Vector4(1, 1, 1, 1))
+    this.addInSocket("emissive", ShaderDataType.Vector4)
+    this.setUniformValue(0, new Vector4())
     this.addOutSocket("color", ShaderDataType.Vector4)
   }
 
@@ -97,11 +100,11 @@ vec4 builtIn_lambertMaterial(vec3 diffuse, vec3 emissive) {
   }
 
   generateFragCode(): string {
-    const i0 = this.getInSocket(0)
-    const i1 = this.getInSocket(1)
-    const o = this.getOutSocket(0)
+    const i0 = this.getInSocket(0).getVarName()
+    const i1 = this.getInSocket(1).getVarName()
+    const o = this.getOutSocket(0).getVarName()
     return `
-    vec4 ${o.getVarName()} = builtIn_lambertMaterial(${i0.getVarName()}, ${i1.getVarName()});
+    vec4 ${o} = builtIn_lambertMaterial(${i0}.rgb, ${i1}.rgb);
     `
   }
 }

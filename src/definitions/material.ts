@@ -1,6 +1,6 @@
-import { Vector3, Vector4 } from "three"
+import { Vector4 } from "three"
 import { NodeTypeId } from "./NodeTypeId"
-import { NodeCategory, NodeInputType, NodeColor } from "./types"
+import { NodeCategory, NodeInputType, NodeColor, NodeDefinition } from "./types"
 
 export const materialCategory: NodeCategory = {
   id: "material",
@@ -9,22 +9,22 @@ export const materialCategory: NodeCategory = {
   color: NodeColor.Emerald,
 }
 
-export const materialDefs = [{
+export const materialDefs: NodeDefinition[] = [{
   id: NodeTypeId.Material_Lambert,
   name: "Lambert",
   category: materialCategory,
   inSockets: [{
     label: "Diffuse",
     alternativeValue: {
-      vec3: new Vector3(1, 1, 1),
+      vec4: new Vector4(1, 1, 1, 1),
     },
-    alternativeValueInputType: NodeInputType.Vector3,
+    alternativeValueInputType: NodeInputType.Color,
   }, {
     label: "Emissive",
     alternativeValue: {
-      vec3: new Vector3(),
+      vec4: new Vector4(),
     },
-    alternativeValueInputType: NodeInputType.Vector3,
+    alternativeValueInputType: NodeInputType.Color,
   }],
   outSockets: [{
     label: "Color",
