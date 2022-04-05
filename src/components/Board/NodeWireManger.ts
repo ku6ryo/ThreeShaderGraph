@@ -1,5 +1,7 @@
 import shortUUID from "short-uuid"
-import { NodeProps, WireProps, cloneNodeProps, cloneWireProps } from "./types"
+import {
+  NodeProps, WireProps, cloneNodeProps, cloneWireProps,
+} from "./types"
 import { NodeTypeId } from "../../definitions/NodeTypeId"
 
 export class NodeWireManager {
@@ -104,7 +106,7 @@ export class NodeWireManager {
   duplicateSelected(): boolean {
     const placementOffset = 20
     const cloneNodeDict: { [id: string]: NodeProps } = {}
-    this.#nodes.filter((n) => n.selected && !n.unique).forEach(n => {
+    this.#nodes.filter((n) => n.selected && !n.unique).forEach((n) => {
       n.selected = false
       const cn = cloneNodeProps(n)
       cn.id = NodeWireManager.generateNodeId(n.typeId)
@@ -116,9 +118,7 @@ export class NodeWireManager {
     const cloneWireDict: { [id: string]: WireProps } = {}
     Object.keys(cloneNodeDict).forEach((oldNodeId) => {
       const cn = cloneNodeDict[oldNodeId]
-      this.#wires.filter((w) => {
-        return cloneNodeDict[w.inNodeId] && cloneNodeDict[w.outNodeId]
-      }).forEach((w) => {
+      this.#wires.filter((w) => cloneNodeDict[w.inNodeId] && cloneNodeDict[w.outNodeId]).forEach((w) => {
         if (!cloneWireDict[w.id]) {
           const cw = cloneWireProps(w)
           cw.id = NodeWireManager.generateWireId()
@@ -150,7 +150,7 @@ export class NodeWireManager {
    */
   removeSelected(): boolean {
     const nodesToKeepDict: { [id: string]: NodeProps } = {}
-    this.#nodes.forEach(n => {
+    this.#nodes.forEach((n) => {
       if (!n.selected || !n.deletable) {
         nodesToKeepDict[n.id] = n
       }
@@ -160,12 +160,12 @@ export class NodeWireManager {
       return false
     }
     const wiresToKeepDict: { [id: string]: WireProps } = {}
-    this.#wires.forEach(w => {
+    this.#wires.forEach((w) => {
       if (nodesToKeepDict[w.inNodeId] && nodesToKeepDict[w.outNodeId]) {
         wiresToKeepDict[w.id] = w
       }
     })
-    this.#wires.forEach(w => {
+    this.#wires.forEach((w) => {
       const isWireKept = !!wiresToKeepDict[w.id]
       const outNode = nodesToKeepDict[w.outNodeId]
       if (!isWireKept && outNode) {

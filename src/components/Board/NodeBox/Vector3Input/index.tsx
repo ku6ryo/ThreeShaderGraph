@@ -1,18 +1,14 @@
 import { useCallback, memo } from "react"
 import { Vector3 } from "three"
-import { InNodeInputValue } from ".."
+import { NodeInputValue } from "../../../../definitions/types"
 import { FloatInputBase } from "../FloatInputBase"
 
 type Props = {
-  label?: string
-  index: number,
-  value: InNodeInputValue,
-  onChange: (index: number, value: InNodeInputValue) => void
+  value: NodeInputValue,
+  onChange: (value: NodeInputValue) => void
 }
 
 export const Vector3Input = memo(function ({
-  label,
-  index,
   value,
   onChange,
 }: Props) {
@@ -35,27 +31,27 @@ export const Vector3Input = memo(function ({
           throw new Error("unreachable")
       }
     })()
-    onChange(index, {
+    onChange({
       vec3: v,
     })
   }, [onChange, value])
   return (
     <div>
-      <FloatInputBase label={label} value={value.vec3.x}
+      <FloatInputBase value={value.vec3.x}
         onChange={
           (v) => {
             onChangeInternal("x", v)
           }
         }
       />
-      <FloatInputBase label={label} value={value.vec3.y}
+      <FloatInputBase value={value.vec3.y}
         onChange={
           (v) => {
             onChangeInternal("y", v)
           }
         }
       />
-      <FloatInputBase label={label} value={value.vec3.z}
+      <FloatInputBase value={value.vec3.z}
         onChange={
           (v) => {
             onChangeInternal("z", v)

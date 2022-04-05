@@ -1,0 +1,72 @@
+@import "../constants.scss";
+
+.frame {
+  color: white;
+  font-size: 12px;
+  line-height: 1;
+  padding: 4px 8px;
+  position: relative;
+  text-align: right;
+
+  &.selected.in {
+    .socket {
+      .circle {
+        border-left-color: $SELECTED_COLOR;
+        border-top-color: $SELECTED_COLOR;
+      }
+    }
+  }
+  &.selected.out {
+    .socket {
+      .circle {
+        border-bottom-color: $SELECTED_COLOR;
+        border-right-color: $SELECTED_COLOR;
+      }
+    }
+  }
+
+  &.in {
+    .label {
+      text-align: left;
+    }
+    .socket {
+      left: -12px;
+      top: -2px;
+      transform: rotate(-45deg);
+    }
+  }
+
+  &.out {
+    .label {
+      text-align: right;
+    }
+    .socket {
+      right: -12px;
+      top: -2px;
+      transform: rotate(-45deg);
+    }
+  }
+}
+
+.inputContainer {
+  margin-top: 4px;
+}
+
+.socket {
+  padding: 8px;
+  position: absolute;
+
+  .circle {
+    background-color: rgb(182, 182, 182);
+    border: 1px solid #444;
+    border-radius: 10px;
+    height: 8px;
+    width: 8px;
+  }
+
+  &:hover {
+    .circle {
+      background-color: #f2f2f2;
+    }
+  }
+}

@@ -8,23 +8,6 @@ $SELECTED_COLOR: #ff9f0f;
   .box {
     border-color: $SELECTED_COLOR;
   }
-
-  .inputs {
-    .socket {
-      .circle {
-        border-left-color: $SELECTED_COLOR;
-        border-top-color: $SELECTED_COLOR;
-      }
-    }
-  }
-  .outputs {
-    .socket {
-      .circle {
-        border-bottom-color: $SELECTED_COLOR;
-        border-right-color: $SELECTED_COLOR;
-      }
-    }
-  }
 }
 
 .box {
@@ -81,9 +64,15 @@ $SELECTED_COLOR: #ff9f0f;
 }
 
 .outputs {
+  color: white;
+  font-size: 12px;
   margin-top: 4px;
+  padding: 0 4px;
 }
 
 .inputs {
+  color: white;
+  font-size: 12px;
   margin-bottom: 2px;
+  padding: 0 8px;
 }

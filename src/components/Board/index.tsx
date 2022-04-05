@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { NodeBox, SocketDirection } from "./NodeBox";
+import { NodeBox } from "./NodeBox";
+import { SocketDirection } from "./NodeBox/types";
 import { WireLine } from "../WireLine";
 import style from "./style.module.scss"
 import classnames from "classnames"
@@ -11,6 +12,7 @@ import { outputDefs } from "../../definitions/output";
 import { Slider } from "@blueprintjs/core";
 import { NodeSelector } from "./NodeSelector";
 import { NodeDefinition, NodeInputValue } from "../../definitions/types";
+import { NodeRectsManager } from "./NodeRectsManger";
 
 /**
  * ZOOM configurations
@@ -24,13 +26,6 @@ const ZOOM_STEP = 0.05
  */
 function generateId() {
   return shortUUID.generate()
-}
-
-/**
- * Checks if two rect are overlapping.
- */
-function hasRectOverlap(r1: Rect, r2: Rect) {
-  return !(r1.x + r1.width < r2.x || r1.x > r2.x + r2.width || r1.y + r1.height < r2.y || r1.y > r2.y + r2.height)
 }
 
 type DraggingNodeStats = {
@@ -77,13 +72,6 @@ type BoardStats = {
   zoom: number,
 }
 
-type Rect = {
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-}
-
 type Props = {
   nodeDefinitions: NodeDefinition[],
   onChange: (nodes: NodeProps[], wires: WireProps[]) => void
@@ -113,7 +101,6 @@ export function Board({
   const [draggingNode, setDraggingNode] = useState<DraggingNodeStats | null>(null)
   const [drawingRect, setDrawingRect] = useState<DrawingRectStats | null>(null)
   const [_, setNwUpdate] = useState("")
-  const [nodeRects, setNodeRects] = useState<{ [id: string]: Rect }>({})
   // Singletons
   const nwManager = useMemo(() => {
     const m = new NodeWireManager()
@@ -125,6 +112,9 @@ export function Board({
   const historyManager = useMemo(() => {
     const manager = new HistoryManager()
     return manager
+  }, [])
+  const rectsManager = useMemo(() => {
+    return new NodeRectsManager()
   }, [])
   // Please use this function instead of directly calling `onChange`
   const notifyChange = useCallback(() => {
@@ -349,9 +339,13 @@ export function Board({
         const ny = lastNode.y + dMouseY / board.zoom
         n.x = nx
         n.y = ny
-        const nr = nodeRects[n.id]
-        nr.x = nx
-        nr.y = ny
+        const rect = rectsManager.get(n.id)
+        if (!rect) {
+          throw new Error("no rect ... might be a bug")
+        }
+        rect.x = nx
+        rect.y = ny
+        rectsManager.set(n.id, rect)
         wires.forEach(w => {
           const lastWire = savedWires[w.id]
           if (!lastWire) {
@@ -368,7 +362,6 @@ export function Board({
         })
         return n
       })
-      setNodeRects({...nodeRects})
       nwManager.updateNodes(updatedNodes)
       nwManager.updateWires([...wires])
     }
@@ -391,7 +384,7 @@ export function Board({
         height: Math.abs(startY - boardY),
       })
     }
-  }, [board.zoom, board.centerX, board.centerY, drawingWire, draggingNode, draggingBoard, drawingRect, svgRootRef.current, nodeRects])
+  }, [board.zoom, board.centerX, board.centerY, drawingWire, draggingNode, draggingBoard, drawingRect, svgRootRef.current])
 
   const onMouseUp = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const nodes = nwManager.getNodes()
@@ -410,11 +403,7 @@ export function Board({
     setDraggingBoard(null)
     if (drawingRect) {
       const newNodes = nodes.map(n => {
-        const rect = nodeRects[n.id]
-        if (!rect) {
-          throw new Error("no rect found for the node. ID: " + n.id)
-        }
-        if (hasRectOverlap(drawingRect, rect)) {
+        if (rectsManager.isOverlapped(n.id, drawingRect)) {
           n.selected = true
         } else {
           n.selected = false
@@ -429,7 +418,7 @@ export function Board({
       saveHistory()
     }
     setDrawingRect(null)
-  }, [drawingRect, nodeRects, draggingNode, drawingWire])
+  }, [drawingRect, draggingNode, drawingWire])
 
   const onMouseLeave = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     setDrawingWire(null)
@@ -482,14 +471,13 @@ export function Board({
     const svgRect = svgRootRef.current.getBoundingClientRect()
     const x = (rect.x - svgRect.x + board.centerX - board.domWidth / 2) / board.zoom
     const y = (rect.y - svgRect.y + board.centerY - board.domHeight / 2) / board.zoom
-    nodeRects[id] = {
+    rectsManager.set(id, {
       x,
       y,
       width: rect.width / board.zoom,
       height: rect.height / board.zoom,
-    }
-    setNodeRects({ ...nodeRects })
-  }, [svgRootRef.current, nodeRects])
+    })
+  }, [svgRootRef.current])
 
   const onNodeAdd = useCallback((typeId: string) => {
     const d = nodeDefinitions.find(d => d.id === typeId)
@@ -633,7 +621,7 @@ export function Board({
         onMouseDown={onMouseDown}
         onMouseLeave={onMouseLeave}
       >
-       <defs>
+        <defs>
           <linearGradient id="wire-linear" x1="20%" y1="0%" x2="80%" y2="0%" spreadMethod="pad">
             <stop offset="0%"   stopColor="#ddd"/>
             <stop offset="100%" stopColor="#888"/>

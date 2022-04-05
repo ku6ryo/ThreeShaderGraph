@@ -1,6 +1,7 @@
-import { NodeColor, NodeInputType, NodeInputValue } from "../../definitions/types"
+import {
+  NodeColor, NodeInputType, NodeInputValue, cloneNodeInputValue, NodeDefinition,
+} from "../../definitions/types"
 import { NodeTypeId } from "../../definitions/NodeTypeId"
-import { cloneNodeInputValue, NodeDefinition } from "../../definitions/types"
 
 // Put commonly used types in this file.
 
@@ -65,8 +66,8 @@ export function createNodeProps(id: string, x: number, y: number, def: NodeDefin
       }
       return value
     }),
-    outSockets: def.outSockets.map((s) => ({ ...s, })),
-    deletable: def.deletable === false ? false : true,
+    outSockets: def.outSockets.map((s) => ({ ...s })),
+    deletable: def.deletable !== false,
     unique: def.unique || false,
   }
 }

@@ -17,13 +17,11 @@ import classNames from "classnames"
 const DELTA = 0.01
 
 type Props = {
-  label?: string
   value: number,
   onChange: (value: number) => void
 }
 
 export function FloatInputBase({
-  label,
   value,
   onChange,
 }: Props) {

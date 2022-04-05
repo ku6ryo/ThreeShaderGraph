@@ -1,19 +1,15 @@
 import { useCallback, memo, useState, MouseEventHandler, useEffect } from "react"
-import { InNodeInputValue } from ".."
+import { NodeInputValue } from "../../../../definitions/types"
 import style from "./style.module.scss"
 import { ChromePicker, ColorChangeHandler } from "react-color"
 import { Vector4 } from "three"
 
 type Props = {
-  label?: string
-  index: number,
-  value: InNodeInputValue,
-  onChange: (index: number, value: InNodeInputValue) => void
+  value: NodeInputValue,
+  onChange: (value: NodeInputValue) => void
 }
 
 export const ColorInput = memo(function ({
-  label,
-  index,
   value,
   onChange,
 }: Props) {
@@ -31,7 +27,7 @@ export const ColorInput = memo(function ({
   const onColorPickerChange: ColorChangeHandler = useCallback((color) => {
     const { rgb } = color
     const { r, g, b, a } = rgb
-    onChange(index, {
+    onChange({
       vec4: new Vector4(r / 255, g / 255, b / 255, a || 0),
     })
   }, [onChange])

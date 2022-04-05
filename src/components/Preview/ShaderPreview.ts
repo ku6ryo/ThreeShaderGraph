@@ -30,20 +30,20 @@ export enum Model {
 }
 
 function createEnvMap() {
-  const baseUrl = "/textures/cubemap/";
+  const baseUrl = "/textures/cubemap/"
   const urls = [
-    baseUrl + "posx.jpg",
-    baseUrl + "negx.jpg",
-    baseUrl + "posy.jpg",
-    baseUrl + "negy.jpg",
-    baseUrl + "posz.jpg",
-    baseUrl + "negz.jpg"
-  ];
-  const textureCube = new CubeTextureLoader().load(urls);
-  textureCube.format = RGBAFormat;
-  textureCube.mapping = CubeReflectionMapping;
-  textureCube.encoding = sRGBEncoding;
-  return textureCube;
+    `${baseUrl}posx.jpg`,
+    `${baseUrl}negx.jpg`,
+    `${baseUrl}posy.jpg`,
+    `${baseUrl}negy.jpg`,
+    `${baseUrl}posz.jpg`,
+    `${baseUrl}negz.jpg`,
+  ]
+  const textureCube = new CubeTextureLoader().load(urls)
+  textureCube.format = RGBAFormat
+  textureCube.mapping = CubeReflectionMapping
+  textureCube.encoding = sRGBEncoding
+  return textureCube
 }
 
 export class ShaderPreview {
@@ -128,7 +128,7 @@ export class ShaderPreview {
     Object.keys(uMap).forEach((name) => {
       uniforms[name] = new Uniform(uMap[name])
     })
-    uniforms["envMap"] = new Uniform(createEnvMap())
+    uniforms.envMap = new Uniform(createEnvMap())
     const builtIns = graph.getBuiltIns()
     const builtInUniforms: any[] = []
     const useLight = builtIns.includes(BuiltIn.DirectionalLight)
@@ -148,9 +148,9 @@ export class ShaderPreview {
       lights: useLight,
       defines: {
         // USE_ENVMAP: true,
-      }
-    })
-    ;(m as any).envMap = createEnvMap()
+      },
+    });
+    (m as any).envMap = createEnvMap()
     m.extensions.derivatives = true
 
     this.#mesh.onBeforeRender = () => {

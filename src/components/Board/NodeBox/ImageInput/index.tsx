@@ -1,16 +1,14 @@
 import { useRef, MouseEventHandler } from "react"
 import { TextureLoader } from "three"
-import { InNodeInputValue } from ".."
+import { NodeInputValue } from "../../../../definitions/types"
 import style from "./style.module.scss"
 
 type Props = {
-  index: number,
-  value: InNodeInputValue,
-  onChange: (index: number, value: InNodeInputValue) => void,
+  value: NodeInputValue,
+  onChange: (value: NodeInputValue) => void,
 }
 
 export function ImageInput({
-  index,
   value,
   onChange
 }: Props) {
@@ -35,7 +33,7 @@ export function ImageInput({
           var imageUrl = urlCreator.createObjectURL( blob );
           const loader = new TextureLoader()
           const tex = await loader.loadAsync(imageUrl)
-          onChange(index, {
+          onChange({
             image: tex,
           })
         }

@@ -1,36 +1,10 @@
 import { MouseEventHandler, MouseEvent, useRef, memo, useCallback, useEffect } from "react"
 import style from "./style.module.scss"
 import classnames from "classnames"
-import { FloatInput } from "./FloatInput"
-import { ImageInput } from "./ImageInput"
-import { ColorInput } from "./ColorInput"
-import { Vector3Input } from "./Vector3Input"
-import { NodeInputType, NodeInputValue, NodeColor } from "../../../definitions/types"
+import { NodeInputValue, NodeColor } from "../../../definitions/types"
 import { InSocketProps, OutSocketProps } from "../types"
-import { outputDefs } from "../../../definitions/output"
-
-export type SocketDirection = "in" | "out"
-
-function extractInfoFromCircle(e: MouseEvent<HTMLElement>, frame: SVGForeignObjectElement) {
-  const circle = e.currentTarget
-  const circleRect = circle.getBoundingClientRect()
-  const frameRect = frame.getBoundingClientRect()
-  const fx = frameRect.x
-  const fy = frameRect.y
-  const i = Number(circle.dataset.socketIndex)
-  const dir = circle.dataset.socketDirection as SocketDirection
-  const cx = circleRect.x + circleRect.width / 2
-  const cy = circleRect.y + circleRect.height / 2
-  const x = cx - fx
-  const y = cy - fy
-  return {
-    i,
-    dir: dir as SocketDirection,
-    // releative to frame and not considering zoom.
-    socketX: x,
-    socketY: y,
-  }
-}
+import { SocketDirection } from "./types"
+import { SocketRow } from "./SocketRow"
 
 type Props = {
   id: string,
@@ -66,22 +40,24 @@ export const NodeBox = memo(function NodeBox({
   const frameRef = useRef<SVGForeignObjectElement | null>(null)
   const boxRef = useRef<HTMLDivElement | null>(null)
 
-  const onSocketMouseUpInternal: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+  const onSocketMouseUpInternal = useCallback((dir: SocketDirection, index: number, x: number, y: number) => {
     if (!frameRef.current) {
       return
     }
-    e.stopPropagation()
-    const { i, dir, socketX, socketY } = extractInfoFromCircle(e, frameRef.current)
-    onSocketMouseUp(id, dir, i, socketX, socketY)
+    const rect = frameRef.current.getBoundingClientRect()
+    const socketX = x - rect.x
+    const socketY = y - rect.y
+    onSocketMouseUp(id, dir, index, socketX, socketY)
   }, [id, x, y, onSocketMouseUp, frameRef.current])
 
-  const onSocketMouseDownInternal: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+  const onSocketMouseDownInternal = useCallback((dir: SocketDirection, index: number, x: number, y: number) => {
     if (!frameRef.current) {
       return
     }
-    e.stopPropagation()
-    const { i, dir, socketX, socketY } = extractInfoFromCircle(e, frameRef.current)
-    onSocketMouseDown(id, dir, i, socketX, socketY)
+    const rect = frameRef.current.getBoundingClientRect()
+    const socketX = x - rect.x
+    const socketY = y - rect.y
+    onSocketMouseDown(id, dir, index, socketX, socketY)
   }, [id, x, y, onSocketMouseDown, frameRef.current])
 
   const onBoxMouseDown: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
@@ -91,7 +67,7 @@ export const NodeBox = memo(function NodeBox({
     }
   }, [id, onDragStart])
 
-  const onSocketValueChange = useCallback((index: number, value: NodeInputValue) => {
+  const onSocketValueChange = useCallback((dir: SocketDirection, index: number, value: NodeInputValue) => {
     onInSocketValueChange(id, index, value)
   }, [id, onInSocketValueChange])
 
@@ -99,7 +75,7 @@ export const NodeBox = memo(function NodeBox({
     if (boxRef.current) {
       onNodeResize(id, boxRef.current.getBoundingClientRect())
     }
-  }, [boxRef.current])
+  })
   return (
     <g transform={`translate(${x}, ${y})`}>
       <foreignObject
@@ -125,21 +101,16 @@ export const NodeBox = memo(function NodeBox({
           {outSockets.length > 0 && (
             <div className={style.outputs}>
               {outSockets.map((socket, i) => (
-                <div
-                  className={style.row}
-                  key={i}
-                >
-                  <div>{socket.label}</div>
-                  <div
-                    className={style.socket}
-                    data-socket-index={i}
-                    data-socket-direction="out"
-                    onMouseDown={onSocketMouseDownInternal}
-                    onMouseUp={onSocketMouseUpInternal}
-                  >
-                    <div className={style.circle} />
-                  </div>
-                </div>
+                <SocketRow
+                  selected={selected}
+                  label={socket.label}
+                  direction="out"
+                  index={i}
+                  onSocketMouseDown={onSocketMouseDownInternal}
+                  onSocketMouseUp={onSocketMouseUpInternal}
+                  onSocketValueChange={onSocketValueChange}
+                  socketHidden={false}
+                />
               ))}
             </div>
           )}
@@ -149,39 +120,19 @@ export const NodeBox = memo(function NodeBox({
                 return
               }
               return (
-                <div
-                  className={style.row}
-                  key={i}
-                >
-                  {!socket.socketHidden && (
-                    <div
-                      className={style.socket}
-                      data-socket-index={i}
-                      data-socket-direction="in"
-                      onMouseDown={onSocketMouseDownInternal}
-                      onMouseUp={onSocketMouseUpInternal}
-                    >
-                      <div className={style.circle} />
-                    </div>
-                  )}
-                  <div>{socket.label}</div>
-                  {!socket.connected && socket.alternativeValue && socket.alternativeValueInputType && (
-                    <div className={style.inputContainer}>
-                      {socket.alternativeValueInputType === NodeInputType.Float && (
-                        <FloatInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
-                      )}
-                      {socket.alternativeValueInputType === NodeInputType.Image && (
-                        <ImageInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
-                      )}
-                      {socket.alternativeValueInputType === NodeInputType.Color && (
-                        <ColorInput index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
-                      )}
-                      {socket.alternativeValueInputType === NodeInputType.Vector3 && (
-                        <Vector3Input index={i} onChange={onSocketValueChange} value={socket.alternativeValue} />
-                      )}
-                    </div>
-                  )}
-                </div>
+                <SocketRow
+                  selected={selected}
+                  label={socket.label}
+                  alternativeValueInputHidden={socket.connected}
+                  alternativeValue={socket.alternativeValue}
+                  alternativeValueInputType={socket.alternativeValueInputType}
+                  direction="in"
+                  index={i}
+                  onSocketMouseDown={onSocketMouseDownInternal}
+                  onSocketMouseUp={onSocketMouseUpInternal}
+                  onSocketValueChange={onSocketValueChange}
+                  socketHidden={socket.socketHidden || false}
+                />
               )
             })}
           </div>
