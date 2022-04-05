@@ -1,4 +1,4 @@
-import { memo, MouseEvent, useRef, MouseEventHandler, useCallback } from "react"
+import { memo, MouseEvent, useRef, MouseEventHandler, useCallback, useEffect } from "react"
 import { NodeInputType, NodeInputValue } from "../../../../definitions/types"
 import style from "./style.module.scss"
 import { FloatInput } from "../FloatInput"
@@ -20,6 +20,7 @@ type Props = {
   onSocketValueChange?: (direction: SocketDirection, index: number, value: NodeInputValue) => void,
   onSocketMouseUp: (direction: SocketDirection, index: number, x: number, y: number) => void,
   onSocketMouseDown: (direction: SocketDirection, index: number, x: number, y: number) => void,
+  onRender: (direction: SocketDirection, index: number, rect: DOMRect) => void,
 }
 
 
@@ -47,6 +48,7 @@ export const SocketRow = memo(function SocketRow ({
   onSocketValueChange,
   onSocketMouseDown,
   onSocketMouseUp,
+  onRender,
 }: Props) {
 
   const circleRef = useRef<HTMLDivElement | null>(null)
@@ -68,6 +70,12 @@ export const SocketRow = memo(function SocketRow ({
       onSocketValueChange(direction, index, value)
     }
   }, [index, direction, onSocketValueChange])
+
+  useEffect(() => {
+    if (circleRef.current) {
+      onRender(direction, index, circleRef.current.getBoundingClientRect())
+    }
+  })
 
   return (
     <div

@@ -67,6 +67,8 @@ type BoardStats = {
   centerX: number,
   centerY: number,
   // SVG Element DOM size.
+  domX: number,
+  domY: number,
   domHeight: number,
   domWidth: number,
   zoom: number,
@@ -92,6 +94,8 @@ export function Board({
   const [board, setBoard] = useState<BoardStats>({
     centerX: 0,
     centerY: 0,
+    domX: 0,
+    domY: 0,
     domWidth: 1000,
     domHeight: 1000,
     zoom: 1,
@@ -100,6 +104,7 @@ export function Board({
   const [drawingWire, setDrawingWire] = useState<DrawingWireStats | null>(null)
   const [draggingNode, setDraggingNode] = useState<DraggingNodeStats | null>(null)
   const [drawingRect, setDrawingRect] = useState<DrawingRectStats | null>(null)
+  const [nodeIdToGeoUpdate, setNodeIdToGeoUpdate] = useState<string | null>(null)
   const [_, setNwUpdate] = useState("")
   // Singletons
   const nwManager = useMemo(() => {
@@ -126,7 +131,7 @@ export function Board({
   const saveHistory = useCallback(() => {
     historyManager.save(nwManager.getNodes(), nwManager.getWires())
   }, [])
-
+  // Initialize the board
   useEffect(() => {
     const d = outputDefs[0]
     const newNodes = [createNodeProps(
@@ -172,6 +177,7 @@ export function Board({
       const wires = nwManager.getWires()
       const existingWire = wires.find(w => w.outNodeId === id && w.outSocketIndex === i)
       if (existingWire) {
+        setNodeIdToGeoUpdate(id)
         nwManager.updateWires(wires.filter(w => w !== existingWire))
         setDrawingWire({
           startDirection: "out",
@@ -234,6 +240,7 @@ export function Board({
       ]
       const startNode = nwManager.getNode(drawingWire.startNodeId)
       startNode.inSockets[drawingWire.startSocketIndex].connected = true
+      setNodeIdToGeoUpdate(drawingWire.startNodeId)
       nwManager.updateNode(startNode)
     } else {
       const newWire = {
@@ -251,6 +258,7 @@ export function Board({
       startNode.inSockets[i].connected = true
       nwManager.updateNode(startNode)
       const existingWire = wires.find(w => w.outNodeId === id && w.outSocketIndex === i)
+      setNodeIdToGeoUpdate(id)
       if (existingWire) {
         newWires = wires.filter(w => w !== existingWire).concat(newWire)
       } else {
@@ -267,13 +275,8 @@ export function Board({
     const nodes = nwManager.getNodes()
     const targetNode = nodes.find(n => n.id === id)
     if (targetNode) {
-      // Wheel button
-      if (!svgRootRef.current) {
-        return
-      }
-      const svgRect = svgRootRef.current.getBoundingClientRect()
-      const mouseOnBoardX = mouseX - svgRect.x
-      const mouseOnBoardY = mouseY - svgRect.y
+      const mouseOnBoardX = mouseX - board.domX
+      const mouseOnBoardY = mouseY - board.domY
       if (!targetNode.selected) {
         nodes.forEach(n => {
           n.selected = false
@@ -300,17 +303,13 @@ export function Board({
       nwManager.updateNodes(newNodes)
       nwManager.updateWires(newWires)
     }
-  }, [svgRootRef.current])
+  }, [board])
 
   const onMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
-    if (!svgRootRef.current) {
-      return
-    }
-    const svgRect = svgRootRef.current.getBoundingClientRect()
-    const mouseX = e.clientX - svgRect.x
-    const mouseY = e.clientY - svgRect.y
-    const boardX = board.centerX + (mouseX- board.domWidth / 2) / board.zoom
-    const boardY = board.centerY + (mouseY- board.domHeight / 2) / board.zoom
+    const mouseX = e.clientX - board.domX
+    const mouseY = e.clientY - board.domY
+    const boardX = board.centerX + (mouseX - board.domWidth / 2) / board.zoom
+    const boardY = board.centerY + (mouseY - board.domHeight / 2) / board.zoom
 
     if (drawingWire) {
       setDrawingWire({
@@ -339,13 +338,7 @@ export function Board({
         const ny = lastNode.y + dMouseY / board.zoom
         n.x = nx
         n.y = ny
-        const rect = rectsManager.get(n.id)
-        if (!rect) {
-          throw new Error("no rect ... might be a bug")
-        }
-        rect.x = nx
-        rect.y = ny
-        rectsManager.set(n.id, rect)
+
         wires.forEach(w => {
           const lastWire = savedWires[w.id]
           if (!lastWire) {
@@ -465,24 +458,20 @@ export function Board({
   }, [board.zoom, board.centerX, board.centerY, board.domWidth, board.domHeight, svgRootRef.current])
 
   const onNodeResize = useCallback((id: string, rect: DOMRect) => {
-    if (!svgRootRef.current) {
-      return
-    }
-    const svgRect = svgRootRef.current.getBoundingClientRect()
-    const x = (rect.x - svgRect.x + board.centerX - board.domWidth / 2) / board.zoom
-    const y = (rect.y - svgRect.y + board.centerY - board.domHeight / 2) / board.zoom
+    const x = (rect.x - board.domX - board.domWidth / 2) / board.zoom + board.centerX
+    const y = (rect.y - board.domY - board.domHeight / 2) / board.zoom + board.centerY
     rectsManager.set(id, {
       x,
       y,
       width: rect.width / board.zoom,
       height: rect.height / board.zoom,
     })
-  }, [svgRootRef.current])
+  }, [svgRootRef.current, board.zoom, board.centerX, board.centerY, board.domHeight, board.domWidth])
 
   const onNodeAdd = useCallback((typeId: string) => {
     const d = nodeDefinitions.find(d => d.id === typeId)
     if (d) {
-      const nodes = nwManager.getNodes().map(n => ({...n, selected: false}))
+      const nodes = nwManager.getNodes().map(n => ({ ...n, selected: false }))
       const newNodes = [
         ...nodes,
         createNodeProps(d.id + "_" + generateId(), board.centerX, board.centerY, d)
@@ -549,9 +538,10 @@ export function Board({
       }
       const s = Math.sign(e.deltaY)
       if ((s > 0 && board.zoom >= MIN_ZOOM) || (s < 0 && board.zoom <= MAX_ZOOM - ZOOM_STEP)) {
+        const nextZoom = board.zoom - ZOOM_STEP * Math.sign(e.deltaY)
         setBoard({
           ...board,
-          zoom: board.zoom - ZOOM_STEP * Math.sign(e.deltaY)
+          zoom: nextZoom
         })
       }
     }
@@ -571,11 +561,14 @@ export function Board({
   // Initially set the board size.
   useEffect(() => {
     if (svgRootRef.current) {
+      const rect = svgRootRef.current.getBoundingClientRect()
       setBoard({
         centerX: 0,
         centerY: 0,
-        domHeight: svgRootRef.current.clientHeight,
-        domWidth: svgRootRef.current.clientWidth,
+        domX: rect.x,
+        domY: rect.y,
+        domHeight: rect.height,
+        domWidth: rect.width,
         zoom: 1
       })
     }
@@ -594,6 +587,69 @@ export function Board({
     }
   }
   , [nwManager, onInSocketValueChange])
+
+  const onSocketRender = useCallback((nodeId: string, dir: SocketDirection, index: number, x: number, y: number) => {
+    const wires = nwManager.getWires()
+    const nx = (x - board.domX - board.domWidth / 2) / board.zoom + board.centerX
+    const ny = (y - board.domY - board.domHeight / 2) / board.zoom + board.centerY
+    wires.forEach(w => {
+      if (w.inNodeId === nodeId && w.inSocketIndex === index && dir === "out") {
+        w.inX = nx
+        w.inY = ny
+      }
+      if (w.outNodeId === nodeId && w.outSocketIndex === index && dir === "in") {
+        w.outX = nx
+        w.outY = ny
+      }
+    })
+  }, [board])
+
+  const nodeGeoMap = useMemo(() => {
+    return new Map<string, {
+      id: string,
+      nodeRect: DOMRect,
+      inRects: (DOMRect | undefined)[]
+      outRects: (DOMRect | undefined)[]
+    }>()
+  }, [])
+  const onNodeGeometryUpdate = useCallback((g: { 
+    id: string,
+    nodeRect: DOMRect,
+    // If socket is hidden, rect is undefined.
+    inRects: (DOMRect | undefined)[]
+    outRects: (DOMRect | undefined)[]
+  }) => {
+    nodeGeoMap.set(g.id, g)
+    if (nodeIdToGeoUpdate === g.id) {
+      const newWires = nwManager.getWires().map(w => {
+        if (w.inNodeId === g.id) {
+          const r = g.outRects[w.inSocketIndex]
+          if (r) {
+            const x = r.x + r.width / 2
+            const y = r.y + r.height / 2
+            const nx = (x - board.domX - board.domWidth / 2) / board.zoom + board.centerX
+            const ny = (y - board.domY - board.domHeight / 2) / board.zoom + board.centerY
+            w.inX = nx
+            w.inY = ny
+          }
+        }
+        if (w.outNodeId === g.id) {
+          const r = g.inRects[w.outSocketIndex]
+          if (r) {
+            const x = r.x + r.width / 2
+            const y = r.y + r.height / 2
+            const nx = (x - board.domX - board.domWidth / 2) / board.zoom + board.centerX
+            const ny = (y - board.domY - board.domHeight / 2) / board.zoom + board.centerY
+            w.outX = nx
+            w.outY = ny
+          }
+        }
+        return w
+      })
+      setNodeIdToGeoUpdate(null)
+      nwManager.updateWires(newWires)
+    }
+  }, [nodeIdToGeoUpdate, setNodeIdToGeoUpdate, board, nwManager])
 
   // Preparing for rendering.
   const viewBox = useMemo(() => {
@@ -655,6 +711,8 @@ export function Board({
             onDragStart={onNodeDragStart}
             onInSocketValueChange={onInSocketValueChangeInternal}
             onNodeResize={onNodeResize}
+            onSocketRender={onSocketRender}
+            onGeometryUpdate={onNodeGeometryUpdate}
           />
         ))}
         {drawingWire && (drawingWire.startDirection == "in" ? (

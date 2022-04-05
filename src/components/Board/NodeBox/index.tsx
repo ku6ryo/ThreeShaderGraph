@@ -1,4 +1,4 @@
-import { MouseEventHandler, MouseEvent, useRef, memo, useCallback, useEffect } from "react"
+import { MouseEventHandler, useRef, memo, useCallback, useEffect, useMemo } from "react"
 import style from "./style.module.scss"
 import classnames from "classnames"
 import { NodeInputValue, NodeColor } from "../../../definitions/types"
@@ -20,6 +20,14 @@ type Props = {
   onDragStart: (id: string, x: number, y: number) => void,
   onInSocketValueChange: (id: string, i: number, value: NodeInputValue) => void,
   onNodeResize: (id: string, rect: DOMRect) => void,
+  onSocketRender: (id: string, direction: SocketDirection, i: number, x: number, y: number) => void,
+  onGeometryUpdate: (g: {
+    id: string,
+    nodeRect: DOMRect,
+    // If socket is hidden, rect is undefined.
+    inRects: (DOMRect | undefined)[]
+    outRects: (DOMRect | undefined)[]
+  }) => void
 }
 
 export const NodeBox = memo(function NodeBox({
@@ -36,9 +44,14 @@ export const NodeBox = memo(function NodeBox({
   onDragStart,
   onInSocketValueChange,
   onNodeResize,
+  onSocketRender,
+  onGeometryUpdate,
 }: Props) {
   const frameRef = useRef<SVGForeignObjectElement | null>(null)
   const boxRef = useRef<HTMLDivElement | null>(null)
+  const socketRectMap = useMemo(() => {
+    return new Map<string, DOMRect>()
+  }, [])
 
   const onSocketMouseUpInternal = useCallback((dir: SocketDirection, index: number, x: number, y: number) => {
     if (!frameRef.current) {
@@ -71,11 +84,29 @@ export const NodeBox = memo(function NodeBox({
     onInSocketValueChange(id, index, value)
   }, [id, onInSocketValueChange])
 
+  const onSocketRenderInternal = useCallback((dir: SocketDirection, index: number, rect: DOMRect) => {
+    socketRectMap.set(`${dir}-${index}`, rect)
+  }, [id, onSocketRender])
+
   useEffect(() => {
+    console.log("node render")
     if (boxRef.current) {
       onNodeResize(id, boxRef.current.getBoundingClientRect())
+      const inRects = inSockets.map((_, i) => {
+        return socketRectMap.get(`in-${i}`)
+      })
+      const outRects = outSockets.map((_, i) => {
+        return socketRectMap.get(`out-${i}`)
+      })
+      onGeometryUpdate({
+        id,
+        nodeRect: boxRef.current.getBoundingClientRect(),
+        inRects,
+        outRects,
+      })
     }
   })
+
   return (
     <g transform={`translate(${x}, ${y})`}>
       <foreignObject
@@ -110,6 +141,7 @@ export const NodeBox = memo(function NodeBox({
                   onSocketMouseUp={onSocketMouseUpInternal}
                   onSocketValueChange={onSocketValueChange}
                   socketHidden={false}
+                  onRender={onSocketRenderInternal}
                 />
               ))}
             </div>
@@ -132,6 +164,7 @@ export const NodeBox = memo(function NodeBox({
                   onSocketMouseUp={onSocketMouseUpInternal}
                   onSocketValueChange={onSocketValueChange}
                   socketHidden={socket.socketHidden || false}
+                  onRender={onSocketRenderInternal}
                 />
               )
             })}

@@ -30,4 +30,12 @@ export class NodeRectsManager {
     }
     return isOverlapped(target, rect)
   }
+
+  getIds() {
+    return Array.from(this.#map.keys())
+  }
+
+  getAll() {
+    return Array.from(this.#map.values())
+  }
 }
