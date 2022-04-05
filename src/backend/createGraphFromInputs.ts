@@ -35,6 +35,7 @@ import { ArcsineNode } from "./nodes/math/ArcsineNode"
 import { ArctangentNode } from "./nodes/math/ArctangentNode"
 import { ArccosineNode } from "./nodes/math/ArccosineNode"
 import { PhysicalNode } from "./nodes/materials/PhysicalNode"
+import { NormalNode } from "./nodes/inputs/NormalNode"
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
   const graph = new ShaderGraph()
@@ -61,6 +62,9 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     if (n.typeId === NodeTypeId.InputColor) {
       sn = new ColorInputNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.InputNormal) {
+      sn = new NormalNode(n.id)
     }
     // Output
     if (n.typeId === NodeTypeId.OutputColor) {

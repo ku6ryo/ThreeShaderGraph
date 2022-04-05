@@ -7,6 +7,7 @@ export enum NodeTypeId {
   InputTexture = "input_texture",
   InputTime = "input_time",
   InputColor = "input_color",
+  InputNormal = "input_normal",
   // Built-in Materials
   Material_Lambert = "material_lambert",
   Material_Phong = "material_phong",

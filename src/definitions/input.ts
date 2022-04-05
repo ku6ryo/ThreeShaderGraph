@@ -28,6 +28,14 @@ export const inputDefs: NodeDefinition[] = [{
     label: "Position",
   }],
 }, {
+  id: NodeTypeId.InputNormal,
+  name: "Normal",
+  category: inputCategory,
+  inSockets: [],
+  outSockets: [{
+    label: "Normal",
+  }],
+}, {
   id: NodeTypeId.InputTime,
   name: "Time",
   category: inputCategory,
