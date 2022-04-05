@@ -123,9 +123,7 @@ export function Board({
   }, [])
   // Please use this function instead of directly calling `onChange`
   const notifyChange = useCallback(() => {
-    const nodes = nwManager.getNodes()
-    const wires = nwManager.getWires()
-    onChange(nodes, wires)
+    onChange(nwManager.getNodes(), nwManager.getWires())
   }, [onChange])
   // Please usee this function instead of directly calling `historyManger.save()`.
   const saveHistory = useCallback(() => {
@@ -145,6 +143,20 @@ export function Board({
     notifyChange()
   }, [])
 
+  const calcGeoOnBoard = useCallback((x: number, y: number, width: number, height: number) => {
+    const { centerX, centerY, zoom, domX, domY, domHeight, domWidth } = board
+    const newX = (x - domX - domWidth / 2) / zoom + centerX
+    const newY = (y - domY - domHeight / 2) / zoom + centerY
+    const newW = width / zoom
+    const newH = height / zoom
+    return {
+      x: newX,
+      y: newY,
+      width: newW,
+      height: newH,
+    }
+  }, [board])
+
   const goToPrevHistory = () => {
     const history = historyManager.goBack()
     if (!history) {
@@ -159,9 +171,7 @@ export function Board({
   }
 
   const onSocketMouseDown = useCallback((id: string, dir: SocketDirection, i: number, x: number, y: number) => {
-    const node = nwManager.getNode(id)
-    const zoomedX = x / board.zoom + node.x
-    const zoomedY = y / board.zoom + node.y
+    const { x: zoomedX, y: zoomedY } = calcGeoOnBoard(x, y, 0, 0)
     if (dir === "out") {
       setDrawingWire({
         startDirection: dir,
@@ -218,9 +228,7 @@ export function Board({
       setDrawingWire(null)
       return
     }
-    const node = nwManager.getNode(id)
-    const zoomedX = x / board.zoom + node.x
-    const zoomedY = y / board.zoom + node.y
+    const { x: zoomedX, y: zoomedY } = calcGeoOnBoard(x, y, 0, 0)
     const wires = nwManager.getWires()
     let newWires: WireProps[] = []
     if (drawingWire.startDirection === "in") {
@@ -308,8 +316,7 @@ export function Board({
   const onMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const mouseX = e.clientX - board.domX
     const mouseY = e.clientY - board.domY
-    const boardX = board.centerX + (mouseX - board.domWidth / 2) / board.zoom
-    const boardY = board.centerY + (mouseY - board.domHeight / 2) / board.zoom
+    const { x: boardX, y: boardY } = calcGeoOnBoard(e.clientX, e.clientY, 0, 0)
 
     if (drawingWire) {
       setDrawingWire({
@@ -367,7 +374,7 @@ export function Board({
         centerY: y,
       })
     }
-    if (drawingRect && svgRootRef.current) {
+    if (drawingRect) {
       const { startX, startY } = drawingRect
       setDrawingRect({
         ...drawingRect,
@@ -377,7 +384,7 @@ export function Board({
         height: Math.abs(startY - boardY),
       })
     }
-  }, [board.zoom, board.centerX, board.centerY, drawingWire, draggingNode, draggingBoard, drawingRect, svgRootRef.current])
+  }, [board.zoom, board.centerX, board.centerY, drawingWire, draggingNode, draggingBoard, drawingRect])
 
   const onMouseUp = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const nodes = nwManager.getNodes()
@@ -421,13 +428,8 @@ export function Board({
   }, [])
 
   const onMouseDown = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
-    // Wheel button
-    if (!svgRootRef.current) {
-      return
-    }
-    const svgRect = svgRootRef.current.getBoundingClientRect()
-    const mouseX = e.clientX - svgRect.x
-    const mouseY = e.clientY - svgRect.y
+    const mouseX = e.clientX - board.domX
+    const mouseY = e.clientY - board.domY
 
     // Start dragging board
     // Mouse wheel click or Left click + shift (for trackpad devices like Macbook)
@@ -443,9 +445,7 @@ export function Board({
 
     // Start drawing selection rect
     if (e.button == 0 && svgRootRef.current) {
-      const svgRect = svgRootRef.current.getBoundingClientRect()
-      const x = board.centerX + (e.clientX - svgRect.x - board.domWidth / 2) / board.zoom
-      const y = board.centerY + (e.clientY - svgRect.y - board.domHeight / 2) / board.zoom
+      const { x, y } = calcGeoOnBoard(e.clientX, e.clientY, 0, 0)
       setDrawingRect({
         startX: x,
         startY: y,
@@ -455,7 +455,7 @@ export function Board({
         height: 0,
       })
     }
-  }, [board.zoom, board.centerX, board.centerY, board.domWidth, board.domHeight, svgRootRef.current])
+  }, [board])
 
   // On a node is selected by the selector.
   const onNodeAdd = useCallback((typeId: string) => {
@@ -502,14 +502,40 @@ export function Board({
     }
   }, [svgRootRef.current])
 
+  const onZoomSliderChange = useCallback((v: number) => {
+    setBoard({
+      ...board,
+      zoom: v,
+    })
+  }, [board])
+
+  // Initially set the board size.
+  useEffect(() => {
+    if (svgRootRef.current) {
+      const rect = svgRootRef.current.getBoundingClientRect()
+      setBoard({
+        centerX: 0,
+        centerY: 0,
+        domX: rect.x,
+        domY: rect.y,
+        domHeight: rect.height,
+        domWidth: rect.width,
+        zoom: 1
+      })
+    }
+  }, [svgRootRef.current])
+
   // window resize
   useEffect(() => {
     const resizeListener = () => {
       if (svgRootRef.current) {
+        const rect = svgRootRef.current.getBoundingClientRect()
         setBoard({
           ...board,
-          domHeight: svgRootRef.current.clientHeight,
-          domWidth: svgRootRef.current.clientWidth,
+          domX: rect.x,
+          domY: rect.y,
+          domHeight: rect.height,
+          domWidth: rect.width,
         })
       }
     }
@@ -539,29 +565,6 @@ export function Board({
       svgRootRef.current?.removeEventListener("wheel", mouseWheelListener)
     }
   }, [board, draggingBoard])
-
-  const onZoomSliderChange = useCallback((v: number) => {
-    setBoard({
-      ...board,
-      zoom: v,
-    })
-  }, [board])
-
-  // Initially set the board size.
-  useEffect(() => {
-    if (svgRootRef.current) {
-      const rect = svgRootRef.current.getBoundingClientRect()
-      setBoard({
-        centerX: 0,
-        centerY: 0,
-        domX: rect.x,
-        domY: rect.y,
-        domHeight: rect.height,
-        domWidth: rect.width,
-        zoom: 1
-      })
-    }
-  }, [svgRootRef.current])
   // Fires when socket value is changed in the node UI component.
   const onInSocketValueChangeInternal = useCallback((nodeId: string, index: number, value: NodeInputValue) => {
     const n = nwManager.getNode(nodeId)
@@ -606,23 +609,21 @@ export function Board({
         if (w.inNodeId === g.id) {
           const r = g.outRects[w.inSocketIndex]
           if (r) {
-            const x = r.x + r.width / 2
-            const y = r.y + r.height / 2
-            const nx = (x - board.domX - board.domWidth / 2) / board.zoom + board.centerX
-            const ny = (y - board.domY - board.domHeight / 2) / board.zoom + board.centerY
-            w.inX = nx
-            w.inY = ny
+            const cx = r.x + r.width / 2
+            const cy = r.y + r.height / 2
+            const { x, y } = calcGeoOnBoard(cx, cy, 0, 0)
+            w.inX = x
+            w.inY = y
           }
         }
         if (w.outNodeId === g.id) {
           const r = g.inRects[w.outSocketIndex]
           if (r) {
-            const x = r.x + r.width / 2
-            const y = r.y + r.height / 2
-            const nx = (x - board.domX - board.domWidth / 2) / board.zoom + board.centerX
-            const ny = (y - board.domY - board.domHeight / 2) / board.zoom + board.centerY
-            w.outX = nx
-            w.outY = ny
+            const cx = r.x + r.width / 2
+            const cy = r.y + r.height / 2
+            const { x, y } = calcGeoOnBoard(cx, cy, 0, 0)
+            w.outX = x
+            w.outY = y
           }
         }
         return w

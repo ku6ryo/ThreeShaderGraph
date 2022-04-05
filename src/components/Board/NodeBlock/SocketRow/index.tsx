@@ -14,9 +14,9 @@ type Props = {
   index: number,
   label: string,
   socketHidden: boolean,
-  alternativeValueInputHidden?: boolean,
-  alternativeValueInputType?: NodeInputType,
-  alternativeValue?: NodeInputValue,
+  valueInputHidden?: boolean,
+  valueInputType?: NodeInputType,
+  value?: NodeInputValue,
   onSocketValueChange?: (direction: SocketDirection, index: number, value: NodeInputValue) => void,
   onSocketMouseUp: (direction: SocketDirection, index: number, x: number, y: number) => void,
   onSocketMouseDown: (direction: SocketDirection, index: number, x: number, y: number) => void,
@@ -36,15 +36,15 @@ function extractInfoFromCircle(e: MouseEvent<HTMLElement>) {
   }
 }
 
-export const SocketRow = memo(function SocketRow ({
+export const SocketRow = memo(function ({
   selected,
   direction,
   index,
   label,
   socketHidden,
-  alternativeValueInputHidden,
-  alternativeValueInputType,
-  alternativeValue,
+  valueInputHidden,
+  valueInputType,
+  value,
   onSocketValueChange,
   onSocketMouseDown,
   onSocketMouseUp,
@@ -54,18 +54,24 @@ export const SocketRow = memo(function SocketRow ({
   const circleRef = useRef<HTMLDivElement | null>(null)
 
   const onSocketMouseUpInternal: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+    if (e.button !== 0) {
+      return
+    }
     e.stopPropagation()
     const { x, y } = extractInfoFromCircle(e)
     onSocketMouseUp(direction, index, x, y)
   }, [direction, index, onSocketMouseUp])
 
   const onSocketMouseDownInternal: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
+    if (e.button !== 0) {
+      return
+    }
     e.stopPropagation()
     const { x, y } = extractInfoFromCircle(e)
     onSocketMouseDown(direction, index, x, y)
   }, [direction, index, onSocketMouseDown])
 
-  const onSocketValueChangeInternal = useCallback((value: NodeInputValue) => {
+  const onValueChange = useCallback((value: NodeInputValue) => {
     if (onSocketValueChange) {
       onSocketValueChange(direction, index, value)
     }
@@ -96,19 +102,19 @@ export const SocketRow = memo(function SocketRow ({
         </div>
       )}
       <div className={style.label}>{label}</div>
-      {!alternativeValueInputHidden && alternativeValue && alternativeValueInputType && (
+      {!valueInputHidden && value && valueInputType && (
         <div className={style.inputContainer}>
-          {alternativeValueInputType === NodeInputType.Float && (
-            <FloatInput onChange={onSocketValueChangeInternal} value={alternativeValue} />
+          {valueInputType === NodeInputType.Float && (
+            <FloatInput onChange={onValueChange} value={value} />
           )}
-          {alternativeValueInputType === NodeInputType.Image && (
-            <ImageInput onChange={onSocketValueChangeInternal} value={alternativeValue} />
+          {valueInputType === NodeInputType.Image && (
+            <ImageInput onChange={onValueChange} value={value} />
           )}
-          {alternativeValueInputType === NodeInputType.Color && (
-            <ColorInput onChange={onSocketValueChangeInternal} value={alternativeValue} />
+          {valueInputType === NodeInputType.Color && (
+            <ColorInput onChange={onValueChange} value={value} />
           )}
-          {alternativeValueInputType === NodeInputType.Vector3 && (
-            <Vector3Input onChange={onSocketValueChangeInternal} value={alternativeValue} />
+          {valueInputType === NodeInputType.Vector3 && (
+            <Vector3Input onChange={onValueChange} value={value} />
           )}
         </div>
       )}

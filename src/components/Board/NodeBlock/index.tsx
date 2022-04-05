@@ -50,23 +50,11 @@ export const NodeBlock = memo(function ({
   }, [])
 
   const onSocketMouseUpInternal = useCallback((dir: SocketDirection, index: number, x: number, y: number) => {
-    if (!frameRef.current) {
-      return
-    }
-    const rect = frameRef.current.getBoundingClientRect()
-    const socketX = x - rect.x
-    const socketY = y - rect.y
-    onSocketMouseUp(id, dir, index, socketX, socketY)
+    onSocketMouseUp(id, dir, index, x, y)
   }, [id, x, y, onSocketMouseUp, frameRef.current])
 
   const onSocketMouseDownInternal = useCallback((dir: SocketDirection, index: number, x: number, y: number) => {
-    if (!frameRef.current) {
-      return
-    }
-    const rect = frameRef.current.getBoundingClientRect()
-    const socketX = x - rect.x
-    const socketY = y - rect.y
-    onSocketMouseDown(id, dir, index, socketX, socketY)
+    onSocketMouseDown(id, dir, index, x, y)
   }, [id, x, y, onSocketMouseDown, frameRef.current])
 
   const onBoxMouseDown: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
@@ -129,10 +117,10 @@ export const NodeBlock = memo(function ({
             <div className={style.outputs}>
               {outSockets.map((socket, i) => (
                 <SocketRow
-                  selected={selected}
                   label={socket.label}
                   direction="out"
                   index={i}
+                  selected={selected}
                   onSocketMouseDown={onSocketMouseDownInternal}
                   onSocketMouseUp={onSocketMouseUpInternal}
                   onSocketValueChange={onSocketValueChange}
@@ -149,13 +137,13 @@ export const NodeBlock = memo(function ({
               }
               return (
                 <SocketRow
-                  selected={selected}
                   label={socket.label}
-                  alternativeValueInputHidden={socket.connected}
-                  alternativeValue={socket.alternativeValue}
-                  alternativeValueInputType={socket.alternativeValueInputType}
                   direction="in"
                   index={i}
+                  selected={selected}
+                  valueInputHidden={socket.connected}
+                  value={socket.alternativeValue}
+                  valueInputType={socket.alternativeValueInputType}
                   onSocketMouseDown={onSocketMouseDownInternal}
                   onSocketMouseUp={onSocketMouseUpInternal}
                   onSocketValueChange={onSocketValueChange}
