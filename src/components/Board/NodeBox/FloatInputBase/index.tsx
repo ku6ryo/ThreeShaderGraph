@@ -56,14 +56,9 @@ export function FloatInputBase({
   const onInputBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
     setTyping(false)
   }, [])
-  const onMouseWheelGuage = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-    onChange(value - Math.sign(e.deltaY) * DELTA)
-  }, [value, onChange])
   const onNumberClick: MouseEventHandler<HTMLDivElement> = useCallback((e) => {
     setTyping(true)
     if (inputRef.current) {
-      console.log(inputRef.current)
       inputRef.current.focus()
     }
   }, [setTyping, inputRef.current])
@@ -99,7 +94,6 @@ export function FloatInputBase({
           <div
             className={style.text}
             onMouseDown={onMouseDownGuage}
-            onWheel={onMouseWheelGuage}
             onClick={onNumberClick}
           >
             <span>{valueStr}</span>
