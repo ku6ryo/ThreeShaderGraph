@@ -37,6 +37,30 @@ import { ArccosineNode } from "./nodes/math/ArccosineNode"
 import { PhysicalNode } from "./nodes/materials/PhysicalNode"
 import { NormalNode } from "./nodes/inputs/NormalNode"
 import { VolonoiNode } from "./nodes/noises/VolonoiNode"
+import { CrossNode } from "./nodes/math/CrossNode"
+import { NormalizeNode } from "./nodes/math/NormalizeNode"
+import { LengthNode } from "./nodes/math/LengthNode"
+import { DistanceNode } from "./nodes/math/DistanceNode"
+import { AbsNode } from "./nodes/math/AbsNode"
+import { SignNode } from "./nodes/math/SignNode"
+import { FloorNode } from "./nodes/math/FloorNode"
+import { CeilNode } from "./nodes/math/CeilNode"
+import { MinNode } from "./nodes/math/MinNode"
+import { MaxNode } from "./nodes/math/MaxNode"
+import { ModNode } from "./nodes/math/ModNode"
+import { StepNode } from "./nodes/math/StepNode"
+import { SmoothstepNode } from "./nodes/math/SmoothstepNode"
+import { DivideNode } from "./nodes/math/DivideNode"
+import { PowNode } from "./nodes/math/PowNode"
+import { ExpNode } from "./nodes/math/ExpNode"
+import { Exp2Node } from "./nodes/math/Exp2Node"
+import { LogNode } from "./nodes/math/LogNode"
+import { Log2Node } from "./nodes/math/Log2Node"
+import { SqrtNode } from "./nodes/math/SqrtNode"
+import { RadiansNode } from "./nodes/math/RadiansNode"
+import { DegreesNode } from "./nodes/math/DegreesNode"
+import { ReflectNode } from "./nodes/math/ReflectNode"
+import { RefractNode } from "./nodes/math/RefractNode"
 
 export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): ShaderGraph {
   const graph = new ShaderGraph()
@@ -125,6 +149,78 @@ export function createGraphFromInputs(nodes: NodeProps[], wires: WireProps[]): S
     }
     if (n.typeId === NodeTypeId.MathInvert) {
       sn = new InvertNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.MathCross) {
+      sn = new CrossNode(n.id)
+    }
+    if (n.typeId === NodeTypeId.MathNormalize) {
+      sn = new NormalizeNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathLength) {
+      sn = new LengthNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathDistance) {
+      sn = new DistanceNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathAbs) {
+      sn = new AbsNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathSign) {
+      sn = new SignNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathFloor) {
+      sn = new FloorNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathCeil) {
+      sn = new CeilNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathMin) {
+      sn = new MinNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathMax) {
+      sn = new MaxNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathMod) {
+      sn = new ModNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathStep) {
+      sn = new StepNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathSmoothstep) {
+      sn = new SmoothstepNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathDivide) {
+      sn = new DivideNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathPow) {
+      sn = new PowNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathExp) {
+      sn = new ExpNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathExp2) {
+      sn = new Exp2Node(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathLog) {
+      sn = new LogNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathLog2) {
+      sn = new Log2Node(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathSqrt) {
+      sn = new SqrtNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathRadians) {
+      sn = new RadiansNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathDegrees) {
+      sn = new DegreesNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathReflect) {
+      sn = new ReflectNode(n.id, ShaderDataType.Vector4)
+    }
+    if (n.typeId === NodeTypeId.MathRefract) {
+      sn = new RefractNode(n.id, ShaderDataType.Vector4)
     }
     // Texture
     if (n.typeId === NodeTypeId.TexturePerlinNoise) {

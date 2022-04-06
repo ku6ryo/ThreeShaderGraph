@@ -6,16 +6,18 @@
 }
 
 .nodes {
-  position: absolute;
-  left: 36px;
-  top: 0px;
   border-radius: 4px;
   background-color: rgba(0, 0, 0, 0.8);
   color: rgb(224, 224, 224);
   display: grid;
-  width: 120px;
   font-size: 12px;
+  left: 36px;
   padding: 6px;
+  position: absolute;
+  top: 0px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 240px;
 
   .node {
     border-radius: 2px;

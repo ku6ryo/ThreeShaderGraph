@@ -94,7 +94,7 @@ export const materialDefs: NodeDefinition[] = [{
   }, {
     label: "Metalness",
     alternativeValue: {
-      float: 1,
+      float: 0.5,
     },
     alternativeValueInputType: NodeInputType.Float,
   }, {

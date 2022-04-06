@@ -2,26 +2,28 @@ import { ShaderNode } from "../../ShaderNode"
 import { ShaderDataType, ShaderVectorTypes } from "../../data_types"
 
 const SupportedTypes = ShaderVectorTypes.concat([ShaderDataType.Float])
-export class AddNode extends ShaderNode {
+export class SmoothstepNode extends ShaderNode {
   #type: ShaderDataType
 
   constructor(id: string, type: ShaderDataType) {
     if (!SupportedTypes.includes(type)) {
       throw new Error(`Unsupported type: ${type}`)
     }
-    super(id, "Math_Add")
+    super(id, "Math_Smoothstep")
     this.#type = type
     this.addInSocket("in0", type)
     this.addInSocket("in1", type)
+    this.addInSocket("in2", type)
     this.addOutSocket("out", type)
   }
 
   generateFragCode(): string {
     const i0 = this.getInSocket(0).getVarName()
     const i1 = this.getInSocket(1).getVarName()
+    const i2 = this.getInSocket(2).getVarName()
     const o = this.getOutSocket(0).getVarName()
     return `
-    ${this.#type} ${o} = ${i0} + ${i1};
+    ${this.#type} ${o} = smoothstep(${i1}, ${i2}, ${i0});
     `
   }
 }
