@@ -383,6 +383,8 @@ export const mathDefs: NodeDefinition[] = [{
   category: mathCategory,
   inSockets: [{
     label: "Value",
+  }, {
+    label: "Value",
   }],
   outSockets: [{
     label: "Result",

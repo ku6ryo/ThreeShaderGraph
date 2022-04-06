@@ -12,14 +12,16 @@ export class ModNode extends ShaderNode {
     super(id, "Math_Mod")
     this.#type = type
     this.addInSocket("in0", type)
+    this.addInSocket("in1", type)
     this.addOutSocket("out", type)
   }
 
   generateFragCode(): string {
     const i0 = this.getInSocket(0).getVarName()
+    const i1 = this.getInSocket(1).getVarName()
     const o = this.getOutSocket(0).getVarName()
     return `
-    ${this.#type} ${o} = mod(${i0});
+    ${this.#type} ${o} = mod(${i0}, ${i1});
     `
   }
 }
