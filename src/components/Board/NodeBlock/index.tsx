@@ -79,7 +79,7 @@ export const NodeBlock = memo(function ({
     if (dir === "out") {
       outSocketRects[index] = rect
     }
-  }, [id])
+  }, [])
 
   useEffect(() => {
     if (boxRef.current) {

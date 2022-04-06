@@ -51,12 +51,14 @@ export const materialDefs: NodeDefinition[] = [{
       vec4: new Vector4(),
     },
     alternativeValueInputType: NodeInputType.Color,
+    hidden: true,
   }, {
     label: "Shininess",
     alternativeValue: {
       float: 1,
     },
     alternativeValueInputType: NodeInputType.Float,
+    hidden: true,
   }, {
     label: "Opacity",
     alternativeValue: {
@@ -97,18 +99,21 @@ export const materialDefs: NodeDefinition[] = [{
     alternativeValueInputType: NodeInputType.Float,
   }, {
     label: "Reflectivity",
+    hidden: true,
     alternativeValue: {
       float: 1,
     },
     alternativeValueInputType: NodeInputType.Float,
   }, {
     label: "Clearcoat",
+    hidden: true,
     alternativeValue: {
       float: 1,
     },
     alternativeValueInputType: NodeInputType.Float,
   }, {
     label: "Clearcoat Roughness",
+    hidden: true,
     alternativeValue: {
       float: 1,
     },
